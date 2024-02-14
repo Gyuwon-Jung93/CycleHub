@@ -1,0 +1,4 @@
+const config = {
+    WEATHER_API_KEY:"6def6f5458e3226a4a33490f6635e269",
+};
+export default config;

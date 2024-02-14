@@ -1,17 +1,20 @@
+// import config from "/config/apiKey.js";
 document.addEventListener('DOMContentLoaded', function() {
     loadWeather();
     // initMap();
 });
+const {WEATHER_API_KEY} = config;
 
 function loadWeather() {
-    const apiKey = "YOUR_OPENWEATHER_API_KEY";
-    const url = `http://api.openweathermap.org/data/2.5/forecast?id=524901&appid=6def6f5458e3226a4a33490f6635e269`;
+    const WEATHER_API_KEY="6def6f5458e3226a4a33490f6635e269"
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=Dublin&appid=${WEATHER_API_KEY}&units=metric&lang=en`;
 
     fetch(url)
     .then(response => response.json())
     .then(data => {
-        document.getElementById('weather').innerHTML = `Dublin's Weather: ${data.weather[0].description}, 온도: ${data.main.temp}°C`;
         console.log(data);
+        document.getElementById('weather').innerHTML = `Dublin's Weather: ${data.weather[0].description}, Temperature: ${data.main.temp}°C`;
+        
     })
     .catch(error => console.log('Error:', error));
 }
