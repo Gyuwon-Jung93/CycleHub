@@ -1,5 +1,49 @@
+*{
+    border: solid 1px black;
+}
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #812323;
+}
+#navbar {
+    overflow: hidden;
+    background-color: rgb(82, 20, 198);
+
+}
+#mainimg{
+    float: right;
+    margin-right: 30px;
+}
+#navbar a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 20px;
+    text-decoration: none;
+}
+#navbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
+#map {
+    height: 800px;
+    width: 100%;
+}
+#weather, #statistics {
+    padding: 20px;
+}
+#sidebar {
+    float: left;
+    width: 30%;
+    height: 970px;
+    background-color: blue;
+}
+#content {
+    float: left;
+    width: 70%;
+    height: 400px;
+}
+#footer {
+    clear: both;
+    text-align: center;
 }
