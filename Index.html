@@ -1,12 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CycleHub</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+      </script>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
+ <script defer src="./script.js"></script>
+ <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&callback=initMap"></script>
 </head>
 <body>
-    <h1>CycleHub</h1>
+
+    <div id="navbar">
+        <a href="#home">Home</a>
+        <a href="#news">News</a>
+        <a href="#contact">Contract</a>
+        <a href="#about">AboutUs</a>
+        <img id="mainimg" src="/image/main.png" alt="">
+  
+    </div>
+
+    <div id="sidebar">
+        <div id="Heat Map">heatmap</div>
+        <div id="weatherBox">
+            <div id="openweathermap-widget-11"></div>
+        </div>
+  
+    </div>
+    <div id="content">
+        <div id="map" sty></div>
+    </div>
+    <div id="footer">
+        <div id="statistics">statistics</div>
+    </div>
+
+    <script src='//openweathermap.org/themes/openweathermap/assets/vendor/owm/js/d3.min.js'></script><script>window.myWidgetParam ? window.myWidgetParam : window.myWidgetParam = [];  window.myWidgetParam.push({id: 11,cityid: '2964574',appid: '6def6f5458e3226a4a33490f6635e269',units: 'metric',containerid: 'openweathermap-widget-11',  });  (function() {var script = document.createElement('script');script.async = true;script.charset = "utf-8";script.src = "//openweathermap.org/themes/openweathermap/assets/vendor/owm/js/weather-widget-generator.js";var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(script, s);  })();</script>
 </body>
 </html>
