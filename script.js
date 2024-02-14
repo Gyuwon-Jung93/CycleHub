@@ -1,6 +1,6 @@
 // import config from "/config/apiKey.js";
 document.addEventListener('DOMContentLoaded', function() {
-    loadWeather();
+
     // initMap();
 });
 
