@@ -1,32 +1,34 @@
-
 body {
     font-family: Arial, sans-serif;
 }
-#navbar {
-    overflow: hidden;
-    background-color: rgb(84, 36, 173);
-
-}
-#mainimg{
-    float: left;
-    margin-right: 30px;
-}
-
-
-#map {
-    height: 800px;
+#container {
+    height: 100%;
     width: 100%;
 }
-#navbar #weatherBox{
+#navbar {
+    overflow: hidden;
+    height: 230px;
+    background-color: rgb(84, 36, 173);
+}
+#mainimg {
+    float: left;
+}
+
+#map {
+    height: 700px;
+    width: 1600px;
+}
+#navbar #weatherBox {
     float: right;
 }
-#weather, #statistics {
+
+#statistics {
     padding: 20px;
 }
 #sidebar {
     float: left;
-    width: 30%;
-    height: 970px;
+    width: 10%;
+    height: 900px;
     background-color: blue;
 }
 #content {
