@@ -8,24 +8,17 @@ body {
 
 }
 #mainimg{
-    float: right;
+    float: left;
     margin-right: 30px;
 }
-#navbar a {
-    float: left;
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 20px;
-    text-decoration: none;
-}
-#navbar a:hover {
-    background-color: #ddd;
-    color: black;
-}
+
+
 #map {
     height: 800px;
     width: 100%;
+}
+#navbar #weatherBox{
+    float: right;
 }
 #weather, #statistics {
     padding: 20px;
