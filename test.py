@@ -1,5 +1,5 @@
 import sqlalchemy as sqla
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 import traceback
 import glob
 import os
@@ -12,14 +12,16 @@ from IPython.display import display
 
 URI = "cyclehub-db.cpywewmkcpo2.eu-north-1.rds.amazonaws.com"
 PORT = "3306"
-DB = "CycleHub-DB"
+DB = "CycleHubDB"
 USER = "carlo"
-PASSWORD = "test"
-engine = create_engine("mysql+mysqldb://{}:{}@{}:{}/{}".format(USER, PASSWORD, URI, PORT, DB), echo=True)
+PASSWORD = "carlogyuwonchristian"
+engine = create_engine("mysql+mysqldb://{}:{}@{}:{}/".format(USER, PASSWORD, URI, PORT), echo=True)
 
 
-sql = """
-CREATE DATABASE IF NOT EXISTS CycleHub-DB;
-"""
 
-sql = engine.execute(sql)
+
+# Create the database if it does not exist
+sql_create_db = text("CREATE DATABASE IF NOT EXISTS {};".format(DB))
+
+engine.connect().execute(sql_create_db)
+
