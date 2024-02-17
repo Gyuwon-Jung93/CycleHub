@@ -2,8 +2,6 @@ import json
 import requests
 
 
-response = requests.get(base_url)
-
 def fetch_data():
     CONTRACT_NAME = "dublin"
     API_KEY = '99d3e65801ab0bdae585264b25d443c5545365b5'
