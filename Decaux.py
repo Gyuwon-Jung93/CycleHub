@@ -17,5 +17,10 @@ def fetch_data():
     else:
         print("Failed to fetch data from the API")
 
+
+
+
+
 if __name__ == "__main__":
     fetch_data()
+    save
