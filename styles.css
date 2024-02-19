@@ -8,7 +8,7 @@ body {
 #navbar {
     overflow: hidden;
     height: 230px;
-    background-color: rgb(84, 36, 173);
+    background-color: black;
 }
 #mainimg {
     float: left;
