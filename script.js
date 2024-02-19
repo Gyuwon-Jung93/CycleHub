@@ -20,7 +20,7 @@ async function initMap() {
     //Googlemaps loading
     const mapDiv = document.getElementById('map');
     const mapCenter = { lat: 53.3483031, lng: -6.2637067 };
-
+    const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
     if (mapDiv) {
         map = new google.maps.Map(mapDiv, {
             center: mapCenter,
@@ -30,11 +30,33 @@ async function initMap() {
 
     // Add some markers to the map.
     //developers.google.com/maps/documentation/javascript/advanced-markers/basic-customization?hl=ko
+
     stations_info.forEach((station) => {
-        let marker = new google.maps.Marker.PinView({
+        let markerColor;
+        if (station.available_bikes <= 3) {
+            markerColor = '#FF0000'; // Red
+        } else if (station.available_bikes <= 5) {
+            markerColor = '#FFA500'; // Orange
+        } else if (station.available_bikes <= 10) {
+            markerColor = '#FFFF00'; // Yellow
+        } else {
+            markerColor = '#008000'; // Green
+        }
+        const svgIcon = {
+            path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z',
+            fillColor: markerColor,
+            fillOpacity: 1,
+            strokeWeight: 0,
+            rotation: 0,
+            scale: 2,
+            anchor: new google.maps.Point(15, 30),
+        };
+
+        let marker = new google.maps.Marker({
             map: map,
             position: new google.maps.LatLng(station.position.lat, station.position.lng),
             title: station.name, // Optional: add a title
+            icon: svgIcon, // Use the custom SVG icon
         });
 
         // Create an info window
@@ -42,7 +64,7 @@ async function initMap() {
             content: `
             <h3>${station.name}</h3>
             <p>Address: ${station.address}</p>
-            <p>Available bikes: ${station.bike_stands}</p>
+            <p>Bikes_stands: ${station.bike_stands}</p>
             <p>Available bikes: ${station.available_bikes}</p>
             <p>Available bike stands: ${station.available_bike_stands}</p>
             <p>Banking: ${station.banking ? 'Yes' : 'No'}</p>
