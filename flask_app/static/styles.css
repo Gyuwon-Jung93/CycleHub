@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+}
+#container {
+    height: 100%;
+    width: 100%;
+}
+#navbar {
+    overflow: hidden;
+    height: 230px;
+    background-color: black;
+}
+#mainimg {
+    float: left;
+}
+
+#map {
+    height: 700px;
+    width: 1600px;
+}
+#navbar #weatherBox {
+    float: right;
+}
+
+#statistics {
+    padding: 20px;
+}
+#sidebar {
+    float: left;
+    width: 10%;
+    height: 900px;
+    background-color: blue;
+}
+#content {
+    float: left;
+    width: 70%;
+    height: 400px;
+}
+#footer {
+    clear: both;
+    text-align: center;
+}
