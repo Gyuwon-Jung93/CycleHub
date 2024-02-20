@@ -9,7 +9,7 @@ async function initMap() {
 
     //fetch station information data from the flask Server
     //install pip3 flask-cors to fetch data
-    const response = await fetch('http://127.0.0.1:5000/stations');
+    const response = await fetch('/stations');
     const stations_info = await response.json();
 
     locations = stations_info.map((station) => ({
