@@ -15,15 +15,15 @@ def root():
 
 # Scrapping DATA
 # it has to be changed to get data from DataBase later.
-# @app.route('/stations')
-# def get_stations():
-#     contract_name = "dublin"
-#     api_key = '99d3e65801ab0bdae585264b25d443c5545365b5'
-#     base_url = f"https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}"
-#     response = requests.get(base_url)
-#     stations = response.json()
+@app.route('/stations')
+def get_stations():
+    contract_name = "dublin"
+    api_key = '99d3e65801ab0bdae585264b25d443c5545365b5'
+    base_url = f"https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}"
+    response = requests.get(base_url)
+    stations = response.json()
 
-#     return jsonify(stations)
+    return jsonify(stations)
 
 # @app.route('/stations/<int:station_id>')
 # def station(station_id):
