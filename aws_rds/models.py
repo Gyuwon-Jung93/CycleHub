@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.schema import PrimaryKeyConstraint
+from sqlalchemy.schema import PrimaryKeyConstraint, ForeignKeyConstraint
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -37,3 +37,15 @@ class Availability(Base):
 
 
 
+# Define Weather model
+class Weather(Base):
+    __tablename__ = 'weather'
+    time_day = Column(Integer,primary_key=True)
+    station_id = Column(Integer, ForeignKey('station.station_id'), primary_key=True)
+    main = Column(String(256))
+    description = Column(String(256))
+    wind_speed = Column(Float)
+    __table_args__ = (
+        PrimaryKeyConstraint('time_day', 'station_id'),
+    )
+    station = relationship("Station")

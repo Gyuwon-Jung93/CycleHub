@@ -12,7 +12,7 @@ def fetch_decaux_data():
     if response.status_code == 200:
         return response.json()
     else:
-        print("Failed to fetch data")
+        print(f"Error: {response.status_code}")
         return None
 
 
