@@ -25,9 +25,14 @@ def get_stations():
 
     return jsonify(stations)
 
-# @app.route('/stations/<int:station_id>')
-# def station(station_id):
-#     return 'Retrieving info for Station : {}'.format(station_id)
+@app.route('/weather', methods=['GET'])
+def get_weather():
+    city = request.args.get('city')
+    api_key = "6def6f5458e3226a4a33490f6635e269"
+    weather_url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+    response = requests.get(weather_url)
+    weather_data = response.json()
+    return jsonify(weather_data)
 
 if __name__ == "__main__": 
     app.run(debug=True)

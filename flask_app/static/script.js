@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     initMap();
+    getWeather();
 });
 
 async function initMap() {
@@ -20,7 +21,7 @@ async function initMap() {
     //Googlemaps loading
     const mapDiv = document.getElementById('map');
     const mapCenter = { lat: 53.3483031, lng: -6.2637067 };
-    const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
+    const { PinElement } = await google.maps.importLibrary('marker');
     if (mapDiv) {
         map = new google.maps.Map(mapDiv, {
             center: mapCenter,
@@ -33,6 +34,7 @@ async function initMap() {
 
     stations_info.forEach((station) => {
         let markerColor;
+
         if (station.available_bikes <= 3) {
             markerColor = '#FF0000'; // Red
         } else if (station.available_bikes <= 5) {
@@ -42,21 +44,18 @@ async function initMap() {
         } else {
             markerColor = '#008000'; // Green
         }
-        const svgIcon = {
-            path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z',
-            fillColor: markerColor,
-            fillOpacity: 1,
-            strokeWeight: 0,
-            rotation: 0,
-            scale: 2,
-            anchor: new google.maps.Point(15, 30),
-        };
+        const pinElement = new PinElement({
+            background: markerColor, // Example: setting the background to red
+            glyphColor: '#000000',
+        });
+
         let marker = new google.maps.Marker({
             map: map,
             position: new google.maps.LatLng(station.position.lat, station.position.lng),
             title: station.name, // Optional: add a title
-            icon: svgIcon, // Use the custom SVG icon
+            icon: pinElement, // Use the custom SVG icon
         });
+
         // Create an info window
         let infoWindow = new google.maps.InfoWindow({
             content: `
@@ -80,4 +79,14 @@ async function initMap() {
         imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
         gridSize: 180,
     });
+}
+
+async function getWeather() {
+    fetch(`/weather?city=dublin`)
+        .then((response) => response.json())
+        .then((data) => {
+            var weather = document.getElementById('weatherResult');
+            weather.innerHTML = 'Temperature: ' + data.main.temp + '°C<br>' + 'Weather: ' + data.weather[0].main;
+        })
+        .catch((error) => console.log('Error:', error));
 }
