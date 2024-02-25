@@ -30,13 +30,14 @@ def update_database_weather():
             main = weather_data['weather'][0]['main']
             description = weather_data['weather'][0]['description']
             wind_speed = weather_data['wind']['speed']
-
+            temperature = weather_data['main']['temp'] - 273.15
             weather = Weather(
                 station_id = id,
                 time_of_day = datetime.datetime.utcfromtimestamp(weather_data['dt']).strftime("%Y-%m-%d %H:%M:%S"),
                 main=main,
                 description=description,
-                wind_speed=wind_speed
+                wind_speed=wind_speed,
+                temperature=temperature
             )
             session.add(weather)
         else:

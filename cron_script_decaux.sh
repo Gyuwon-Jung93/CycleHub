@@ -1,4 +1,4 @@
 #!/bin/bash
 source /home/ubuntu/miniconda3/bin/activate comp30830
-python /home/ubuntu/CycleHub/api_scraper.py
+python /home/ubuntu/CycleHub/decaux_scraper.py
                                      

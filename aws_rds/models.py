@@ -44,6 +44,7 @@ class Weather(Base):
     station_id = Column(Integer, ForeignKey('station.station_id'), primary_key=True)
     main = Column(String(256))
     description = Column(String(256))
+    temperature = Column(Integer)
     wind_speed = Column(Float)
     __table_args__ = (
         PrimaryKeyConstraint('time_of_day', 'station_id'),
