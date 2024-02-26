@@ -16,29 +16,39 @@
 <body>
 <div id="container">
     <div id="navbar">
-        <img id="mainimg" src="/image/main.png" alt="">
-        <div id="weatherBox">
-            <div id="openweathermap-widget-21"></div>
+        
+        <div class="imgcontainer">
+            <img class="centered" src="flask_app\static\image\main.png">
         </div>
+        <div id="timecontainer">
+            <img id="clockimage" src="flask_app\static\image\clock.png">
+            <p id="time"></p>
+            </div>
+        </div>
+        <!-- <div id="weatherBox">
+            <div id="openweathermap-widget-21"></div>
+        </div> -->
     </div>
 
     <div id="sidebar">
-        <div id="Heat Map">heatmap</div>
-
+        <div id="inputcontainer">
+            <div id="inputtext">
+                <form id = "searchinput" action=""> 
+                    <input type="text" id="search" placeholder="Input journey..."><br><br>
+                    <button id="rest">Reset</button>
+                  </form>
+            </div>
+        </div>
   
     </div>
     <div id="content">
         <div id="map"></div>     
     </div>
-   <div></div>
-    <div id="footer">
-        <div id="statistics">statistics</div>
-    </div>
 
 </div>
    
 
- <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&callback=initMap"></script>
+<script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&callback=initMap"></script>
 <script src="https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
 <!-- <script src='//openweathermap.org/themes/openweathermap/assets/vendor/owm/js/d3.min.js'></script><script>window.myWidgetParam ? window.myWidgetParam : window.myWidgetParam = [];  window.myWidgetParam.push({id: 21,cityid: '2963597',appid: '6def6f5458e3226a4a33490f6635e269',units: 'metric',containerid: 'openweathermap-widget-21',  });  (function() {var script = document.createElement('script');script.async = true;script.charset = "utf-8";script.src = "//openweathermap.org/themes/openweathermap/assets/vendor/owm/js/weather-widget-generator.js";var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(script, s);  })();</script> -->
 </body>

@@ -9,7 +9,7 @@ async function initMap() {
 
     //fetch station information data from the flask Server
     //install pip3 flask-cors to fetch data
-    const response = await fetch('/stations');
+    const response = await fetch('http://127.0.0.1:5000/stations');
     const stations_info = await response.json();
 
     locations = stations_info.map((station) => ({
@@ -51,28 +51,32 @@ async function initMap() {
             scale: 2,
             anchor: new google.maps.Point(15, 30),
         };
+
         let marker = new google.maps.Marker({
             map: map,
             position: new google.maps.LatLng(station.position.lat, station.position.lng),
             title: station.name, // Optional: add a title
             icon: svgIcon, // Use the custom SVG icon
         });
+
         // Create an info window
         let infoWindow = new google.maps.InfoWindow({
             content: `
-        <h3>${station.name}</h3>
-        <p>Address: ${station.address}</p>
-        <p>Bikes_stands: ${station.bike_stands}</p>
-        <p>Available bikes: ${station.available_bikes}</p>
-        <p>Available bike stands: ${station.available_bike_stands}</p>
-        <p>Banking: ${station.banking ? 'Yes' : 'No'}</p>
-        <p>Status: ${station.status}</p>`,
+            <h3>${station.name}</h3>
+            <p>Address: ${station.address}</p>
+            <p>Bikes_stands: ${station.bike_stands}</p>
+            <p>Available bikes: ${station.available_bikes}</p>
+            <p>Available bike stands: ${station.available_bike_stands}</p>
+            <p>Banking: ${station.banking ? 'Yes' : 'No'}</p>
+            <p>Status: ${station.status}</p>`,
             // You can add more station details here
         });
-        //Add click event listener to the marker
+
+        // Add click event listener to the marker
         marker.addListener('click', () => {
             infoWindow.open(map, marker);
         });
+
         markers.push(marker);
     });
     //marker cluster
@@ -80,4 +84,16 @@ async function initMap() {
         imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
         gridSize: 180,
     });
+}
+
+window.onload = function() {
+    setInterval(function(){
+        let date = new Date();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+
+        let displayTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+
+        document.getElementById('time').innerHTML = displayTime;
+    }, 1000); // 1000 milliseconds = 1 second
 }

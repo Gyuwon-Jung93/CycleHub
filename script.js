@@ -85,3 +85,15 @@ async function initMap() {
         gridSize: 180,
     });
 }
+
+window.onload = function() {
+    setInterval(function(){
+        let date = new Date();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+
+        let displayTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+
+        document.getElementById('time').innerHTML = displayTime;
+    }, 1000); // 1000 milliseconds = 1 second
+}
