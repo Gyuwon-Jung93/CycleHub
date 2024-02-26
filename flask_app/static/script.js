@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     initMap();
     getWeather();
+    showTime();
 });
 
 async function initMap() {
@@ -89,4 +90,16 @@ async function getWeather() {
             weather.innerHTML = 'Temperature: ' + data.main.temp + '°C<br>' + 'Weather: ' + data.weather[0].main;
         })
         .catch((error) => console.log('Error:', error));
+}
+
+async function showTime() {
+    setInterval(function () {
+        let date = new Date();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+
+        let displayTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+
+        document.getElementById('time').innerHTML = displayTime;
+    }, 1000); // 1000 milliseconds = 1 second
 }

@@ -12,12 +12,28 @@
     <body>
         <div id="container">
             <div id="navbar">
-                <img id="mainimg" src="/static/image/main.png" alt="" />
+                <!-- <img id="mainimg" src="/static/image/main.png" alt="" />
+            -->
+            
+            <div class="imgcontainer">
+                <img class="centered" src="/static/image/main.png" />
             </div>
 
+            <div id="timecontainer">
+                <img id="clockimage" src="/static/image/clock.png">
+                <p id="time"></p>
+                </div>
+            </div>
+        </div>
             <div id="sidebar">
-                <div id="Heat Map">heatmap</div>
-                <div id="weatherResult"></div>
+           <div id="inputcontainer">
+            <div id="inputtext">
+                <form id = "searchinput" action=""> 
+                    <input type="text" id="search" placeholder="Input journey..."><br><br>
+                    <button id="rest">Reset</button>
+                  </form>
+            </div>
+        </div>
             </div>
             <div id="content">
                 <div id="map"></div>
