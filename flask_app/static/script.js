@@ -86,10 +86,31 @@ async function getWeather() {
     fetch(`/weather?city=dublin`)
         .then((response) => response.json())
         .then((data) => {
-            var weather = document.getElementById('weatherResult');
-            weather.innerHTML = 'Temperature: ' + data.main.temp + '°C<br>' + 'Weather: ' + data.weather[0].main;
+            // weather for widget
+            let weatherimage;
+            let ww_weather = document.getElementById('weatherwidget');
+            if (data.weather[0].main = 'clear') {
+                weatherimage = `<img id="weatherimage" src="/static/image/weather_overcast.png" />`;
+            }
+            ww_weather.innerHTML = 'Temperature: ' + data.main.temp  + '°C ' + weatherimage + data.weather[0].main;
+            // end 
         })
         .catch((error) => console.log('Error:', error));
+}
+
+// when user clicks on specific date
+// to be finished later using ML model 
+
+async function dateTimeSelected(inputType) {
+
+    let selectedValue;
+    if (inputType === 'date') {
+        selectedValue = document.getElementById("dateInput").value;
+    } else if (inputType === 'time') {
+        selectedValue = document.getElementById("timeInput").value;
+    }
+
+    // more to come
 }
 
 async function showTime() {

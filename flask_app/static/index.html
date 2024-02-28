@@ -12,9 +12,19 @@
     <body>
         <div id="container">
             <div id="navbar">
-                <!-- <img id="mainimg" src="/static/image/main.png" alt="" />
-            -->
-            
+            <!-- <div id="openweathermap-widget-23"></div>
+                <script>
+                    window.myWidgetParam ? window.myWidgetParam : window.myWidgetParam = [];
+                    window.myWidgetParam.push({id: 23,cityid: '2964574',appid: 'e09fe30aecb65a55bb36442eda372b92',units: 'metric',containerid: 'openweathermap-widget-23',  });
+                    (function() {var script = document.createElement('script');script.async = true;script.charset = "utf-8";
+                    script.src = "//openweathermap.org/themes/openweathermap/assets/vendor/owm/js/weather-widget-generator.js";
+                    var s = document.getElementsByTagName('script')[0];
+                    s.parentNode.insertBefore(script, s);  })();
+                </script> -->
+                <div id="widget">
+                    <div id="today">Today</div>
+                    <div id="weatherwidget"></div>
+                </div>
             <div class="imgcontainer">
                 <img class="centered" src="/static/image/main.png" />
             </div>
@@ -26,21 +36,31 @@
             </div>
         </div>
             <div id="sidebar">
-           <div id="inputcontainer">
-            <div id="inputtext">
-                <form id = "searchinput" action=""> 
-                    <input type="text" id="search" placeholder="Input journey..."><br><br>
-                    <button id="rest">Reset</button>
-                  </form>
-            </div>
-        </div>
+                <div id="inputcontainer">
+                    <div id="inputtext">
+                        <form id = "searchinput" action=""> 
+                            <input type="text" id="search" placeholder="Input journey..."><br><br>
+
+                            <button id="rest">Reset</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="calendar">
+                    <form>
+                        <label>
+                          <h3>Pick a date and time</h3>
+                            <input id="dateinput" type="date" min="2024-03-01" onchange="dateTimeSelected('date')"/>
+                            <input id="timeinput" type="time" onchange="dateTimeSelected('time')">
+                        </label>
+                      </form>
+                </div>
+                <div id="weatherprediction">
+                </div>
+                <div id="busyprediction">
+                </div>
             </div>
             <div id="content">
                 <div id="map"></div>
-            </div>
-
-            <div id="footer">
-                <div id="statistics">statistics</div>
             </div>
         </div>
         <script src="/static/script.js"></script>
