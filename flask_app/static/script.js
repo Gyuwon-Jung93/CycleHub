@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initMap();
     getWeather();
     showTime();
+    dateTimeSelected(inputType);
 });
 
 async function initMap() {
@@ -60,13 +61,13 @@ async function initMap() {
         // Create an info window
         let infoWindow = new google.maps.InfoWindow({
             content: `
-        <h3>${station.name}</h3>
-        <p>Address: ${station.address}</p>
-        <p>Bikes_stands: ${station.bike_stands}</p>
-        <p>Available bikes: ${station.available_bikes}</p>
-        <p>Available bike stands: ${station.available_bike_stands}</p>
-        <p>Banking: ${station.banking ? 'Yes' : 'No'}</p>
-        <p>Status: ${station.status}</p>`,
+        <h3 class="stationdetails">${station.name}</h3>
+        <p class="stationdetails">Address: ${station.address}</p>
+        <p class="stationdetails">Bikes_stands: ${station.bike_stands}</p>
+        <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
+        <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
+        <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+        <p class="stationdetails">Status: ${station.status}</p>`,
             // You can add more station details here
         });
         //Add click event listener to the marker
@@ -86,10 +87,39 @@ async function getWeather() {
     fetch(`/weather?city=dublin`)
         .then((response) => response.json())
         .then((data) => {
-            var weather = document.getElementById('weatherResult');
-            weather.innerHTML = 'Temperature: ' + data.main.temp + '°C<br>' + 'Weather: ' + data.weather[0].main;
+            // weather details for widget
+            let currentDate = new Date();
+            let dayOfWeek = currentDate.getDay();
+            let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            let currentDay = daysOfWeek[dayOfWeek];
+            
+            let weatherimage;
+            let temperature = document.getElementById('temperature');
+            let clouds = document.getElementById("clouds")
+            if (data.weather[0].main = 'clear') {
+                weatherimage = `<img id="weatherimage" src="/static/image/weather_overcast.png" />`;
+            }
+            // need to add else if statements here for sunny, raining, and sunny showers, but not sure of data.weather[0].main strings
+            temperature.innerHTML = data.main.temp  + '°C ' + '<br>' + currentDay;
+            clouds.innerHTML = data.weather[0].main + '<br>' + weatherimage;
+            // end 
         })
         .catch((error) => console.log('Error:', error));
+}
+
+// when user clicks on specific date, statistics returns 
+// to be finished later using ML model 
+
+async function dateTimeSelected(inputType) {
+
+    let selectedValue;
+    if (inputType === 'date') {
+        selectedValue = document.getElementById("dateInput").value;
+    } else if (inputType === 'time') {
+        selectedValue = document.getElementById("timeInput").value;
+    }
+
+    // more to come
 }
 
 async function showTime() {
