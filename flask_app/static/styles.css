@@ -16,7 +16,6 @@ body {
 }
 
 .imgcontainer {
-   
 }
 h3 {
     color: black;
@@ -25,20 +24,129 @@ h2 {
     color: #f4f4f4;
 }
 .stationdetails {
-    
 }
 .centered {
     width: 40vh;
-
 }
+/* Map related css*/
 #map {
-    height: 91vh;
-    width: 173vh;
+    height: 80vh;
+    width: 800px;
 }
+#search-box {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index: 5;
+}
+
+#station-search {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.station-result {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 5px;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.station-result:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+/* Select marker bounce*/
+@-webkit-keyframes bounce {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        -webkit-transform: translateY(0);
+    }
+    40% {
+        -webkit-transform: translateY(-30px);
+    }
+    60% {
+        -webkit-transform: translateY(-15px);
+    }
+}
+
+@-moz-keyframes bounce {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        -moz-transform: translateY(0);
+    }
+    40% {
+        -moz-transform: translateY(-30px);
+    }
+    60% {
+        -moz-transform: translateY(-15px);
+    }
+}
+
+@-o-keyframes bounce {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        -o-transform: translateY(0);
+    }
+    40% {
+        -o-transform: translateY(-30px);
+    }
+    60% {
+        -o-transform: translateY(-15px);
+    }
+}
+@keyframes bounce {
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+    60% {
+        transform: translateY(-15px);
+    }
+}
+/* Time related css*/
 #timecontainer {
     display: flex;
     justify-content: right;
     padding-right: 3%;
+}
+#search-results div:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+.custom-map-control-button {
+    background-color: #fff;
+    border: 0;
+    border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    margin: 10px;
+    padding: 0 0.5em;
+    height: 40px;
+    font-size: 12px;
+    line-height: 40px;
+    text-align: center;
+    color: black;
 }
 #time {
     font-size: 3vh;
@@ -57,11 +165,23 @@ h2 {
     float: left;
     width: 40vh;
     height: 91vh;
-    padding: 11px;   
+    padding: 11px;
     background-color: #001f38;
 }
 #searchinput {
     display: flex;
+}
+#search-results {
+    display: none;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 5px;
+    margin-bottom: 5px;
+    overflow-y: scroll;
+    background: white;
+    border: 1px solid #ccc;
+    cursor: pointer;
 }
 #search {
     border-radius: 15px;
@@ -78,6 +198,7 @@ h2 {
     float: left;
     width: calc(100% - 50vh);
     height: 91vh;
+    overflow-y: scroll;
 }
 #widget {
     font-size: 25px;
@@ -103,16 +224,15 @@ h2 {
 }
 #today {
     padding: 10px;
-
 }
-input[type="date"] {
-    border-radius: 5px; 
-    padding: 8px; 
-    border: 1px solid #ccc; 
+input[type='date'] {
+    border-radius: 5px;
+    padding: 8px;
+    border: 1px solid #ccc;
 }
 
-input[type="time"] {
-    border-radius: 5px; 
-    padding: 8px; 
+input[type='time'] {
+    border-radius: 5px;
+    padding: 8px;
     border: 1px solid #ccc;
 }

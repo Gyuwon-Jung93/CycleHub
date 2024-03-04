@@ -61,6 +61,10 @@
                 </div>
             </div>
             <div id="content">
+                <div id="search-container">
+                    <input type="text" id="station-search" placeholder="Search for stations...">
+                    <div id="search-results"></div>
+                </div>
                 <div id="map"></div>
             </div>
         </div>
@@ -68,9 +72,10 @@
         <script
             async
             defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&callback=initMap"
         ></script>
-        <reference types="@types/googlemaps" />
+        
+
         <script src="https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
     </body>
 </html>
