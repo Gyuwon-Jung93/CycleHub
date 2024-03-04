@@ -2,14 +2,200 @@ document.addEventListener('DOMContentLoaded', function () {
     initMap();
     getWeather();
     showTime();
-    dateTimeSelected(inputType);
+    dateTimeSelected();
 });
 
 async function initMap() {
     let map;
     let markers = [];
     let locations = [];
-
+    let mapSetting = [
+        {
+            elementType: 'geometry',
+            stylers: [
+                {
+                    color: '#f5f5f5',
+                },
+            ],
+        },
+        {
+            elementType: 'labels.icon',
+            stylers: [
+                {
+                    visibility: 'off',
+                },
+            ],
+        },
+        {
+            elementType: 'labels.text.fill',
+            stylers: [
+                {
+                    color: '#616161',
+                },
+            ],
+        },
+        {
+            elementType: 'labels.text.stroke',
+            stylers: [
+                {
+                    color: '#f5f5f5',
+                },
+            ],
+        },
+        {
+            featureType: 'administrative.land_parcel',
+            elementType: 'labels.text.fill',
+            stylers: [
+                {
+                    color: '#bdbdbd',
+                },
+            ],
+        },
+        {
+            featureType: 'poi',
+            elementType: 'geometry',
+            stylers: [
+                {
+                    color: '#eeeeee',
+                },
+            ],
+        },
+        {
+            featureType: 'poi',
+            elementType: 'labels.text.fill',
+            stylers: [
+                {
+                    color: '#757575',
+                },
+            ],
+        },
+        {
+            featureType: 'poi.business',
+            stylers: [
+                {
+                    visibility: 'off',
+                },
+            ],
+        },
+        {
+            featureType: 'poi.park',
+            elementType: 'geometry',
+            stylers: [
+                {
+                    color: '#e5e5e5',
+                },
+            ],
+        },
+        {
+            featureType: 'poi.park',
+            elementType: 'labels.text',
+            stylers: [
+                {
+                    visibility: 'off',
+                },
+            ],
+        },
+        {
+            featureType: 'poi.park',
+            elementType: 'labels.text.fill',
+            stylers: [
+                {
+                    color: '#9e9e9e',
+                },
+            ],
+        },
+        {
+            featureType: 'road',
+            elementType: 'geometry',
+            stylers: [
+                {
+                    color: '#ffffff',
+                },
+            ],
+        },
+        {
+            featureType: 'road.arterial',
+            elementType: 'labels.text.fill',
+            stylers: [
+                {
+                    color: '#757575',
+                },
+            ],
+        },
+        {
+            featureType: 'road.highway',
+            elementType: 'geometry',
+            stylers: [
+                {
+                    color: '#dadada',
+                },
+            ],
+        },
+        {
+            featureType: 'road.highway',
+            elementType: 'labels.text.fill',
+            stylers: [
+                {
+                    color: '#616161',
+                },
+            ],
+        },
+        {
+            featureType: 'road.local',
+            elementType: 'labels.text.fill',
+            stylers: [
+                {
+                    color: '#9e9e9e',
+                },
+            ],
+        },
+        {
+            featureType: 'transit.line',
+            elementType: 'geometry',
+            stylers: [
+                {
+                    color: '#e5e5e5',
+                },
+            ],
+        },
+        {
+            featureType: 'transit.station',
+            elementType: 'geometry',
+            stylers: [
+                {
+                    color: '#eeeeee',
+                },
+            ],
+        },
+        {
+            featureType: 'water',
+            elementType: 'geometry',
+            stylers: [
+                {
+                    color: '#c9c9c9',
+                },
+            ],
+        },
+        {
+            featureType: 'water',
+            elementType: 'geometry.fill',
+            stylers: [
+                {
+                    color: '#bcd4eb',
+                },
+            ],
+        },
+        {
+            featureType: 'water',
+            elementType: 'labels.text.fill',
+            stylers: [
+                {
+                    color: '#9e9e9e',
+                },
+            ],
+        },
+    ];
+    let customMapType = new google.maps.StyledMapType(mapSetting, { name: 'custom_style' });
     //fetch station information data from the flask Server
     //install pip3 flask-cors to fetch data
     const response = await fetch('/stations');
@@ -24,12 +210,16 @@ async function initMap() {
     const mapDiv = document.getElementById('map');
     const mapCenter = { lat: 53.3483031, lng: -6.2637067 };
     const { PinElement } = await google.maps.importLibrary('marker');
+
     if (mapDiv) {
         map = new google.maps.Map(mapDiv, {
             center: mapCenter,
             zoom: 13,
+            zoomControl: true,
         });
     }
+    map.mapTypes.set('custom_style', customMapType);
+    map.setMapTypeId('custom_style');
 
     // Add some markers to the map.
     //developers.google.com/maps/documentation/javascript/advanced-markers/basic-customization?hl=ko
@@ -90,33 +280,32 @@ async function getWeather() {
             // weather details for widget
             let currentDate = new Date();
             let dayOfWeek = currentDate.getDay();
-            let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            let daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             let currentDay = daysOfWeek[dayOfWeek];
-            
+
             let weatherimage;
             let temperature = document.getElementById('temperature');
-            let clouds = document.getElementById("clouds")
-            if (data.weather[0].main = 'clear') {
+            let clouds = document.getElementById('clouds');
+            if ((data.weather[0].main = 'clear')) {
                 weatherimage = `<img id="weatherimage" src="/static/image/weather_overcast.png" />`;
             }
             // need to add else if statements here for sunny, raining, and sunny showers, but not sure of data.weather[0].main strings
-            temperature.innerHTML = data.main.temp  + '°C ' + '<br>' + currentDay;
+            temperature.innerHTML = data.main.temp + '°C ' + '<br>' + currentDay;
             clouds.innerHTML = data.weather[0].main + '<br>' + weatherimage;
-            // end 
+            // end
         })
         .catch((error) => console.log('Error:', error));
 }
 
-// when user clicks on specific date, statistics returns 
-// to be finished later using ML model 
+// when user clicks on specific date, statistics returns
+// to be finished later using ML model
 
 async function dateTimeSelected(inputType) {
-
     let selectedValue;
     if (inputType === 'date') {
-        selectedValue = document.getElementById("dateInput").value;
+        selectedValue = document.getElementById('dateInput').value;
     } else if (inputType === 'time') {
-        selectedValue = document.getElementById("timeInput").value;
+        selectedValue = document.getElementById('timeInput').value;
     }
 
     // more to come
