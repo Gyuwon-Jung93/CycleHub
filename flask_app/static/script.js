@@ -10,6 +10,7 @@ async function initMap() {
     let locations = [];
     const { Map } = await google.maps.importLibrary('maps');
     const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
+
     //fetch station information data from the flask Server
     //install pip3 flask-cors to fetch data
     const response = await fetch('/stations');
@@ -33,7 +34,7 @@ async function initMap() {
     if (mapDiv) {
         map = new Map(mapDiv, {
             center: mapCenter,
-            zoom: 13,
+            zoom: 15,
             zoomControl: true,
             mapTypeControl: false,
             streetViewControl: false,
@@ -250,7 +251,7 @@ async function initMap() {
             map: map,
             position: new google.maps.LatLng(station.position.lat, station.position.lng),
             title: station.name, // Optional: add a title
-            // icon: pinElement, // Use the custom SVG icon
+            content: pinElement.element, // Use the custom SVG icon
         });
 
         // Create an info window
@@ -273,10 +274,7 @@ async function initMap() {
         markers.push(marker);
     });
     //marker cluster
-    // let markerCluster = new MarkerClusterer(map, markers, {
-    //     imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
-    //     gridSize: 90,
-    // });
+    const clusterer = new markerClusterer.MarkerClusterer({ markers, map, maxZoom: 40 });
 }
 
 async function getWeather() {
