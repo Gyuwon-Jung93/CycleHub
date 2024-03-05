@@ -39,10 +39,10 @@
             <div id="sidebar">
                 <div id="inputcontainer">
                     <div id="inputtext">
-                        <form id = "searchinput" action=""> 
+                        <form id = "searchinput"> 
                             <input type="text" id="search" placeholder="Input journey..."><br><br>
 
-                            <button id="rest">Reset</button>
+                            <button id="rest" onclick="resetJourney()">Reset</button>
                         </form>
                     </div>
                 </div>
@@ -61,13 +61,17 @@
                 </div>
             </div>
             <div id="content">
+                <div id="search-container">
+                    <input type="text" id="station-search" placeholder="Search for stations...">
+                    <div id="search-results"></div>
+                </div>
                 <div id="map"></div>
             </div>
         </div>
         <script src="/static/script.js"></script>
         <script
             async
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&callback=initMap&libraries=geometry"
         ></script>
         <script src="https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
     </body>
