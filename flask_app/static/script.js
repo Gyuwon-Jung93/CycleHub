@@ -294,7 +294,7 @@ async function getWeather() {
                 weatherimage = `<img id="weatherimage" src="/static/image/weather_overcast.png" />`;
             }
             // need to add else if statements here for sunny, raining, and sunny showers, but not sure of data.weather[0].main strings
-            temperature.innerHTML = data.main.temp + '°C ' + '<br>' + currentDay;
+            temperature.innerHTML = Math.round(data.main.temp) + '°C ' + '<br>' + currentDay;
             clouds.innerHTML = data.weather[0].main + '<br>' + weatherimage;
             // end
         })
