@@ -4,8 +4,15 @@ document.addEventListener('DOMContentLoaded', function () {
     showTime();
     dateTimeSelected();
 });
+
+// Reset Button 
+function resetJourney() {
+    directionsRenderer.setDirections({ routes: [] });
+}
+
 let map;
 let markers = [];
+let currLatLng;
 async function initMap() {
     let locations = [];
     const { Map } = await google.maps.importLibrary('maps');
@@ -21,6 +28,27 @@ async function initMap() {
         lng: station.position.lng,
     }));
 
+    // Current Users Location
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      currLatLng = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+      new google.maps.Marker({
+        position: currLatLng,
+        map: map,
+        title: "Your Location",
+        icon: {
+          url: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fpreviews%2F000%2F568%2F450%2Foriginal%2Fhome-icon-vector.jpg&f=1&nofb=1&ipt=f2d8572d3bc0e5157c09f3a3dedd946cd009c3d726adae243da530612c5f0787&ipo=images",
+          scaledSize: new google.maps.Size(50, 50), // Adjust size as needed
+        },
+      });
+    });
+  } else {
+    console.error("Geolocation is not supported by this browser.");
+  }
+  
     //Googlemaps loading
     const mapDiv = document.getElementById('map');
     const mapCenter = { lat: 53.3483031, lng: -6.2637067 };
@@ -230,7 +258,35 @@ async function initMap() {
             ],
         });
     }
+    //When the user inputs a location it will be trigger 
+    const addressInput = document.getElementById("search");
+    addressInput.addEventListener("change", function () {
+      calculateAndDisplayRoute(addressInput.value);
+    });
 
+    //Google Directions API
+    function calculateAndDisplayRoute(destination) {
+        const directionsService = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setDirections({ routes: [] });
+        directionsRenderer.setMap(map);
+        //Old inputs still show up even when trying it multiple times, will fix later
+        
+        directionsService.route(
+        {
+            origin: currLatLng,
+            destination: destination,
+            travelMode: google.maps.TravelMode.DRIVING, //can be changed to BICYCLING?
+        },
+        (response, status) => {
+            if (status === "OK") {
+            directionsRenderer.setDirections(response);
+            } else {
+            console.log(status);
+            }
+        }
+        );
+  }
     // Add some markers to the map.
     stations_info.forEach((station) => {
         let markerColor = '#008000';

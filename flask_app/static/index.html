@@ -7,7 +7,6 @@
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
         <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
         <link rel="stylesheet" href="/static/styles.css" />
     </head>
     <body>
@@ -40,10 +39,10 @@
             <div id="sidebar">
                 <div id="inputcontainer">
                     <div id="inputtext">
-                        <form id = "searchinput" action=""> 
+                        <form id = "searchinput"> 
                             <input type="text" id="search" placeholder="Input journey..."><br><br>
 
-                            <button id="rest">Reset</button>
+                            <button id="rest" onclick="resetJourney()">Reset</button>
                         </form>
                     </div>
                 </div>
@@ -71,10 +70,9 @@
         </div>
         <script src="/static/script.js"></script>
         <script
-            defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&callback=initMap"
+            async
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&callback=initMap&libraries=geometry"
         ></script>
-        <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
-
+        <script src="https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
     </body>
 </html>

@@ -15,6 +15,7 @@ def root():
 
 # Scrapping DATA
 # it has to be changed to get data from DataBase later.
+#We need to hide the API keys later
 @app.route('/stations')
 def get_stations():
     contract_name = "dublin"
