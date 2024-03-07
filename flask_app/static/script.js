@@ -5,9 +5,35 @@ document.addEventListener('DOMContentLoaded', function () {
     dateTimeSelected();
 });
 
-// Reset Button 
-function resetJourney() {
-    directionsRenderer.setDirections({ routes: [] });
+//When the user inputs a location it will be trigger 
+function searchDest(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+    let locationInput = document.getElementById("searchLocation");
+    let destInput = document.getElementById("searchDestination");
+    calculateAndDisplayRoute(locationInput.value, destInput.value);
+  }
+  
+//Google Directions API
+function calculateAndDisplayRoute(loc, dest) {
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+    //Old inputs still show up even when trying it multiple times, will fix later
+    
+    directionsService.route(
+    {
+        origin: loc,
+        destination: dest,
+        travelMode: google.maps.TravelMode.DRIVING, //can be changed to BICYCLING?
+    },
+    (response, status) => {
+        if (status === "OK") {
+        directionsRenderer.setDirections(response);
+        } else {
+        console.log(status);
+        }
+    }
+    );
 }
 
 let map;
@@ -258,35 +284,7 @@ async function initMap() {
             ],
         });
     }
-    //When the user inputs a location it will be trigger 
-    const addressInput = document.getElementById("search");
-    addressInput.addEventListener("change", function () {
-      calculateAndDisplayRoute(addressInput.value);
-    });
-
-    //Google Directions API
-    function calculateAndDisplayRoute(destination) {
-        const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer();
-        directionsRenderer.setDirections({ routes: [] });
-        directionsRenderer.setMap(map);
-        //Old inputs still show up even when trying it multiple times, will fix later
-        
-        directionsService.route(
-        {
-            origin: currLatLng,
-            destination: destination,
-            travelMode: google.maps.TravelMode.DRIVING, //can be changed to BICYCLING?
-        },
-        (response, status) => {
-            if (status === "OK") {
-            directionsRenderer.setDirections(response);
-            } else {
-            console.log(status);
-            }
-        }
-        );
-  }
+    
     // Add some markers to the map.
     stations_info.forEach((station) => {
         let markerColor = '#008000';

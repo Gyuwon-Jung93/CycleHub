@@ -39,11 +39,12 @@
             <div id="sidebar">
                 <div id="inputcontainer">
                     <div id="inputtext">
-                        <form id = "searchinput"> 
-                            <input type="text" id="search" placeholder="Input journey..."><br><br>
-
-                            <button id="rest" onclick="resetJourney()">Reset</button>
+                        <form id="searchinput" onsubmit="searchDest(event)">
+                            <input type="text" id="searchLocation" placeholder="Input location.."><br><br>
+                            <input type="text" id="searchDestination" placeholder="Input destination.."><br><br>
+                            <button type="submit" id="rest">Search</button>
                         </form>
+                        
                     </div>
                 </div>
                 <div id="calendar">

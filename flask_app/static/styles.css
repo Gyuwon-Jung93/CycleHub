@@ -28,7 +28,6 @@ h2 {
 .centered {
     width: 40vh;
 }
-/* Map related css*/
 #map {
     height: 80vh;
     width: 800px;
@@ -62,7 +61,6 @@ h2 {
     cursor: pointer;
 }
 
-/* Time related css*/
 #timecontainer {
     display: flex;
     justify-content: right;
@@ -108,6 +106,11 @@ h2 {
 }
 #searchinput {
     display: flex;
+    flex-direction: column;
+}
+#inputtext {
+    /* display: flex;
+    flex-direction: column; */
 }
 #search-results {
     display: none;
@@ -121,7 +124,11 @@ h2 {
     border: 1px solid #ccc;
     cursor: pointer;
 }
-#search {
+#searchLocation {
+    border-radius: 15px;
+    font-size: 15px;
+}
+#searchDestination {
     border-radius: 15px;
     font-size: 15px;
 }
