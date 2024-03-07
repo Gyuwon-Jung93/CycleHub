@@ -399,7 +399,7 @@ document.getElementById('station-search').addEventListener('input', async functi
                 div.className = 'station-result';
                 div.onclick = function () {
                     // Find the marker that matches the clicked station
-                    const markerObj = markers.find((m) => m.qz === station.name);
+                    const markerObj = markers.find((m) => m.uz === station.name);
                     if (markerObj) {
                         const stationName = markerObj.Ds;
                         const marker = new google.maps.Marker({
