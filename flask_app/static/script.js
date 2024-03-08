@@ -5,34 +5,34 @@ document.addEventListener('DOMContentLoaded', function () {
     dateTimeSelected();
 });
 
-//When the user inputs a location it will be trigger 
+//When the user inputs a location it will be trigger
 function searchDest(event) {
     event.preventDefault(); // Prevent the default form submission behavior
-    let locationInput = document.getElementById("searchLocation");
-    let destInput = document.getElementById("searchDestination");
+    let locationInput = document.getElementById('searchLocation');
+    let destInput = document.getElementById('searchDestination');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
-  }
-  
+}
+
 //Google Directions API
 function calculateAndDisplayRoute(loc, dest) {
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer();
     directionsRenderer.setMap(map);
     //Old inputs still show up even when trying it multiple times, will fix later
-    
+
     directionsService.route(
-    {
-        origin: loc,
-        destination: dest,
-        travelMode: google.maps.TravelMode.DRIVING, //can be changed to BICYCLING?
-    },
-    (response, status) => {
-        if (status === "OK") {
-        directionsRenderer.setDirections(response);
-        } else {
-        console.log(status);
+        {
+            origin: loc,
+            destination: dest,
+            travelMode: google.maps.TravelMode.DRIVING, //can be changed to BICYCLING?
+        },
+        (response, status) => {
+            if (status === 'OK') {
+                directionsRenderer.setDirections(response);
+            } else {
+                console.log(status);
+            }
         }
-    }
     );
 }
 
@@ -42,8 +42,6 @@ let currLatLng;
 async function initMap() {
     let locations = [];
     const { Map } = await google.maps.importLibrary('maps');
-    const { AdvancedMarkerElement } = await google.maps.importLibrary('marker');
-
     //fetch station information data from the flask Server
     //install pip3 flask-cors to fetch data
     const response = await fetch('/stations');
@@ -55,30 +53,34 @@ async function initMap() {
     }));
 
     // Current Users Location
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      currLatLng = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      };
-      new google.maps.Marker({
-        position: currLatLng,
-        map: map,
-        title: "Your Location",
-        icon: {
-          url: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fpreviews%2F000%2F568%2F450%2Foriginal%2Fhome-icon-vector.jpg&f=1&nofb=1&ipt=f2d8572d3bc0e5157c09f3a3dedd946cd009c3d726adae243da530612c5f0787&ipo=images",
-          scaledSize: new google.maps.Size(50, 50), // Adjust size as needed
-        },
-      });
-    });
-  } else {
-    console.error("Geolocation is not supported by this browser.");
-  }
-  
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            currLatLng = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+            };
+            let markerImg = document.createElement('img');
+            markerImg.src = '/static/image/home_icon.png';
+            markerImg.width = 50; // Width in pixels
+            markerImg.height = 50; // Height in pixels
+
+            new google.maps.Marker({
+                position: currLatLng,
+                map: map,
+                title: 'Your Location',
+                icon: {
+                    url: markerImg.src,
+                    scaledSize: new google.maps.Size(50, 50), // Adjust size as needed
+                },
+            });
+        });
+    } else {
+        console.error('Geolocation is not supported by this browser.');
+    }
+
     //Googlemaps loading
     const mapDiv = document.getElementById('map');
     const mapCenter = { lat: 53.3483031, lng: -6.2637067 };
-    const { PinElement } = await google.maps.importLibrary('marker');
 
     //Current location add
     const locationButton = document.createElement('button');
@@ -95,217 +97,30 @@ async function initMap() {
             zoomControlOptions: {
                 position: google.maps.ControlPosition.RIGHT_BOTTOM,
             },
-            mapId: '4504f8b37365c3d0',
-            styles: [
-                {
-                    elementType: 'geometry',
-                    stylers: [
-                        {
-                            color: '#f5f5f5',
-                        },
-                    ],
-                },
-                {
-                    elementType: 'labels.icon',
-                    stylers: [
-                        {
-                            visibility: 'off',
-                        },
-                    ],
-                },
-                {
-                    elementType: 'labels.text.fill',
-                    stylers: [
-                        {
-                            color: '#616161',
-                        },
-                    ],
-                },
-                {
-                    elementType: 'labels.text.stroke',
-                    stylers: [
-                        {
-                            color: '#f5f5f5',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'administrative.land_parcel',
-                    elementType: 'labels.text.fill',
-                    stylers: [
-                        {
-                            color: '#bdbdbd',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'poi',
-                    elementType: 'geometry',
-                    stylers: [
-                        {
-                            color: '#eeeeee',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'poi',
-                    elementType: 'labels.text.fill',
-                    stylers: [
-                        {
-                            color: '#757575',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'poi.business',
-                    stylers: [
-                        {
-                            visibility: 'off',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'poi.park',
-                    elementType: 'geometry',
-                    stylers: [
-                        {
-                            color: '#e5e5e5',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'poi.park',
-                    elementType: 'labels.text',
-                    stylers: [
-                        {
-                            visibility: 'off',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'poi.park',
-                    elementType: 'labels.text.fill',
-                    stylers: [
-                        {
-                            color: '#9e9e9e',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'road',
-                    elementType: 'geometry',
-                    stylers: [
-                        {
-                            color: '#ffffff',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'road.arterial',
-                    elementType: 'labels.text.fill',
-                    stylers: [
-                        {
-                            color: '#757575',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'road.highway',
-                    elementType: 'geometry',
-                    stylers: [
-                        {
-                            color: '#dadada',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'road.highway',
-                    elementType: 'labels.text.fill',
-                    stylers: [
-                        {
-                            color: '#616161',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'road.local',
-                    elementType: 'labels.text.fill',
-                    stylers: [
-                        {
-                            color: '#9e9e9e',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'transit.line',
-                    elementType: 'geometry',
-                    stylers: [
-                        {
-                            color: '#e5e5e5',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'transit.station',
-                    elementType: 'geometry',
-                    stylers: [
-                        {
-                            color: '#eeeeee',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'water',
-                    elementType: 'geometry',
-                    stylers: [
-                        {
-                            color: '#c9c9c9',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'water',
-                    elementType: 'geometry.fill',
-                    stylers: [
-                        {
-                            color: '#bcd4eb',
-                        },
-                    ],
-                },
-                {
-                    featureType: 'water',
-                    elementType: 'labels.text.fill',
-                    stylers: [
-                        {
-                            color: '#9e9e9e',
-                        },
-                    ],
-                },
-            ],
+            styles: styleArray,
         });
     }
-    
     // Add some markers to the map.
+    // set the number as a percentage
+
     stations_info.forEach((station) => {
-        let markerColor = '#008000';
-
-        if (station.available_bikes <= 3) {
-            markerColor = '#FF0000'; // Red
-        } else if (station.available_bikes <= 5) {
-            markerColor = '#FFA500'; // Orange
-        } else if (station.available_bikes <= 10) {
-            markerColor = '#FFFF00'; // Yellow
+        let markerImg = document.createElement('img');
+        markerImg.src = '/static/image/redMarker.png';
+        let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
+        if (bikeAvailability == 0) {
+            markerImg.src = './static/image/grayMarker.png';
+        } else if (bikeAvailability > 0 && bikeAvailability < 40) {
+            markerImg.src = './static/image/redMarker.png';
+        } else if (bikeAvailability >= 40 && bikeAvailability < 50) {
+            markerImg.src = './static/image/orangeMarker.png';
+        } else {
+            markerImg.src = './static/image/greenMarker.png';
         }
-        const pinElement = new PinElement({
-            background: markerColor, // Example: setting the background to red
-            glyphColor: '#000000',
-        });
-
-        const marker = new AdvancedMarkerElement({
+        const marker = new google.maps.Marker({
             map: map,
             position: new google.maps.LatLng(station.position.lat, station.position.lng),
             title: station.name, // Optional: add a title
-            content: pinElement.element, // Use the custom SVG icon
+            icon: { url: markerImg.src, scaledSize: new google.maps.Size(40, 40) },
         });
 
         // Create an info window
@@ -317,7 +132,11 @@ async function initMap() {
         <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
         <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
         <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-        <p class="stationdetails">Status: ${station.status}</p>`,
+        <p class="stationdetails">Status: ${station.status}</p>
+        <p class="stationdetails">Available Percent: ${(
+            (station.available_bikes / station.bike_stands) *
+            100
+        ).toFixed()}%</p>`,
             // You can add more station details here
         });
         //Add click event listener to the marker
@@ -348,7 +167,7 @@ async function getWeather() {
                 weatherimage = `<img id="weatherimage" src="/static/image/weather_overcast.png" />`;
             }
             // need to add else if statements here for sunny, raining, and sunny showers, but not sure of data.weather[0].main strings
-            temperature.innerHTML = Math.round(data.main.temp) + '°C ' + '<br>' + currentDay;
+            temperature.innerHTML = data.main.temp.toFixed() + '°C ' + '<br>' + currentDay;
             clouds.innerHTML = data.weather[0].main + '<br>' + weatherimage;
             // end
         })
@@ -394,22 +213,23 @@ document.getElementById('station-search').addEventListener('input', async functi
         stations
             .filter((station) => station.name.toLowerCase().includes(input.toLowerCase()))
             .forEach((station) => {
+                //Make div for searching result
                 const div = document.createElement('div');
                 div.innerHTML = station.name; // Display station name
                 div.className = 'station-result';
+
+                //Move zoom to the target station the user cliked
                 div.onclick = function () {
                     // Find the marker that matches the clicked station
-                    const markerObj = markers.find((m) => m.uz === station.name);
+                    // Object's index name changes when we change marker style(Advanced=>Legacy Marker)
+                    const markerObj = markers.find((m) => m.title === station.name);
                     if (markerObj) {
-                        const stationName = markerObj.Ds;
-                        const marker = new google.maps.Marker({
-                            position: { stationName },
-                            position: new google.maps.LatLng(station.position.lat, station.position.lng),
-                            map: map,
-                        });
                         // Move the map to the selected marker
-                        map.setCenter(stationName);
+                        let searchLat = station.position.lat;
+                        let searchLng = station.position.lng;
+                        map.setCenter(new google.maps.LatLng(searchLat, searchLng));
                         map.setZoom(17);
+
                         // Assuming we have stored InfoWindow objects in a map or similar structure
                         // This part assumes you have an existing mechanism to match markers with InfoWindows
                         // For simplicity, let's assume each marker's 'title' property matches the station name and use it to find the corresponding InfoWindow
@@ -426,7 +246,7 @@ document.getElementById('station-search').addEventListener('input', async functi
                         });
 
                         // Open the InfoWindow on the map at the marker's location
-                        infoWindow.open(map, marker);
+                        infoWindow.open(map, markerObj);
                     }
                 };
                 resultsDiv.appendChild(div);
