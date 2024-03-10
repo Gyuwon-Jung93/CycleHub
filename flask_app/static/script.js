@@ -4,6 +4,26 @@ document.addEventListener('DOMContentLoaded', function () {
     showTime();
     dateTimeSelected();
 });
+const body = document.querySelector('body'),
+    sidebar = body.querySelector('.sidebar'),
+    toggle = body.querySelector('.toggle'),
+    searchBtn = body.querySelector('.search-box'),
+    modeSwitch = body.querySelector('.toggle-switch'),
+    modeText = body.querySelector('.mode-text');
+
+modeSwitch.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    if (darkModeFlag == false) {
+        darkModeFlag = true;
+    } else {
+        darkModeFlag = false;
+    }
+    initMap();
+});
+
+toggle.addEventListener('click', () => {
+    sidebar.classList.toggle('close');
+});
 
 //When the user inputs a location it will be trigger
 function searchDest(event) {
@@ -35,7 +55,7 @@ function calculateAndDisplayRoute(loc, dest) {
         }
     );
 }
-
+let darkModeFlag = false;
 let map;
 let markers = [];
 let currLatLng;
@@ -86,7 +106,14 @@ async function initMap() {
     const locationButton = document.createElement('button');
     locationButton.classList.add('custom-map-control-button');
 
-    //Google maps options setting
+    //GoogleMaps Style Select
+
+    if (darkModeFlag) {
+        customStyle = brightStyleArray;
+    } else {
+        customStyle = darkStyleArray;
+    }
+
     if (mapDiv) {
         map = new Map(mapDiv, {
             center: mapCenter,
@@ -97,9 +124,10 @@ async function initMap() {
             zoomControlOptions: {
                 position: google.maps.ControlPosition.RIGHT_BOTTOM,
             },
-            styles: styleArray,
+            styles: customStyle,
         });
     }
+
     // Add some markers to the map.
     // set the number as a percentage
 
@@ -220,6 +248,7 @@ document.getElementById('station-search').addEventListener('input', async functi
 
                 //Move zoom to the target station the user cliked
                 div.onclick = function () {
+                    resultsDiv.style.display = 'None';
                     // Find the marker that matches the clicked station
                     // Object's index name changes when we change marker style(Advanced=>Legacy Marker)
                     const markerObj = markers.find((m) => m.title === station.name);

@@ -1,4 +1,4 @@
-let styleArray = [
+let brightStyleArray = [
     {
         elementType: 'geometry',
         stylers: [

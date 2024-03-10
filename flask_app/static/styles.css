@@ -1,4 +1,4 @@
-body {
+/* body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -109,8 +109,8 @@ h2 {
     flex-direction: column;
 }
 #inputtext {
-    /* display: flex;
-    flex-direction: column; */
+    display: flex;
+    flex-direction: column;
 }
 #search-results {
     display: none;
@@ -180,4 +180,4 @@ input[type='time'] {
     border-radius: 5px;
     padding: 8px;
     border: 1px solid #ccc;
-}
+} */

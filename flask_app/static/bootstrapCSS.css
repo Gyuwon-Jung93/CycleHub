@@ -164,26 +164,42 @@ body.dark .sidebar header .toggle {
     color: var(--text-color);
 }
 #search-container {
+    width: 200px;
     position: fixed;
-    background: RED;
+}
+#search-results {
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    margin-left: 270px;
+    margin-top: 50px;
+    width: 300px;
+    background: var(--sidebar-color);
+}
+
+#search-results div:hover {
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    cursor: pointer;
 }
 
 #station-search {
-    background-color: #fff;
+    width: 800px;
     border: 0;
     border-radius: 2px;
-    box-shadow: 0 1px 4px -1px rgba(0, 0, 0, 0.3);
     margin: 10px;
     padding: 0 0.5em;
-    font: 400 18px Roboto, Arial, sans-serif;
-    overflow: hidden;
-    font-family: Roboto;
     padding: 0;
+}
+.sidebar.close #station-search {
+    display: none;
 }
 .sidebar .search-box {
     background: var(--primary-color-light);
     border-radius: 6px;
 }
+
 .search-box input {
     height: 100%;
     width: 100%;
@@ -290,10 +306,7 @@ body.dark .switch::before {
     justify-content: right;
     padding-right: 3%;
 }
-#search-results div:hover {
-    background-color: #f9f9f9;
-    cursor: pointer;
-}
+
 .custom-map-control-button {
     background-color: #fff;
     border: 0;
