@@ -74,28 +74,37 @@ async function initMap() {
 
     // Current Users Location
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-            currLatLng = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-            };
-            let markerImg = document.createElement('img');
-            markerImg.src = '/static/image/home_icon.png';
-            markerImg.width = 50; // Width in pixels
-            markerImg.height = 50; // Height in pixels
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                currLatLng = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+                let markerImg = document.createElement('img');
+                markerImg.src = '/static/image/home_icon.png';
+                markerImg.width = 50; // Width in pixels
+                markerImg.height = 50; // Height in pixels
 
-            new google.maps.Marker({
-                position: currLatLng,
-                map: map,
-                title: 'Your Location',
-                icon: {
-                    url: markerImg.src,
-                    scaledSize: new google.maps.Size(50, 50), // Adjust size as needed
-                },
-            });
-        });
-    } else {
-        console.error('Geolocation is not supported by this browser.');
+                new google.maps.Marker({
+                    position: currLatLng,
+                    map: map,
+                    title: 'Your Location',
+                    icon: {
+                        url: markerImg.src,
+                        scaledSize: new google.maps.Size(50, 50), // Adjust size as needed
+                    },
+                });
+            },
+            (error) => {
+                console.error(error);
+            },
+            {
+                //enableHighAccuracy added 21/3/2024 Gyuwon
+                enableHighAccuracy: true, // This requests the highest possible accuracy.
+                timeout: 10000, // Maximum time in milliseconds to wait for a response.
+                maximumAge: 0, // Maximum age in milliseconds of a possible cached position that is acceptable to return.
+            }
+        );
     }
 
     //Googlemaps loading
@@ -117,7 +126,7 @@ async function initMap() {
     if (mapDiv) {
         map = new Map(mapDiv, {
             center: mapCenter,
-            zoom: 15,
+            zoom: 13,
             zoomControl: true,
             mapTypeControl: false,
             streetViewControl: false,
@@ -130,7 +139,6 @@ async function initMap() {
 
     // Add some markers to the map.
     // set the number as a percentage
-
     stations_info.forEach((station) => {
         let markerImg = document.createElement('img');
         markerImg.src = '/static/image/redMarker.png';
@@ -175,8 +183,26 @@ async function initMap() {
         markers.push(marker);
     });
     //marker cluster
-    const clusterer = new markerClusterer.MarkerClusterer({ markers, map, maxZoom: 40 });
+    let clusterer = new MarkerClusterer(map, markers, {
+        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+    });
 }
+google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
+    // Get the bounds of the cluster
+    var bounds = new google.maps.LatLngBounds();
+
+    // Add each marker's position to the bounds
+    cluster.getMarkers().forEach(function (marker) {
+        bounds.extend(marker.getPosition());
+    });
+
+    // Adjust the map's viewport to ensure all markers in the cluster are visible
+    map.fitBounds(bounds);
+
+    // Optionally, if you want to zoom in just one level, you can use:
+    map.setCenter(cluster.getCenter());
+    map.setZoom(map.getZoom() + 1);
+});
 
 async function getWeather() {
     fetch(`/weather?city=dublin`)
