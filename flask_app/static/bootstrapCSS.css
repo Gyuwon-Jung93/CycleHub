@@ -51,7 +51,7 @@ body {
 /* Adjust sidebar style */
 .sidebar {
     margin: 30px 10px 30px 20px;
-    max-width: 270px;
+    max-width: 400px;
     z-index: 3;
     width: 20%;
     height: 100%;
@@ -69,7 +69,7 @@ body {
     top: 0;
     left: 0;
     height: 95%;
-    width: 280px;
+    width: 2800px;
     padding: 10px 14px;
     background: var(--sidebar-color);
     transition: var(--tran-05);
@@ -77,6 +77,9 @@ body {
 .sidebar.close {
     width: 88px;
 }
+
+
+
 
 /* ===== Reuable CSS ===== */
 .sidebar .text {
