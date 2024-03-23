@@ -187,8 +187,7 @@ async function initMap() {
         imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
     });
 };
-
-// I have no clue why, but this is causing problems with the Search Stations 
+// I have no clue why, but this is causing problems with the Search Stations
 // google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
 //     // Get the bounds of the cluster
 //     var bounds = new google.maps.LatLngBounds();
@@ -327,3 +326,18 @@ function displayResults(stations) {
         resultsContainer.appendChild(div);
     });
 }
+
+// Trigger search function when Enter key is pressed in the input field (destination or location)
+document.getElementById("searchDestination").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        searchDest(event);
+    }
+});
+
+document.getElementById("searchLocation").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        searchDest(event);
+    }
+});
