@@ -54,19 +54,15 @@
                         <div class="menu">
                                 <li class="search-box">
                                     <i class="bx bx-search icon"></i>
-                                    <div id="search-container">
-                                        <input type="search" id="station-searcher" placeholder="Search for stations...">
-                                        <div id="search-results-stations"></div>
-                                    </div>
-                                    <!-- <form id="searchinput" onsubmit="searchDest(event)">
+                                    <form id="searchinput" onsubmit="searchDest(event)">
                                     <input type="search" id="searchLocation" placeholder="Search location" />
                                     <input type="search" id="searchDestination" placeholder="Search destination" />
                                     <button type="submit" id="rest">Search</button>
-                                    </form> -->
-                                    <div id="search-results"></div>
+                                    </form>
+                                    <!-- <div id="search-results"></div> -->
                                 </li>
 
-                            <ul class="menu-links"></ul>
+                                <ul class="menu-links"></ul>
                                 <li class="nav-link">
                                     <a href="#">
                                         <i class="bx bx-home-alt icon"></i>
@@ -93,24 +89,27 @@
 
                                     <div class="toggle-switch">
                                         <span class="switch"></span>
-                                    </div>  
+                                    </div>
                             
                                 </li>
+                                <li class="search-box">
+                                    <i class="bx bx-search icon"></i>
+                                        <input type="text" id="station-searcher" placeholder="Search for stations...">
+                                </li>
+                                <div id="search-results-stations"></div>
                             </ul>
                         </div>
                     </div>
-                    <div id="content">
-                        
-                    </div>
+                    
                     
                 </nav>
       
-        <script src="/static/script.js"></script>
-        <script src="/static/mapCustomise.js"></script>
-        <script src="/static/mapCustomise_dark.js"></script>
-        <script async
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&callback=initMap&libraries=geometry"
-        ></script>
-        <script src="https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
-    </body>
-</html>
+                <script src="/static/script.js"></script>
+                <script src="/static/mapCustomise.js"></script>
+                <script src="/static/mapCustomise_dark.js"></script>
+                <script async
+                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&callback=initMap&libraries=geometry"
+                ></script>
+                <script src="https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
+            </body>
+        </html>

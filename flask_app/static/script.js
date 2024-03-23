@@ -25,16 +25,6 @@ toggle.addEventListener('click', () => {
     sidebar.classList.toggle('close');
 });
 
-// // Trigger search function when Enter key is pressed in the input field
-// document.getElementById("searchInput").addEventListener("keypress", function(event) {
-//     // Key code for Enter key is 13
-//     if (event.key === "Enter") {
-//         // Cancel the default action, if needed
-//         event.preventDefault();
-//         // Trigger the search function
-//         searchDest(event);
-//     }
-// }); 
 //When the user inputs a location it will be trigger
 function searchDest(event) {
     event.preventDefault(); // Prevent the default form submission behavior
@@ -64,7 +54,7 @@ function calculateAndDisplayRoute(loc, dest) {
             }
         }
     );
-}
+};
 let darkModeFlag = false;
 let map;
 let markers = [];
@@ -196,23 +186,25 @@ async function initMap() {
     let clusterer = new MarkerClusterer(map, markers, {
         imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
     });
-}
-google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
-    // Get the bounds of the cluster
-    var bounds = new google.maps.LatLngBounds();
+};
 
-    // Add each marker's position to the bounds
-    cluster.getMarkers().forEach(function (marker) {
-        bounds.extend(marker.getPosition());
-    });
+// I have no clue why, but this is causing problems with the Search Stations 
+// google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
+//     // Get the bounds of the cluster
+//     var bounds = new google.maps.LatLngBounds();
 
-    // Adjust the map's viewport to ensure all markers in the cluster are visible
-    map.fitBounds(bounds);
+//     // Add each marker's position to the bounds
+//     cluster.getMarkers().forEach(function (marker) {
+//         bounds.extend(marker.getPosition());
+//     });
 
-    // Optionally, if you want to zoom in just one level, you can use:
-    map.setCenter(cluster.getCenter());
-    map.setZoom(map.getZoom() + 1);
-});
+//     // Adjust the map's viewport to ensure all markers in the cluster are visible
+//     map.fitBounds(bounds);
+
+//     // Optionally, if you want to zoom in just one level, you can use:
+//     map.setCenter(cluster.getCenter());
+//     map.setZoom(map.getZoom() + 1);
+// });
 
 async function getWeather() {
     fetch(`/weather?city=dublin`)
@@ -264,11 +256,12 @@ async function showTime() {
     }, 1000); // 1000 milliseconds = 1 second
 }
 
+
 //Reuse same flask call
 document.getElementById('station-searcher').addEventListener('input', async function (e) {
-    console.log('HELPPPPP')
     const input = this.value;
-    // const resultsDiv = document.getElementById('search-results-stations');
+    const resultsDiv = document.getElementById('search-results-stations');
+
     
     if (input.length >= 3) {
         const response = await fetch('/stations');
