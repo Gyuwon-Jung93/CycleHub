@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     initMap();
-    getWeather();
-    showTime();
+    // getWeather();  fix this later
+    // showTime();  fix later
     dateTimeSelected();
 });
 const body = document.querySelector('body'),
@@ -25,36 +25,117 @@ toggle.addEventListener('click', () => {
     sidebar.classList.toggle('close');
 });
 
+// Calculate nearest station from location
+
+// Function to calculate the distance between two points using the Haversine formula
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    //console.log('lat1', lat1, 'lon1', lon1, 'lat2', lat2, 'lon2', lon2);
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
+    //console.log('d', d);
+    return d;
+}
+
+function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+}
+
+// Calculate distances and find the closest destination
+let closestDestination = null;
+let closestDistance = Infinity;
+
+async function findNearestStation(loca) {
+    //console.log(loca);
+    let closestDestination = null;
+    let closestDistance = Infinity;
+    const responseFind = await fetch('/stations');
+    const stations_info_stat = await responseFind.json();
+    const destinations = stations_info_stat.map(station => ({
+        lat: station.position.lat,
+        lng: station.position.lng,
+    }));
+    try {
+        const location = await geocodeAddress(loca);
+        destinations.forEach(destination => {
+            const distance = getDistanceFromLatLonInKm(location.lat(), location.lng(), destination.lat, destination.lng);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestDestination = destination;
+            }
+        });
+        //console.log(closestDestination);
+        return closestDestination;
+    } catch (error) {
+        console.error("Error finding nearest station:", error);
+        throw error; // Rethrow the error for the caller to handle
+    }
+}
+
 //When the user inputs a location it will be trigger
 function searchDest(event) {
     event.preventDefault(); // Prevent the default form submission behavior
     let locationInput = document.getElementById('searchLocation');
     let destInput = document.getElementById('searchDestination');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
-}
+};
+function geocodeAddress(address) {
+    return new Promise((resolve, reject) => {
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ address: address }, (results, status) => {
+            if (status === "OK") {
+                const location = results[0].geometry.location;
+                resolve(location);
+            } else {
+                reject("Geocode was not successful for the following reason: " + status);
+            }
+        });
+    });
+};
+// Google Directions API
+async function calculateAndDisplayRoute(loc, dest) {
+    try {
+        const dest1 = await findNearestStation(loc);
+        const dest2 = await findNearestStation(dest);
+        //console.log(dest1, dest2);
+        console.log(loc, dest, dest1, dest2);
+        let directionsService = new google.maps.DirectionsService();
+        let directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
 
-//Google Directions API
-function calculateAndDisplayRoute(loc, dest) {
-    const directionsService = new google.maps.DirectionsService();
-    const directionsRenderer = new google.maps.DirectionsRenderer();
-    directionsRenderer.setMap(map);
-    //Old inputs still show up even when trying it multiple times, will fix later
-
-    directionsService.route(
-        {
+        directionsService.route({
             origin: loc,
             destination: dest,
-            travelMode: google.maps.TravelMode.DRIVING, //can be changed to BICYCLING?
-        },
-        (response, status) => {
+            waypoints: [
+                {
+                    location: dest1,
+                    stopover: false
+                },{
+                    location: dest2,
+                    stopover: true
+                }
+            ],
+            provideRouteAlternatives: false,
+            travelMode: google.maps.TravelMode.DRIVING,
+        }, (response, status) => {
             if (status === 'OK') {
                 directionsRenderer.setDirections(response);
             } else {
-                console.log(status);
+                console.error("Directions request failed:", status);
             }
-        }
-    );
-};
+        });
+    } catch (error) {
+        console.error("Error calculating and displaying route:", error);
+    }
+}
+
+
 let darkModeFlag = false;
 let map;
 let markers = [];
@@ -71,6 +152,9 @@ async function initMap() {
         lat: station.position.lat,
         lng: station.position.lng,
     }));
+    
+
+
 
     // Current Users Location
     if (navigator.geolocation) {
@@ -105,7 +189,7 @@ async function initMap() {
                 maximumAge: 0, // Maximum age in milliseconds of a possible cached position that is acceptable to return.
             }
         );
-    }
+    };
 
     //Googlemaps loading
     const mapDiv = document.getElementById('map');
@@ -205,29 +289,31 @@ async function initMap() {
 //     map.setZoom(map.getZoom() + 1);
 // });
 
-async function getWeather() {
-    fetch(`/weather?city=dublin`)
-        .then((response) => response.json())
-        .then((data) => {
-            // weather details for widget
-            let currentDate = new Date();
-            let dayOfWeek = currentDate.getDay();
-            let daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            let currentDay = daysOfWeek[dayOfWeek];
 
-            let weatherimage;
-            let temperature = document.getElementById('temperature');
-            let clouds = document.getElementById('clouds');
-            if ((data.weather[0].main = 'clear')) {
-                weatherimage = `<img id="weatherimage" src="/static/image/weather_overcast.png" />`;
-            }
-            // need to add else if statements here for sunny, raining, and sunny showers, but not sure of data.weather[0].main strings
-            temperature.innerHTML = data.main.temp.toFixed() + '°C ' + '<br>' + currentDay;
-            clouds.innerHTML = data.weather[0].main + '<br>' + weatherimage;
-            // end
-        })
-        .catch((error) => console.log('Error:', error));
-}
+// Fix weather !
+// async function getWeather() {
+//     fetch(`/weather?city=dublin`)
+//         .then((response) => response.json())
+//         .then((data) => {
+//             // weather details for widget
+//             let currentDate = new Date();
+//             let dayOfWeek = currentDate.getDay();
+//             let daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+//             let currentDay = daysOfWeek[dayOfWeek];
+
+//             let weatherimage;
+//             let temperature = document.getElementById('temperature');
+//             let clouds = document.getElementById('clouds');
+//             if ((data.weather[0].main = 'clear')) {
+//                 weatherimage = `<img id="weatherimage" src="/static/image/weather_overcast.png" />`;
+//             }
+//             // need to add else if statements here for sunny, raining, and sunny showers, but not sure of data.weather[0].main strings
+//             temperature.innerHTML = data.main.temp.toFixed() + '°C ' + '<br>' + currentDay;
+//             clouds.innerHTML = data.weather[0].main + '<br>' + weatherimage;
+//             // end
+//         })
+//         .catch((error) => console.log('Error:', error));
+// };
 
 // when user clicks on specific date, statistics returns
 // to be finished later using ML model
@@ -243,17 +329,19 @@ async function dateTimeSelected(inputType) {
     // more to come
 }
 
-async function showTime() {
-    setInterval(function () {
-        let date = new Date();
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
+// Fix time!
 
-        let displayTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+// async function showTime() {
+//     setInterval(function () {
+//         let date = new Date();
+//         let hours = date.getHours();
+//         let minutes = date.getMinutes();
 
-        document.getElementById('time').innerHTML = displayTime;
-    }, 1000); // 1000 milliseconds = 1 second
-}
+//         let displayTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+
+//         document.getElementById('time').innerHTML = displayTime;
+//     }, 1000); // 1000 milliseconds = 1 second
+// }
 
 
 //Reuse same flask call
