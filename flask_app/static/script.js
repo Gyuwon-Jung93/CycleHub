@@ -25,11 +25,8 @@ toggle.addEventListener('click', () => {
     sidebar.classList.toggle('close');
 });
 
-// Calculate nearest station from location
-
 // Function to calculate the distance between two points using the Haversine formula
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-    //console.log('lat1', lat1, 'lon1', lon1, 'lat2', lat2, 'lon2', lon2);
     const R = 6371; // Radius of the earth in km
     const dLat = deg2rad(lat2 - lat1);
     const dLon = deg2rad(lon2 - lon1);
@@ -38,8 +35,7 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
         Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c; // Distance in km
-    //console.log('d', d);
+    const d = R * c;
     return d;
 }
 
@@ -52,7 +48,6 @@ let closestDestination = null;
 let closestDistance = Infinity;
 
 async function findNearestStation(loca) {
-    //console.log(loca);
     let closestDestination = null;
     let closestDistance = Infinity;
     const responseFind = await fetch('/stations');
@@ -70,17 +65,16 @@ async function findNearestStation(loca) {
                 closestDestination = destination;
             }
         });
-        //console.log(closestDestination);
         return closestDestination;
     } catch (error) {
         console.error("Error finding nearest station:", error);
-        throw error; // Rethrow the error for the caller to handle
+        throw error;
     }
 }
 
-//When the user inputs a location it will be trigger
+//When the user inputs a location it will be a trigger
 function searchDest(event) {
-    event.preventDefault(); // Prevent the default form submission behavior
+    event.preventDefault(); // Prevent the usual form submission behavior
     let locationInput = document.getElementById('searchLocation');
     let destInput = document.getElementById('searchDestination');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
@@ -99,15 +93,22 @@ function geocodeAddress(address) {
     });
 };
 // Google Directions API
+let previousDirectionsRenderer = null;
+
 async function calculateAndDisplayRoute(loc, dest) {
     try {
         const dest1 = await findNearestStation(loc);
         const dest2 = await findNearestStation(dest);
-        //console.log(dest1, dest2);
         console.log(loc, dest, dest1, dest2);
+        
         let directionsService = new google.maps.DirectionsService();
         let directionsRenderer = new google.maps.DirectionsRenderer();
         directionsRenderer.setMap(map);
+
+        if (previousDirectionsRenderer) {
+            previousDirectionsRenderer.setMap(null); // Remove previous renderer from the map
+        }
+        previousDirectionsRenderer = directionsRenderer; // Update previous renderer reference
 
         directionsService.route({
             origin: loc,
@@ -115,8 +116,9 @@ async function calculateAndDisplayRoute(loc, dest) {
             waypoints: [
                 {
                     location: dest1,
-                    stopover: false
-                },{
+                    stopover: true
+                },
+                {
                     location: dest2,
                     stopover: true
                 }
@@ -133,7 +135,8 @@ async function calculateAndDisplayRoute(loc, dest) {
     } catch (error) {
         console.error("Error calculating and displaying route:", error);
     }
-}
+};
+
 
 
 let darkModeFlag = false;
@@ -152,10 +155,6 @@ async function initMap() {
         lat: station.position.lat,
         lng: station.position.lng,
     }));
-    
-
-
-
     // Current Users Location
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -272,6 +271,7 @@ async function initMap() {
     });
 };
 // I have no clue why, but this is causing problems with the Search Stations
+
 // google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
 //     // Get the bounds of the cluster
 //     var bounds = new google.maps.LatLngBounds();
@@ -291,6 +291,7 @@ async function initMap() {
 
 
 // Fix weather !
+
 // async function getWeather() {
 //     fetch(`/weather?city=dublin`)
 //         .then((response) => response.json())
