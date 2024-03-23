@@ -25,6 +25,16 @@ toggle.addEventListener('click', () => {
     sidebar.classList.toggle('close');
 });
 
+// // Trigger search function when Enter key is pressed in the input field
+// document.getElementById("searchInput").addEventListener("keypress", function(event) {
+//     // Key code for Enter key is 13
+//     if (event.key === "Enter") {
+//         // Cancel the default action, if needed
+//         event.preventDefault();
+//         // Trigger the search function
+//         searchDest(event);
+//     }
+// }); 
 //When the user inputs a location it will be trigger
 function searchDest(event) {
     event.preventDefault(); // Prevent the default form submission behavior
@@ -255,14 +265,16 @@ async function showTime() {
 }
 
 //Reuse same flask call
-document.getElementById('station-search').addEventListener('input', async function (e) {
+document.getElementById('station-searcher').addEventListener('input', async function (e) {
+    console.log('HELPPPPP')
     const input = this.value;
-    const resultsDiv = document.getElementById('search-results');
-
+    // const resultsDiv = document.getElementById('search-results-stations');
+    
     if (input.length >= 3) {
         const response = await fetch('/stations');
         const stations = await response.json();
         resultsDiv.innerHTML = ''; // Clear previous results
+        
 
         stations
             .filter((station) => station.name.toLowerCase().includes(input.toLowerCase()))
@@ -271,7 +283,6 @@ document.getElementById('station-search').addEventListener('input', async functi
                 const div = document.createElement('div');
                 div.innerHTML = station.name; // Display station name
                 div.className = 'station-result';
-
                 //Move zoom to the target station the user cliked
                 div.onclick = function () {
                     resultsDiv.style.display = 'None';
