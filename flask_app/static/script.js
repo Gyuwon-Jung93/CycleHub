@@ -96,6 +96,8 @@ function geocodeAddress(address) {
 let previousDirectionsRenderer = null;
 
 async function calculateAndDisplayRoute(loc, dest) {
+    const errorResult = document.getElementById('errorResult');
+    errorResult.innerHTML = '';
     try {
         const dest1 = await findNearestStation(loc);
         const dest2 = await findNearestStation(dest);
@@ -130,6 +132,11 @@ async function calculateAndDisplayRoute(loc, dest) {
                 directionsRenderer.setDirections(response);
             } else {
                 console.error("Directions request failed:", status);
+                errorResult.innerHTML = 'Directions request failed. Try again';
+                setTimeout(() => {
+                    errorResult.innerHTML = ''; // Remove the error message
+                }, 3000);
+                
             }
         });
     } catch (error) {
