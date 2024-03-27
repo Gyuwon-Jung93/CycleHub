@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Toggles the open sidebar icon 
     let toggleButton = document.getElementById("openToggle");
     toggleButton.addEventListener("click", function() {
-        
+
         if (toggleButton.classList.contains("bx-chevron-right")) {
             // If it contains "bx-chevron-right", replace it with "bx-chevron-left"
             toggleButton.classList.remove("bx-chevron-right");
@@ -296,23 +296,22 @@ async function initMap() {
 
 // I have no clue why, but this is causing problems with the Search Stations
 
-// google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
-//     // Get the bounds of the cluster
-//     let bounds = new google.maps.LatLngBounds();
+google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
+    // Get the bounds of the cluster
+    let bounds = new google.maps.LatLngBounds();
 
-//     // Add each marker's position to the bounds
-//     cluster.getMarkers().forEach(function (marker) {
-//         bounds.extend(marker.getPosition());
-//     });
+    // Add each marker's position to the bounds
+    cluster.getMarkers().forEach(function (marker) {
+        bounds.extend(marker.getPosition());
+    });
 
-//     // Adjust the map's viewport to ensure all markers in the cluster are visible
-//     map.fitBounds(bounds);
+    // Adjust the map's viewport to ensure all markers in the cluster are visible
+    map.fitBounds(bounds);
 
-//     // Optionally, if you want to zoom in just one level, you can use:
-//     map.setCenter(cluster.getCenter());
-//     map.setZoom(map.getZoom() + 1);
-// });
-
+    // Optionally, if you want to zoom in just one level, you can use:
+    map.setCenter(cluster.getCenter());
+    map.setZoom(map.getZoom() + 1);
+});
 
 // Fix weather !
 
@@ -384,11 +383,11 @@ document.getElementById('station-searcher').addEventListener('input', async func
         stations
             .filter((station) => station.name.toLowerCase().includes(input.toLowerCase()))
             .forEach((station) => {
-                //Make div for searching result
+                // Make div for searching result
                 const div = document.createElement('div');
                 div.innerHTML = station.name; // Display station name
                 div.className = 'station-result';
-                //Move zoom to the target station the user cliked
+                // Move zoom to the target station the user clicked
                 div.onclick = function () {
                     resultsDiv.style.display = 'None';
                     // Find the marker that matches the clicked station
