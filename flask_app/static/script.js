@@ -68,6 +68,7 @@ async function findNearestStation(loca) {
         return closestDestination;
     } catch (error) {
         console.error("Error finding nearest station:", error);
+        errorResult.innerHTML = 'Directions request failed. Try again';
         throw error;
     }
 }
@@ -88,6 +89,7 @@ function geocodeAddress(address) {
                 resolve(location);
             } else {
                 reject("Geocode was not successful for the following reason: " + status);
+                errorResult.innerHTML = 'Directions request failed. Try again';
             }
         });
     });
