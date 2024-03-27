@@ -296,22 +296,22 @@ async function initMap() {
 
 // I have no clue why, but this is causing problems with the Search Stations
 
-google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
-    // Get the bounds of the cluster
-    let bounds = new google.maps.LatLngBounds();
+// google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
+//     // Get the bounds of the cluster
+//     let bounds = new google.maps.LatLngBounds();
 
-    // Add each marker's position to the bounds
-    cluster.getMarkers().forEach(function (marker) {
-        bounds.extend(marker.getPosition());
-    });
+//     // Add each marker's position to the bounds
+//     cluster.getMarkers().forEach(function (marker) {
+//         bounds.extend(marker.getPosition());
+//     });
 
-    // Adjust the map's viewport to ensure all markers in the cluster are visible
-    map.fitBounds(bounds);
+//     // Adjust the map's viewport to ensure all markers in the cluster are visible
+//     map.fitBounds(bounds);
 
-    // Optionally, if you want to zoom in just one level, you can use:
-    map.setCenter(cluster.getCenter());
-    map.setZoom(map.getZoom() + 1);
-});
+//     // Optionally, if you want to zoom in just one level, you can use:
+//     map.setCenter(cluster.getCenter());
+//     map.setZoom(map.getZoom() + 1);
+// });
 
 // Fix weather !
 
