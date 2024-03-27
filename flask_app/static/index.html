@@ -26,11 +26,7 @@
         <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     </head>
     <body>
-       <!-- Map container -->
        <div id="map"></div>
-       
- 
-                <!-- Content for sidebar goes here -->
                 <nav class="sidebar close">
                     <header>
                         <!-- <div class="image-text">
@@ -45,26 +41,27 @@
                                     <p id="time"></p>
                                 </div>
                             </div>
-                        </div> -->
-
+                        </div> -->  
                         <i id="openToggle" class="bx bx-chevron-right toggle"></i>
                     </header>
-
                     <div class="menu-bar">
                         <div class="menu">
-                            <form id="searchinput" onsubmit="searchDest(event)"></form>
+                            <form id="searchinput" onsubmit="searchDest(event)">
                                 <li class="search-box">
-                                    <i class='bx bx-current-location icon' ></i>
+                                    <i class='bx bx-current-location icon'></i>
                                     <input type="search" id="searchLocation" placeholder=" Search location" />
                                 </li>
                                 <li class="search-box">
-                                    <i class='bx bx-cycling icon' ></i>
+                                    <i class='bx bx-cycling icon'></i>
                                     <box-icon name='cycling'></box-icon>
                                     <input type="search" id="searchDestination" placeholder=" Search destination" />
                                 </li>
+                                <li>
+                                    <button type="submit">Search</button>
+                                </li>
                             </form>
                                 <li class="search-box">
-                                    <i class="bx bx-search icon"></i>
+                                    <i class="bx bx-right-arrow-alt icon"></i>
                                         <input type="text" id="station-searcher" placeholder=" Search for stations...">
                                 </li>
                                 <div class ="mode-text text" id="errorResult"></div>
@@ -93,15 +90,14 @@
                                     <div class="toggle-switch">
                                         <span class="switch"></span>
                                     </div>
-                            
+                                </li>
+                                <li class="box">  
+                                    <div id="time"></div>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    
-                    
                 </nav>
-      
                 <script src="/static/script.js"></script>
                 <script src="/static/mapCustomise.js"></script>
                 <script src="/static/mapCustomise_dark.js"></script>

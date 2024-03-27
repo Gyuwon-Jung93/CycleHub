@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
     initMap();
     // getWeather();  fix this later
-    // showTime();  fix later
+    showTime();
     dateTimeSelected();
 
     // Toggles the open sidebar icon 
     let toggleButton = document.getElementById("openToggle");
     toggleButton.addEventListener("click", function() {
+        
         if (toggleButton.classList.contains("bx-chevron-right")) {
             // If it contains "bx-chevron-right", replace it with "bx-chevron-left"
             toggleButton.classList.remove("bx-chevron-right");
@@ -161,8 +162,6 @@ async function calculateAndDisplayRoute(loc, dest) {
     }
 };
 
-
-
 let darkModeFlag = false;
 let map;
 let markers = [];
@@ -294,11 +293,12 @@ async function initMap() {
         imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
     });
 };
+
 // I have no clue why, but this is causing problems with the Search Stations
 
 // google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
 //     // Get the bounds of the cluster
-//     var bounds = new google.maps.LatLngBounds();
+//     let bounds = new google.maps.LatLngBounds();
 
 //     // Add each marker's position to the bounds
 //     cluster.getMarkers().forEach(function (marker) {
@@ -356,17 +356,17 @@ async function dateTimeSelected(inputType) {
 
 // Fix time!
 
-// async function showTime() {
-//     setInterval(function () {
-//         let date = new Date();
-//         let hours = date.getHours();
-//         let minutes = date.getMinutes();
+async function showTime() {
+    setInterval(function () {
+        let date = new Date();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
 
-//         let displayTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+        let displayTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes;
 
-//         document.getElementById('time').innerHTML = displayTime;
-//     }, 1000); // 1000 milliseconds = 1 second
-// }
+        document.getElementById('time').innerHTML = displayTime;
+    }, 1000); // 1000 milliseconds = 1 second
+};
 
 
 //Reuse same flask call
