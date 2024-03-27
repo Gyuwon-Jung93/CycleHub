@@ -3,7 +3,22 @@ document.addEventListener('DOMContentLoaded', function () {
     // getWeather();  fix this later
     // showTime();  fix later
     dateTimeSelected();
+
+    // Toggles the open sidebar icon 
+    let toggleButton = document.getElementById("openToggle");
+    toggleButton.addEventListener("click", function() {
+        if (toggleButton.classList.contains("bx-chevron-right")) {
+            // If it contains "bx-chevron-right", replace it with "bx-chevron-left"
+            toggleButton.classList.remove("bx-chevron-right");
+            toggleButton.classList.add("bx-chevron-left");
+        } else {
+            // If it contains "bx-chevron-left", replace it with "bx-chevron-right"
+            toggleButton.classList.remove("bx-chevron-left");
+            toggleButton.classList.add("bx-chevron-right");
+        }
+    });
 });
+
 const body = document.querySelector('body'),
     sidebar = body.querySelector('.sidebar'),
     toggle = body.querySelector('.toggle'),
@@ -210,9 +225,9 @@ async function initMap() {
     //GoogleMaps Style Select
 
     if (darkModeFlag) {
-        customStyle = brightStyleArray;
-    } else {
         customStyle = darkStyleArray;
+    } else {
+        customStyle = brightStyleArray;
     }
 
     if (mapDiv) {

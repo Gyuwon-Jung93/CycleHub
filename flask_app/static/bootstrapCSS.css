@@ -10,11 +10,11 @@
 :root {
     /* =====colors===== */
     --body-color: #e4e9f7;
-    --sidebar-color: #fff;
+    --sidebar-color: #dadadd;
     --primary-color: #695cfe;
-    --primary-color-light: #f6f5ff;
-    --toggle-color: #ddd;
-    --text-color: #707070;
+    --primary-color-light: #e0e0e2;
+    --toggle-color: #faf7f7;
+    --text-color: #464545;
 
     /* =====Transition===== */
     --tran-02: all 0.2s ease;
@@ -77,8 +77,6 @@ body {
 .sidebar.close {
     width: 88px;
 }
-
-
 
 
 /* ===== Reuable CSS ===== */
@@ -170,15 +168,15 @@ body.dark .sidebar header .toggle {
     width: 200px;
     position: fixed;
 }
-#search-results {
-    position: absolute;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
+#search-results-stations {
+    /* position: absolute; */
+    /* align-items: center;
+    justify-content: center; */
+    /* border-radius: 10px;
     margin-left: 270px;
     margin-top: 50px;
     width: 300px;
-    background: var(--sidebar-color);
+    background: var(--sidebar-color); */
 }
 
 #search-results div:hover {
@@ -198,10 +196,10 @@ body.dark .sidebar header .toggle {
 .sidebar.close #station-search {
     display: none;
 }
-.sidebar .search-box {
+.sidebar .box {
     background: var(--primary-color-light);
     border-radius: 6px;
-}
+} 
 
 .search-box input {
     height: 100%;
