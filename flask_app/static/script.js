@@ -146,7 +146,7 @@ async function calculateAndDisplayRoute(loc, dest) {
 
 
 
-let darkModeFlag = false;
+let darkModeFlag = true;
 let map;
 let markers = [];
 let currLatLng;

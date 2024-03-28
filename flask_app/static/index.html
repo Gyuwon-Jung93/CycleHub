@@ -28,29 +28,21 @@
     <body>
        <!-- Map container -->
        <div id="map"></div>
-       
- 
-                <!-- Content for sidebar goes here -->
-                <nav class="sidebar close">
+                    <nav class="sidebar close">
                     <header>
-                        <!-- <div class="image-text">
-                            <div class="text header-text">
-                                <div id="widget">
-                                    <div id="temperature"></div>
-                                    <div id="clouds"></div>
-                                </div>
-                                <div id="timecontainer">
-                                    <img id="clockimage-black" src="/static/image/clock_black.png" />
-                                    <img id="clockimage" src="/static/image/clock.png" />
-                                    <p id="time"></p>
-                                </div>
-                            </div>
-                        </div> -->
-
                         <i class="bx bx-chevron-right toggle"></i>
                     </header>
 
                     <div class="menu-bar">
+                    </li>
+                    <li class="search-box">
+                        <i class="bx bx-search icon"></i>
+                            <input type="text" id="station-searcher" placeholder="Search for stations...">
+                    </li>
+                    <div class ="mode-text text" id="errorResult"></div>
+                    <div id="search-results-stations"></div>
+
+
                         <div class="menu">
                                 <li class="search-box">
                                     <i class="bx bx-search icon"></i>
@@ -79,13 +71,7 @@
                                         <span class="switch"></span>
                                     </div>
                             
-                                </li>
-                                <li class="search-box">
-                                    <i class="bx bx-search icon"></i>
-                                        <input type="text" id="station-searcher" placeholder="Search for stations...">
-                                </li>
-                                <div class ="mode-text text" id="errorResult"></div>
-                                <div id="search-results-stations"></div>
+
                             </ul>
                         </div>
                     </div>
