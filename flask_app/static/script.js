@@ -4,18 +4,17 @@ document.addEventListener('DOMContentLoaded', function () {
     showTime();
     dateTimeSelected();
 
-    // Toggles the open sidebar icon 
-    let toggleButton = document.getElementById("openToggle");
-    toggleButton.addEventListener("click", function() {
-
-        if (toggleButton.classList.contains("bx-chevron-right")) {
+    // Toggles the open sidebar icon
+    let toggleButton = document.getElementById('openToggle');
+    toggleButton.addEventListener('click', function () {
+        if (toggleButton.classList.contains('bx-chevron-right')) {
             // If it contains "bx-chevron-right", replace it with "bx-chevron-left"
-            toggleButton.classList.remove("bx-chevron-right");
-            toggleButton.classList.add("bx-chevron-left");
+            toggleButton.classList.remove('bx-chevron-right');
+            toggleButton.classList.add('bx-chevron-left');
         } else {
             // If it contains "bx-chevron-left", replace it with "bx-chevron-right"
-            toggleButton.classList.remove("bx-chevron-left");
-            toggleButton.classList.add("bx-chevron-right");
+            toggleButton.classList.remove('bx-chevron-left');
+            toggleButton.classList.add('bx-chevron-right');
         }
     });
 });
@@ -48,8 +47,7 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     const dLon = deg2rad(lon2 - lon1);
     const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
     return d;
@@ -68,14 +66,19 @@ async function findNearestStation(loca) {
     let closestDistance = Infinity;
     const responseFind = await fetch('/stations');
     const stations_info_stat = await responseFind.json();
-    const destinations = stations_info_stat.map(station => ({
+    const destinations = stations_info_stat.map((station) => ({
         lat: station.position.lat,
         lng: station.position.lng,
     }));
     try {
         const location = await geocodeAddress(loca);
-        destinations.forEach(destination => {
-            const distance = getDistanceFromLatLonInKm(location.lat(), location.lng(), destination.lat, destination.lng);
+        destinations.forEach((destination) => {
+            const distance = getDistanceFromLatLonInKm(
+                location.lat(),
+                location.lng(),
+                destination.lat,
+                destination.lng
+            );
             if (distance < closestDistance) {
                 closestDistance = distance;
                 closestDestination = destination;
@@ -83,7 +86,7 @@ async function findNearestStation(loca) {
         });
         return closestDestination;
     } catch (error) {
-        console.error("Error finding nearest station:", error);
+        console.error('Error finding nearest station:', error);
         errorResult.innerHTML = 'Directions request failed. Try again';
         throw error;
     }
@@ -95,21 +98,21 @@ function searchDest(event) {
     let locationInput = document.getElementById('searchLocation');
     let destInput = document.getElementById('searchDestination');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
-};
+}
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ address: address }, (results, status) => {
-            if (status === "OK") {
+            if (status === 'OK') {
                 const location = results[0].geometry.location;
                 resolve(location);
             } else {
-                reject("Geocode was not successful for the following reason: " + status);
+                reject('Geocode was not successful for the following reason: ' + status);
                 errorResult.innerHTML = 'Directions request failed. Try again';
             }
         });
     });
-};
+}
 // Google Directions API
 let previousDirectionsRenderer = null;
 
@@ -120,7 +123,7 @@ async function calculateAndDisplayRoute(loc, dest) {
         const dest1 = await findNearestStation(loc);
         const dest2 = await findNearestStation(dest);
         console.log(loc, dest, dest1, dest2);
-        
+
         let directionsService = new google.maps.DirectionsService();
         let directionsRenderer = new google.maps.DirectionsRenderer();
         directionsRenderer.setMap(map);
@@ -130,37 +133,39 @@ async function calculateAndDisplayRoute(loc, dest) {
         }
         previousDirectionsRenderer = directionsRenderer; // Update previous renderer reference
 
-        directionsService.route({
-            origin: loc,
-            destination: dest,
-            waypoints: [
-                {
-                    location: dest1,
-                    stopover: true
-                },
-                {
-                    location: dest2,
-                    stopover: true
+        directionsService.route(
+            {
+                origin: loc,
+                destination: dest,
+                waypoints: [
+                    {
+                        location: dest1,
+                        stopover: true,
+                    },
+                    {
+                        location: dest2,
+                        stopover: true,
+                    },
+                ],
+                provideRouteAlternatives: false,
+                travelMode: google.maps.TravelMode.DRIVING,
+            },
+            (response, status) => {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(response);
+                } else {
+                    console.error('Directions request failed:', status);
+                    errorResult.innerHTML = 'Directions request failed. Try again';
+                    setTimeout(() => {
+                        errorResult.innerHTML = ''; // Remove the error message
+                    }, 3000);
                 }
-            ],
-            provideRouteAlternatives: false,
-            travelMode: google.maps.TravelMode.DRIVING,
-        }, (response, status) => {
-            if (status === 'OK') {
-                directionsRenderer.setDirections(response);
-            } else {
-                console.error("Directions request failed:", status);
-                errorResult.innerHTML = 'Directions request failed. Try again';
-                setTimeout(() => {
-                    errorResult.innerHTML = ''; // Remove the error message
-                }, 3000);
-                
             }
-        });
+        );
     } catch (error) {
-        console.error("Error calculating and displaying route:", error);
+        console.error('Error calculating and displaying route:', error);
     }
-};
+}
 
 let darkModeFlag = false;
 let map;
@@ -211,7 +216,7 @@ async function initMap() {
                 maximumAge: 0, // Maximum age in milliseconds of a possible cached position that is acceptable to return.
             }
         );
-    };
+    }
 
     //Googlemaps loading
     const mapDiv = document.getElementById('map');
@@ -232,7 +237,7 @@ async function initMap() {
     if (mapDiv) {
         map = new Map(mapDiv, {
             center: mapCenter,
-            zoom: 13,
+            zoom: 14,
             zoomControl: true,
             mapTypeControl: false,
             streetViewControl: false,
@@ -262,7 +267,7 @@ async function initMap() {
             map: map,
             position: new google.maps.LatLng(station.position.lat, station.position.lng),
             title: station.name, // Optional: add a title
-            icon: { url: markerImg.src, scaledSize: new google.maps.Size(40, 40) },
+            icon: { url: markerImg.src, scaledSize: new google.maps.Size(25, 25) },
         });
 
         // Create an info window
@@ -289,10 +294,10 @@ async function initMap() {
         markers.push(marker);
     });
     //marker cluster
-    let clusterer = new MarkerClusterer(map, markers, {
-        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
-    });
-};
+    // let clusterer = new MarkerClusterer(map, markers, {
+    //     imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+    // });
+}
 
 // I have no clue why, but this is causing problems with the Search Stations
 
@@ -365,20 +370,17 @@ async function showTime() {
 
         document.getElementById('time').innerHTML = displayTime;
     }, 1000); // 1000 milliseconds = 1 second
-};
-
+}
 
 //Reuse same flask call
 document.getElementById('station-searcher').addEventListener('input', async function (e) {
     const input = this.value;
     const resultsDiv = document.getElementById('search-results-stations');
 
-    
     if (input.length >= 3) {
         const response = await fetch('/stations');
         const stations = await response.json();
         resultsDiv.innerHTML = ''; // Clear previous results
-        
 
         stations
             .filter((station) => station.name.toLowerCase().includes(input.toLowerCase()))
@@ -440,15 +442,15 @@ function displayResults(stations) {
 }
 
 // Trigger search function when Enter key is pressed in the input field (destination or location)
-document.getElementById("searchDestination").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
+document.getElementById('searchDestination').addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
         event.preventDefault();
         searchDest(event);
     }
 });
 
-document.getElementById("searchLocation").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
+document.getElementById('searchLocation').addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
         event.preventDefault();
         searchDest(event);
     }
