@@ -50,7 +50,7 @@ body {
 }
 /* Adjust sidebar style */
 .sidebar {
-    margin: 30px 10px 30px 20px;
+    margin: 150px 10px 30px 20px;
     max-width: 400px;
     z-index: 3;
     width: 20%;
@@ -68,7 +68,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    height: 95%;
+    height: 65%;
     width: 2800px;
     padding: 10px 14px;
     background: var(--sidebar-color);
@@ -77,7 +77,6 @@ body {
 .sidebar.close {
     width: 88px;
 }
-
 
 /* ===== Reuable CSS ===== */
 .sidebar .text {
@@ -199,7 +198,7 @@ body.dark .sidebar header .toggle {
 .sidebar .box {
     background: var(--primary-color-light);
     border-radius: 6px;
-} 
+}
 
 .search-box input {
     height: 100%;
@@ -321,7 +320,7 @@ body.dark .switch::before {
     line-height: 40px;
     text-align: center;
     color: black;
-}   
+}
 #time {
     display: flex;
     align-items: center;
