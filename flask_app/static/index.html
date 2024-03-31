@@ -27,6 +27,7 @@
     </head>
     <body>
        <div id="map"></div>
+
                 <nav class="sidebar close">
                     <header>
                         <!-- <div class="image-text">
@@ -43,8 +44,22 @@
                             </div>
                         </div> -->  
                         <i id="openToggle" class="bx bx-chevron-right toggle"></i>
+
+                    <nav class="sidebar close">
+                    <header>
+                        <i class="bx bx-chevron-right toggle"></i>
+
                     </header>
                     <div class="menu-bar">
+                    </li>
+                    <li class="search-box">
+                        <i class="bx bx-search icon"></i>
+                            <input type="text" id="station-searcher" placeholder="Search for stations...">
+                    </li>
+                    <div class ="mode-text text" id="errorResult"></div>
+                    <div id="search-results-stations"></div>
+
+
                         <div class="menu">
                             <form id="searchinput" onsubmit="searchDest(event)">
                                 <li class="search-box">
@@ -90,10 +105,15 @@
                                     <div class="toggle-switch">
                                         <span class="switch"></span>
                                     </div>
+
                                 </li>
                                 <li class="box">  
                                     <div id="time"></div>
                                 </li>
+
+                            
+
+
                             </ul>
                         </div>
                     </div>
