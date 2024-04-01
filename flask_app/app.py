@@ -8,8 +8,8 @@ from io import BytesIO
 import base64
 from ml_model import predict_bike_availability
 from ml_model import df3
-
-
+import json
+import os
 # Create our flask app. Static files are served from 'static' directory
 app = Flask(__name__, static_url_path='/static')
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -82,9 +82,10 @@ def get_stations():
     base_url = f"https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}"
     response = requests.get(base_url)
     stations = response.json()
-
+    with open('stations.json', 'w') as file:
+        json.dump(stations, file, indent=4)
     return jsonify(stations)
-
+    
 @app.route('/weather', methods=['GET'])
 def get_weather():
     city = request.args.get('city')
@@ -93,6 +94,17 @@ def get_weather():
     response = requests.get(weather_url)
     weather_data = response.json()
     return jsonify(weather_data)
+
+
+@app.route('/stationSearch', methods=['GET'])
+def get_stations_from_file():
+    try:
+        open(os.path.join(app.root_path, 'stations.json'), 'r')
+        with open('stations.json', 'r') as file:
+            stations = json.load(file)
+        return jsonify(stations)
+    except FileNotFoundError:
+        return jsonify({"error": "Stations file not found"}), 404
 
 if __name__ == "__main__": 
     app.run(debug=True)

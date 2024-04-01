@@ -26,6 +26,9 @@ const body = document.querySelector('body'),
     modeSwitch = body.querySelector('.toggle-switch'),
     modeText = body.querySelector('.mode-text');
 
+// Create an info window
+let infoWindow;
+
 modeSwitch.addEventListener('click', () => {
     body.classList.toggle('dark');
     if (darkModeFlag == false) {
@@ -183,6 +186,7 @@ async function initMap() {
         lat: station.position.lat,
         lng: station.position.lng,
     }));
+
     // Current Users Location
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -247,54 +251,61 @@ async function initMap() {
             styles: customStyle,
         });
     }
-
-
-
-
-
-// Function to generate and display the chart
-async function generateChart(stationId) {
-    // Make a POST request to the /predict endpoint
-    const response = await fetch('/predict', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `station_id=${stationId}`,
+    map.addListener('click', () => {
+        if (infoWindow) {
+            infoWindow.close();
+        }
     });
 
-    // Parse the HTML response
-    const htmlContent = await response.text();
+    // Function to generate and display the chart
+    // async function generateChart(stationId) {
+    //     // Make a POST request to the /predict endpoint
+    //     const response = await fetch('/predict', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/x-www-form-urlencoded',
+    //         },
+    //         body: `station_id=${stationId}`,
+    //     });
 
-    // Display the chart in a modal or another container
-    document.getElementById('chart-container').innerHTML = htmlContent;
-}
+    //     // Parse the HTML response
+    //     const htmlContent = await response.text();
 
-// Add some markers to the map
-stations_info.forEach((station) => {
-    let markerImg = document.createElement('img');
-    markerImg.src = '/static/image/redMarker.png';
-    let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
-    if (bikeAvailability == 0) {
-        markerImg.src = './static/image/grayMarker.png';
-    } else if (bikeAvailability > 0 && bikeAvailability < 40) {
-        markerImg.src = './static/image/redMarker.png';
-    } else if (bikeAvailability >= 40 && bikeAvailability < 50) {
-        markerImg.src = './static/image/orangeMarker.png';
-    } else {
-        markerImg.src = './static/image/greenMarker.png';
-    }
-    const marker = new google.maps.Marker({
-        map: map,
-        position: new google.maps.LatLng(station.position.lat, station.position.lng),
-        title: station.name, // Optional: add a title
-        icon: { url: markerImg.src, scaledSize: new google.maps.Size(25, 25) },
-    });
+    //     // Display the chart in a modal or another container
+    //     document.getElementById('chart-container').innerHTML = htmlContent;
+    // }
 
-    // Create an info window
-    let infoWindow = new google.maps.InfoWindow({
-        content: `
-        <h3 class="stationdetails">${station.name}</h3>
+    // Add some markers to the map
+    stations_info.forEach((station) => {
+        let markerImg = document.createElement('img');
+        markerImg.src = '/static/image/redMarker.png';
+        let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
+        if (bikeAvailability == 0) {
+            markerImg.src = './static/image/grayMarker.png';
+        } else if (bikeAvailability > 0 && bikeAvailability < 40) {
+            markerImg.src = './static/image/redMarker.png';
+        } else if (bikeAvailability >= 40 && bikeAvailability < 50) {
+            markerImg.src = './static/image/orangeMarker.png';
+        } else {
+            markerImg.src = './static/image/greenMarker.png';
+        }
+        const marker = new google.maps.Marker({
+            map: map,
+            position: new google.maps.LatLng(station.position.lat, station.position.lng),
+            title: station.name, // Optional: add a title
+            icon: { url: markerImg.src, scaledSize: new google.maps.Size(25, 25) },
+        });
+
+        // Create an info window
+        marker.addListener('click', () => {
+            // if infoWindow is already exist, close the current window.
+            if (infoWindow) {
+                infoWindow.close();
+            }
+
+            infoWindow = new google.maps.InfoWindow({
+                content: `
+        <h3 class="stationdetails">${station.number}.${station.name}</h3>
         <p class="stationdetails">Address: ${station.address}</p>
         <p class="stationdetails">Bikes_stands: ${station.bike_stands}</p>
         <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
@@ -305,45 +316,31 @@ stations_info.forEach((station) => {
             (station.available_bikes / station.bike_stands) *
             100
         ).toFixed()}%</p>`,
-        // You can add more station details here
-    });
-    // Add click event listener to the marker
-    marker.addListener('click', () => {
-        infoWindow.open(map, marker);
-        // Call a function to generate and render the chart
-        generateChart(station.number);
-    });
+                // You can add more station details here
+            });
+            infoWindow.open(map, marker);
+            // Call a function to generate and render the chart
+            // generateChart(station.number);
+        });
 
-    markers.push(marker);
-});
+        markers.push(marker);
+    });
 
     // Function to generate and render the chart for a specific station
 
-    
     //marker cluster
-    // let clusterer = new MarkerClusterer(map, markers, {
-    //     imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
-    // });
+    let clusterer = new MarkerClusterer(map, markers, {
+        minimumClusterSize: 4,
+        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+        zoomOnClick: false,
+    });
+    //Cluster click listener
+    google.maps.event.addListener(clusterer, 'click', (cluster) => {
+        map.setCenter(cluster.getCenter()); // 클러스터의 중심으로 지도 중심 이동
+        map.setZoom(map.getZoom() + 3); // 현재 줌 레벨에서 2 레벨 추가로 확대
+        console.log(map.getZoom());
+    });
 }
-
-// I have no clue why, but this is causing problems with the Search Stations
-
-// google.maps.event.addListener(markerCluster, 'clusterclick', function (cluster) {
-//     // Get the bounds of the cluster
-//     let bounds = new google.maps.LatLngBounds();
-
-//     // Add each marker's position to the bounds
-//     cluster.getMarkers().forEach(function (marker) {
-//         bounds.extend(marker.getPosition());
-//     });
-
-//     // Adjust the map's viewport to ensure all markers in the cluster are visible
-//     map.fitBounds(bounds);
-
-//     // Optionally, if you want to zoom in just one level, you can use:
-//     map.setCenter(cluster.getCenter());
-//     map.setZoom(map.getZoom() + 1);
-// });
 
 // Fix weather !
 
@@ -386,7 +383,6 @@ async function dateTimeSelected(inputType) {
 }
 
 // Fix time!
-
 async function showTime() {
     setInterval(function () {
         let date = new Date();
@@ -405,7 +401,8 @@ document.getElementById('station-searcher').addEventListener('input', async func
     const resultsDiv = document.getElementById('search-results-stations');
 
     if (input.length >= 3) {
-        const response = await fetch('/stations');
+        const response = await fetch('/stationSearch');
+        console.log(response);
         const stations = await response.json();
         resultsDiv.innerHTML = ''; // Clear previous results
 
@@ -427,11 +424,13 @@ document.getElementById('station-searcher').addEventListener('input', async func
                         let searchLat = station.position.lat;
                         let searchLng = station.position.lng;
                         map.setCenter(new google.maps.LatLng(searchLat, searchLng));
-                        map.setZoom(17);
+                        map.setZoom(16);
 
+                        console.log(station);
                         // Assuming we have stored InfoWindow objects in a map or similar structure
                         // This part assumes you have an existing mechanism to match markers with InfoWindows
                         // For simplicity, let's assume each marker's 'title' property matches the station name and use it to find the corresponding InfoWindow
+
                         let infoWindow = new google.maps.InfoWindow({
                             content: `
                                 <h3 class="stationdetails">${station.name}</h3>
