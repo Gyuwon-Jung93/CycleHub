@@ -2,6 +2,7 @@
 from flask import Flask,jsonify, request
 import requests
 from flask_cors import CORS
+import pickle
 
 # Create our flask app. Static files are served from 'static' directory
 app = Flask(__name__, static_url_path='/static')
@@ -11,6 +12,27 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 @app.route('/')
 def root():
     return app.send_static_file('index.html')
+
+
+# Load the pickled model
+with open('your_model.pkl', 'rb') as file:
+    model = pickle.load(file)
+
+
+
+
+# Define a route for handling station clicks
+@app.route('/predict', methods=['POST'])
+def predict():
+    
+    # Get station data from request
+    station_data = request.json
+
+    # Perform prediction using your model
+    prediction = model.predict(station_data)  # Replace this with actual prediction logic
+
+    # Return prediction result
+    return str(prediction)
 
 
 # Scrapping DATA

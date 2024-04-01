@@ -26,6 +26,53 @@
         <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     </head>
     <body>
+        <select id="stationSelect">
+            <option value="1">Station 1</option>
+            <option value="2">Station 2</option>
+            <!-- Add other station options here -->
+        </select>
+        <canvas id="predictionChart" width="400" height="200"></canvas>
+    
+        <script>
+            document.getElementById('stationSelect').addEventListener('change', function() {
+                var selectedStation = this.value;
+                fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ station_id: selectedStation })
+                })
+                .then(response => response.json())
+                .then(prediction => {
+                    // Plot prediction graph using Chart.js
+                    var ctx = document.getElementById('predictionChart').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                            datasets: [{
+                                label: 'Predicted Available Bikes',
+                                data: prediction,
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        </script>
+
+        
        <!-- Map container -->
        <div id="map"></div>
        
@@ -33,19 +80,7 @@
                 <!-- Content for sidebar goes here -->
                 <nav class="sidebar close">
                     <header>
-                        <!-- <div class="image-text">
-                            <div class="text header-text">
-                                <div id="widget">
-                                    <div id="temperature"></div>
-                                    <div id="clouds"></div>
-                                </div>
-                                <div id="timecontainer">
-                                    <img id="clockimage-black" src="/static/image/clock_black.png" />
-                                    <img id="clockimage" src="/static/image/clock.png" />
-                                    <p id="time"></p>
-                                </div>
-                            </div>
-                        </div> -->
+
 
                         <i class="bx bx-chevron-right toggle"></i>
                     </header>
