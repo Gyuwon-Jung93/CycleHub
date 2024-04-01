@@ -79,14 +79,22 @@ df = pd.DataFrame(station_df)
 
 
 df3 = df_interpolated.merge(df, how ="cross")
-df3
 df3['time_of_day'] = pd.to_datetime(df3['time_of_day'])
 df3['month'] = pd.to_datetime(df3['time_of_day']).dt.month
 df3['day'] = pd.to_datetime(df3['time_of_day']).dt.day
 df3['hour'] = pd.to_datetime(df3['time_of_day']).dt.hour
 df3['weekday_num'] = df3['time_of_day'].dt.weekday + 1  # Adding 1 to match the range 1-7 (Sunday = 7)
 
+import pandas as pd
+import pickle
 
+def predict_bike_availability(df):
+    # Load the pre-trained model
+    with open('your_model.pkl', 'rb') as file:
+        model = pickle.load(file)
+    
+    # Predict bike availability using the model
+    predictions = model.predict(df)
+    
+    return predictions
 
-with open('model.pkl', 'rb') as file:
-    model = pickle.load(file)
