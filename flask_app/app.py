@@ -37,7 +37,7 @@ def predict():
     predictions = predict_bike_availability(df_station)
     
     #Plot the predictions
-    plt.figure(figsize=(10, 10))
+    plt.figure(figsize=(3, 3))
     plt.plot(times, predictions, label='Predicted', color='orange')
     plt.xlabel('Time')
     plt.ylabel('Value')
