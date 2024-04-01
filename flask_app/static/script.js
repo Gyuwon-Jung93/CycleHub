@@ -248,31 +248,52 @@ async function initMap() {
         });
     }
 
-    // Add some markers to the map.
-    // set the number as a percentage
-    stations_info.forEach((station) => {
-        let markerImg = document.createElement('img');
-        markerImg.src = '/static/image/redMarker.png';
-        let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
-        if (bikeAvailability == 0) {
-            markerImg.src = './static/image/grayMarker.png';
-        } else if (bikeAvailability > 0 && bikeAvailability < 40) {
-            markerImg.src = './static/image/redMarker.png';
-        } else if (bikeAvailability >= 40 && bikeAvailability < 50) {
-            markerImg.src = './static/image/orangeMarker.png';
-        } else {
-            markerImg.src = './static/image/greenMarker.png';
-        }
-        const marker = new google.maps.Marker({
-            map: map,
-            position: new google.maps.LatLng(station.position.lat, station.position.lng),
-            title: station.name, // Optional: add a title
-            icon: { url: markerImg.src, scaledSize: new google.maps.Size(25, 25) },
-        });
 
-        // Create an info window
-        let infoWindow = new google.maps.InfoWindow({
-            content: `
+
+
+
+// Function to generate and display the chart
+async function generateChart(stationId) {
+    // Make a POST request to the /predict endpoint
+    const response = await fetch('/predict', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `station_id=${stationId}`,
+    });
+
+    // Parse the HTML response
+    const htmlContent = await response.text();
+
+    // Display the chart in a modal or another container
+    document.getElementById('chart-container').innerHTML = htmlContent;
+}
+
+// Add some markers to the map
+stations_info.forEach((station) => {
+    let markerImg = document.createElement('img');
+    markerImg.src = '/static/image/redMarker.png';
+    let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
+    if (bikeAvailability == 0) {
+        markerImg.src = './static/image/grayMarker.png';
+    } else if (bikeAvailability > 0 && bikeAvailability < 40) {
+        markerImg.src = './static/image/redMarker.png';
+    } else if (bikeAvailability >= 40 && bikeAvailability < 50) {
+        markerImg.src = './static/image/orangeMarker.png';
+    } else {
+        markerImg.src = './static/image/greenMarker.png';
+    }
+    const marker = new google.maps.Marker({
+        map: map,
+        position: new google.maps.LatLng(station.position.lat, station.position.lng),
+        title: station.name, // Optional: add a title
+        icon: { url: markerImg.src, scaledSize: new google.maps.Size(25, 25) },
+    });
+
+    // Create an info window
+    let infoWindow = new google.maps.InfoWindow({
+        content: `
         <h3 class="stationdetails">${station.name}</h3>
         <p class="stationdetails">Address: ${station.address}</p>
         <p class="stationdetails">Bikes_stands: ${station.bike_stands}</p>
@@ -284,15 +305,21 @@ async function initMap() {
             (station.available_bikes / station.bike_stands) *
             100
         ).toFixed()}%</p>`,
-            // You can add more station details here
-        });
-        //Add click event listener to the marker
-        marker.addListener('click', () => {
-            infoWindow.open(map, marker);
-        });
-
-        markers.push(marker);
+        // You can add more station details here
     });
+    // Add click event listener to the marker
+    marker.addListener('click', () => {
+        infoWindow.open(map, marker);
+        // Call a function to generate and render the chart
+        generateChart(station.number);
+    });
+
+    markers.push(marker);
+});
+
+    // Function to generate and render the chart for a specific station
+
+    
     //marker cluster
     // let clusterer = new MarkerClusterer(map, markers, {
     //     imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',

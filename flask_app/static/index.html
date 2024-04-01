@@ -26,15 +26,15 @@
         <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     </head>
     <body>
-        <h1>Select Station</h1>
-        <form action="/predict" method="post">
-            <label for="station_id">Station ID:</label>
-            <input type="text" id="station_id" name="station_id" required>
-            <button type="submit">Predict</button>
-        </form>
-
+       
+        <div id="chart-container">
+            <h2>Predicted Values</h2>
+            <div id="chart"></div>
+        </div>
        <!-- Map container -->
        <div id="map"></div>
+
+
                     <nav class="sidebar close">
                     <header>
                         <i class="bx bx-chevron-right toggle"></i>
@@ -77,14 +77,18 @@
                                     <div class="toggle-switch">
                                         <span class="switch"></span>
                                     </div>
-                            
 
+
+                            
+        
                             </ul>
                         </div>
                     </div>
+
                     
-                    
-                </nav>
+ 
+    </div>
+</nav>
       
                 <script src="/static/script.js"></script>
                 <script src="/static/mapCustomise.js"></script>

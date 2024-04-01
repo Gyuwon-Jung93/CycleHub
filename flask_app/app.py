@@ -27,17 +27,17 @@ def predict():
  # Get user input from the form
     station_id = int(request.form['station_id'])
     
-    # Filter the DataFrame for the specified station_id
+    #Filter the DataFrame for the specified station_id
     df_station = df3[df3['station_id'] == station_id].copy()
     times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]
 
    
     
-    # Perform prediction using the machine learning model
+    #Perform prediction using the machine learning model
     predictions = predict_bike_availability(df_station)
     
-    # Plot the predictions
-    plt.figure(figsize=(10, 6))
+    #Plot the predictions
+    plt.figure(figsize=(10, 10))
     plt.plot(times, predictions, label='Predicted', color='orange')
     plt.xlabel('Time')
     plt.ylabel('Value')
