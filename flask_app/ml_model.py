@@ -1,6 +1,8 @@
 import requests
-import datetime
+from datetime import datetime
 import pickle
+import pandas as pd
+
 
 def fetch_weather_data(lat, lng):
     
@@ -34,66 +36,39 @@ station_data = fetch_decaux_data()
 
 
 
-
-from datetime import datetime
-import pandas as pd
-
-datetimes = []
-temperatures = []
-
-weather = []
-
-for item in weather_data['list']:
-    dt = datetime.utcfromtimestamp(item['dt'])
-    temp = item['main']['temp'] - 273.15 
-    wind_speed = item['wind']['speed']
-    description = item['weather'][0]['description']
-    weather.append({'time_of_day': dt, 'wind_speed': wind_speed, 'temperature': temp, 'description': description})
+weather = [{'time_of_day': datetime.utcfromtimestamp(item['dt']),
+            'wind_speed': item['wind']['speed'],
+            'temperature': item['main']['temp'] - 273.15,
+            'description': item['weather'][0]['description']}
+           for item in weather_data['list']]
 
 df = pd.DataFrame(weather)
-df.set_index('time_of_day', inplace=True)
 
-# Generate hourly datetime range
-start_date = df.index.min()
-end_date = df.index.max()
+
+
+start_date = df["time_of_day"].min()
+end_date = df["time_of_day"].max()
 hourly_range = pd.date_range(start=start_date, end=end_date, freq='H')
-
-# Reindex the DataFrame with hourly datetime range
-df = df.reindex(hourly_range)
-
-# Interpolate missing values
+df = df.set_index('time_of_day').reindex(hourly_range).reset_index()
+df.rename(columns={'index': 'time_of_day'}, inplace=True)
 df_interpolated = df.interpolate(method='linear')
-         
-
 df_interpolated['description'] = df_interpolated['description'].fillna(method='ffill')
-# Print the interpolated DataFrame
-df_interpolated.reset_index(inplace=True)
-df_interpolated.rename(columns={'index': 'time_of_day'}, inplace=True)
 
 
 
-station_df = [{'station_id': d['number'], 'bike_stands': d['bike_stands']} for d in station_data]
-
-# Creating DataFrame
-df = pd.DataFrame(station_df)
-
-
+df = pd.DataFrame([{'station_id': d['number'], 'bike_stands': d['bike_stands']} for d in station_data])
 df3 = df_interpolated.merge(df, how ="cross")
-df3['time_of_day'] = pd.to_datetime(df3['time_of_day'])
 df3['month'] = pd.to_datetime(df3['time_of_day']).dt.month
 df3['day'] = pd.to_datetime(df3['time_of_day']).dt.day
 df3['hour'] = pd.to_datetime(df3['time_of_day']).dt.hour
-df3['weekday_num'] = df3['time_of_day'].dt.weekday + 1  # Adding 1 to match the range 1-7 (Sunday = 7)
+df3['weekday_num'] = df3['time_of_day'].dt.weekday + 1  
 
-import pandas as pd
-import pickle
+
+
 
 def predict_bike_availability(df):
-    # Load the pre-trained model
     with open('your_model.pkl', 'rb') as file:
         model = pickle.load(file)
-    
-    # Predict bike availability using the model
     predictions = model.predict(df)
     
     return predictions
