@@ -259,6 +259,7 @@ body.dark .sidebar li a:hover .text {
 .menu-bar .mode i .sun {
     opacity: 0;
 }
+
 /* sidebar Widemode */
 .menu-bar .mode .toggle-switch {
     position: absolute;
@@ -350,6 +351,10 @@ body.dark #clockimage {
 
 #statistics {
     padding: 20px;
+}
+
+#searchLocation {
+    margin-bottom: 10px;
 }
 
 /* sidebar shortMode */

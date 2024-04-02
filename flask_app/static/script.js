@@ -224,7 +224,7 @@ async function initMap() {
 
     //Googlemaps loading
     const mapDiv = document.getElementById('map');
-    const mapCenter = { lat: 53.3483031, lng: -6.2637067 };
+    const mapCenter = { lat: 53.344979, lng: -6.27209 };
 
     //Current location add
     const locationButton = document.createElement('button');
@@ -241,13 +241,15 @@ async function initMap() {
     if (mapDiv) {
         map = new Map(mapDiv, {
             center: mapCenter,
-            zoom: 14,
+            zoom: 14.3,
             zoomControl: true,
             mapTypeControl: false,
             streetViewControl: false,
             zoomControlOptions: {
                 position: google.maps.ControlPosition.RIGHT_BOTTOM,
             },
+            fullscreenControl: false,
+
             styles: customStyle,
         });
     }
@@ -258,22 +260,22 @@ async function initMap() {
     });
 
     // Function to generate and display the chart
-    // async function generateChart(stationId) {
-    //     // Make a POST request to the /predict endpoint
-    //     const response = await fetch('/predict', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/x-www-form-urlencoded',
-    //         },
-    //         body: `station_id=${stationId}`,
-    //     });
+    async function generateChart(stationId) {
+        // Make a POST request to the /predict endpoint
+        const response = await fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `station_id=${stationId}`,
+        });
 
-    //     // Parse the HTML response
-    //     const htmlContent = await response.text();
+        // Parse the HTML response
+        const htmlContent = await response.text();
 
-    //     // Display the chart in a modal or another container
-    //     document.getElementById('chart-container').innerHTML = htmlContent;
-    // }
+        // Display the chart in a modal or another container
+        document.getElementById('chart-container').innerHTML = htmlContent;
+    }
 
     // Add some markers to the map
     stations_info.forEach((station) => {
@@ -320,7 +322,7 @@ async function initMap() {
             });
             infoWindow.open(map, marker);
             // Call a function to generate and render the chart
-            // generateChart(station.number);
+            generateChart(station.number);
         });
 
         markers.push(marker);
@@ -336,9 +338,8 @@ async function initMap() {
     });
     //Cluster click listener
     google.maps.event.addListener(clusterer, 'click', (cluster) => {
-        map.setCenter(cluster.getCenter()); // 클러스터의 중심으로 지도 중심 이동
-        map.setZoom(map.getZoom() + 3); // 현재 줌 레벨에서 2 레벨 추가로 확대
-        console.log(map.getZoom());
+        map.setCenter(cluster.getCenter());
+        map.setZoom(map.getZoom() + 3);
     });
 }
 
