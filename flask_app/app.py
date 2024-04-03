@@ -36,6 +36,7 @@ def predict():
     #Perform prediction using the machine learning model
     predictions = predict_bike_availability(df_station)
     
+    
     #Plot the predictions
     plt.figure(figsize=(3, 3))
     plt.plot(times, predictions, label='Predicted', color='orange')
