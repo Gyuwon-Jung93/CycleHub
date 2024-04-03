@@ -1,8 +1,30 @@
 document.addEventListener('DOMContentLoaded', function () {
     initMap();
-    // getWeather();  fix this later
-    showTime();
+    getWeather();
     dateTimeSelected();
+    getTodayDate();
+
+    const weatherToggle = document.getElementById('weatherToggle');
+    const weatherDisplay = document.getElementById('weatherdisplay');
+
+    // Initially hide the weather display
+    weatherDisplay.classList.add('closed');
+
+    // Toggle the visibility of the weather display when the toggle is clicked
+    weatherToggle.addEventListener('click', function () {
+        weatherDisplay.classList.toggle('closed');
+    });
+
+    const dateToggle = document.getElementById('datetoggle');
+    const dateDisplay = document.getElementById('datetimedisplay');
+
+    // Initially hide the weather display
+    dateDisplay.classList.add('closed');
+
+    // Toggle the visibility of the weather display when the toggle is clicked
+    dateToggle.addEventListener('click', function () {
+        dateDisplay.classList.toggle('closed');
+    });
 
     // Toggles the open sidebar icon
     let toggleButton = document.getElementById('openToggle');
@@ -93,7 +115,7 @@ async function findNearestStation(loca) {
         errorResult.innerHTML = 'Directions request failed. Try again';
         throw error;
     }
-}
+};
 
 //When the user inputs a location it will be a trigger
 function searchDest(event) {
@@ -101,7 +123,7 @@ function searchDest(event) {
     let locationInput = document.getElementById('searchLocation');
     let destInput = document.getElementById('searchDestination');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
-}
+};
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
         const geocoder = new google.maps.Geocoder();
@@ -115,7 +137,7 @@ function geocodeAddress(address) {
             }
         });
     });
-}
+};
 // Google Directions API
 let previousDirectionsRenderer = null;
 
@@ -283,11 +305,9 @@ async function initMap() {
         markerImg.src = '/static/image/redMarker.png';
         let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
         if (bikeAvailability == 0) {
-            markerImg.src = './static/image/grayMarker.png';
-        } else if (bikeAvailability > 0 && bikeAvailability < 40) {
             markerImg.src = './static/image/redMarker.png';
-        } else if (bikeAvailability >= 40 && bikeAvailability < 50) {
-            markerImg.src = './static/image/orangeMarker.png';
+        } else if (bikeAvailability > 0 && bikeAvailability < 40) {
+            markerImg.src = './static/image/orangeMarker.png'; 
         } else {
             markerImg.src = './static/image/greenMarker.png';
         }
@@ -307,17 +327,11 @@ async function initMap() {
 
             infoWindow = new google.maps.InfoWindow({
                 content: `
-        <h3 class="stationdetails">${station.number}.${station.name}</h3>
-        <p class="stationdetails">Address: ${station.address}</p>
-        <p class="stationdetails">Bikes_stands: ${station.bike_stands}</p>
-        <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
-        <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
+        <h3 class="stationdetails">${station.name}</h3>
+        <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
+        <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
         <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-        <p class="stationdetails">Status: ${station.status}</p>
-        <p class="stationdetails">Available Percent: ${(
-            (station.available_bikes / station.bike_stands) *
-            100
-        ).toFixed()}%</p>`,
+        <p class="stationdetails">Status: ${station.status}</p>`,
                 // You can add more station details here
             });
             infoWindow.open(map, marker);
@@ -341,33 +355,36 @@ async function initMap() {
         map.setCenter(cluster.getCenter());
         map.setZoom(map.getZoom() + 3);
     });
-}
+};
 
-// Fix weather !
+let dateInput = document.getElementById('dateinput');
+function getTodayDate() {
+    const options = {
+        timeZone: 'Europe/London',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    };
+    let todayDate = new Date().toLocaleDateString('en-GB', options);
+    todayDate =  todayDate.replace(/\//g, '-');
+    dateInput.min = todayDate;
+}; 
 
-// async function getWeather() {
-//     fetch(`/weather?city=dublin`)
-//         .then((response) => response.json())
-//         .then((data) => {
-//             // weather details for widget
-//             let currentDate = new Date();
-//             let dayOfWeek = currentDate.getDay();
-//             let daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-//             let currentDay = daysOfWeek[dayOfWeek];
-
-//             let weatherimage;
-//             let temperature = document.getElementById('temperature');
-//             let clouds = document.getElementById('clouds');
-//             if ((data.weather[0].main = 'clear')) {
-//                 weatherimage = `<img id="weatherimage" src="/static/image/weather_overcast.png" />`;
-//             }
-//             // need to add else if statements here for sunny, raining, and sunny showers, but not sure of data.weather[0].main strings
-//             temperature.innerHTML = data.main.temp.toFixed() + '°C ' + '<br>' + currentDay;
-//             clouds.innerHTML = data.weather[0].main + '<br>' + weatherimage;
-//             // end
-//         })
-//         .catch((error) => console.log('Error:', error));
-// };
+// Fix weather 
+async function getWeather() {
+    fetch(`/weather?city=dublin`)
+        .then((response) => response.json())
+        .then((data) => {
+            // console.log(data);
+            let currentDate = new Date();
+            let dayOfWeek = currentDate.getDay();
+            let daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            let currentDay = daysOfWeek[dayOfWeek];
+            const temperature = document.getElementById('weatherText');
+            temperature.innerHTML = data.weather[0].description + " " + data.main.temp.toFixed() + '°C ' + '</br>' + 'High: ' + data.main.temp_max.toFixed() + '°C ' + '   Low: ' + data.main.temp_min.toFixed() + '°C ';
+        })
+        .catch((error) => console.log('Error:', error));
+};
 
 // when user clicks on specific date, statistics returns
 // to be finished later using ML model
@@ -381,20 +398,7 @@ async function dateTimeSelected(inputType) {
     }
 
     // more to come
-}
-
-// Fix time!
-async function showTime() {
-    setInterval(function () {
-        let date = new Date();
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
-
-        let displayTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes;
-
-        document.getElementById('time').innerHTML = displayTime;
-    }, 1000); // 1000 milliseconds = 1 second
-}
+};
 
 //Reuse same flask call
 document.getElementById('station-searcher').addEventListener('input', async function (e) {

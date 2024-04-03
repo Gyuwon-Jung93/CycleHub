@@ -31,7 +31,6 @@
                     <header>
                         <i class="bx bx-chevron-right toggle" id="openToggle"></i>
                     </header>
-
                     <div class="menu-bar">
                         <li id="time"></li>
                         <div class="menu">
@@ -55,17 +54,32 @@
                                 </li>
                                 <div class ="mode-text text" id="errorResult"></div>
                                 <div id="search-results-stations"></div>
-                                <li class="box"> 
+                                <li class="box" id = "datetoggle"> 
                                     <a href="#">   
                                     <i class="bx bx-calendar icon"></i>
                                     <span class="text nav-text">Date/Time</span>
                                 </a>
                                 </li>
-                                <li class="box"> 
+                                <li id="datetimedisplay">
+                                    <div class="text nav-text" id ="timetext">
+                                        <form>
+                                            <label>
+                                              <h5>Pick a date and time</h5>
+                                                <input id="dateinput" type="date" min="2024-02-01" onchange="dateTimeSelected('date')"/>
+                                                <input id="timeinput" type="time" onchange="dateTimeSelected('time')">
+                                                <button onsubmit ="">Submit</button>
+                                            </label>
+                                          </form>
+                                    </div>
+                                </li>
+                                <li class="box" id="weatherToggle"> 
                                     <a href="#">     
                                     <i class="bx bx-cloud icon"></i>
                                     <span class="text nav-text">Weather</span>
                                 </a>
+                                </li>
+                                <li id="weatherdisplay">
+                                    <div class="text nav-text" id ="weatherText"></div>
                                 </li>
                                 <li class="box">
                                     <a href="#">    
