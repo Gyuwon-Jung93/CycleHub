@@ -3,7 +3,6 @@ from datetime import datetime
 import pickle
 import pandas as pd
 
-
 def fetch_weather_data(lat, lng):
     
     API_KEY = 'e09fe30aecb65a55bb36442eda372b92'
@@ -67,9 +66,8 @@ df3['weekday_num'] = df3['time_of_day'].dt.weekday + 1
 
 
 def predict_bike_availability(df):
-    with open('your_model.pkl', 'rb') as file:
+    with open('flask_app/your_model.pkl', 'rb') as file:
         model = pickle.load(file)
     predictions = model.predict(df)
     
     return predictions
-

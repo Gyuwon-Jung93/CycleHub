@@ -10,10 +10,10 @@
 :root {
     /* =====colors===== */
     --body-color: #e4e9f7;
-    --sidebar-color: #dadadd;
+    --sidebar-color: white;
     --primary-color: #695cfe;
     --primary-color-light: #e0e0e2;
-    --toggle-color: #faf7f7;
+    --toggle-color: rgba(13, 18, 6, 0.977);
     --text-color: #464545;
 
     /* =====Transition===== */
@@ -167,16 +167,6 @@ body.dark .sidebar header .toggle {
     width: 200px;
     position: fixed;
 }
-#search-results-stations {
-    /* position: absolute; */
-    /* align-items: center;
-    justify-content: center; */
-    /* border-radius: 10px;
-    margin-left: 270px;
-    margin-top: 50px;
-    width: 300px;
-    background: var(--sidebar-color); */
-}
 
 #search-results div:hover {
     border-radius: 10px;
@@ -259,6 +249,7 @@ body.dark .sidebar li a:hover .text {
 .menu-bar .mode i .sun {
     opacity: 0;
 }
+
 /* sidebar Widemode */
 .menu-bar .mode .toggle-switch {
     position: absolute;
@@ -352,6 +343,10 @@ body.dark #clockimage {
     padding: 20px;
 }
 
+#searchLocation {
+    margin-bottom: 10px;
+}
+
 /* sidebar shortMode */
 .sidebar.close .menu-bar .mode .moon-sun {
     opacity: 0;
@@ -395,4 +390,12 @@ body.dark #clockimage {
 #chart {
     width: 100%;
     height: 300px; /* Set height for the chart */
+}
+
+#weatherdisplay.closed {
+    display: none;
+}
+
+#datetimedisplay.closed {
+    display: none;
 }

@@ -21,48 +21,72 @@
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"
         ></script>
-        <link rel="stylesheet" href="/static/bootstrapCSS.css" />
+        <link rel="stylesheet" href="/static/CycleHub.css" />
         <!-- Boxicons CSS icon -->
         <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     </head>
     <body>
-      
-       <!-- Map container -->
        <div id="map"></div>
-
-
                     <nav class="sidebar close">
                     <header>
-                        <i class="bx bx-chevron-right toggle"></i>
+                        <i class="bx bx-chevron-right toggle" id="openToggle"></i>
                     </header>
-
                     <div class="menu-bar">
-                    </li>
-                    <li class="search-box">
-                        <i class="bx bx-search icon"></i>
-                            <input type="text" id="station-searcher" placeholder="Search for stations...">
-                    </li>
-                    <div class ="mode-text text" id="errorResult"></div>
-                    <div id="search-results-stations"></div>
-
-
+                        <li id="time"></li>
                         <div class="menu">
+                            <form id="searchinput" onsubmit="searchDest(event)">
                                 <li class="search-box">
-                                    <i class="bx bx-search icon"></i>
-                                    <form id="searchinput" onsubmit="searchDest(event)">
-                                    <input type="search" id="searchLocation" placeholder="Search location" />
-                                    <input type="search" id="searchDestination" placeholder="Search destination" />
-                                    </form>
-                                    
+                                    <i class='bx bx-current-location icon'></i>
+                                    <input type="search" id="searchLocation" placeholder=" Search location" />
                                 </li>
-                                <li class="nav-link">
-                                    <a href="#">
+                                <li class="search-box">
+                                    <i class='bx bx-cycling icon'></i>
+                                    <box-icon name='cycling'></box-icon>
+                                    <input type="search" id="searchDestination" placeholder=" Search destination" />
+                                </li>
+                                <li>
+                                    <button class ="button" type="submit">Search</button>
+                                </li>
+                            </form>
+                                <li class="search-box">
+                                    <i class="bx bx-right-arrow-alt icon"></i>
+                                        <input type="text" id="station-searcher" placeholder=" Search for stations...">
+                                </li>
+                                <div class ="mode-text text" id="errorResult"></div>
+                                <div id="search-results-stations"></div>
+                                <li class="box" id = "datetoggle"> 
+                                    <a href="#">   
+                                    <i class="bx bx-calendar icon"></i>
+                                    <span class="text nav-text">Date/Time</span>
+                                </a>
+                                </li>
+                                <li id="datetimedisplay">
+                                    <div class="text nav-text" id ="timetext">
+                                        <form>
+                                            <label>
+                                              <h5>Pick a date and time</h5>
+                                                <input id="dateinput" type="date" min="2024-02-01" onchange="dateTimeSelected('date')"/>
+                                                <input id="timeinput" type="time" onchange="dateTimeSelected('time')">
+                                                <button onsubmit ="">Submit</button>
+                                            </label>
+                                          </form>
+                                    </div>
+                                </li>
+                                <li class="box" id="weatherToggle"> 
+                                    <a href="#">     
+                                    <i class="bx bx-cloud icon"></i>
+                                    <span class="text nav-text">Weather</span>
+                                </a>
+                                </li>
+                                <li id="weatherdisplay">
+                                    <div class="text nav-text" id ="weatherText"></div>
+                                </li>
+                                <li class="box">
+                                    <a href="#">    
                                         <i class="bx bx-bar-chart-alt icon"></i>
                                         <span class="text nav-text">Analytics</span>
                                     </a>
                                 </li>
-
-                                
                                 <li class="mode">
                                     <div class="moon-sun">
                                         <i class="bx bx-moon icon moon"></i>
@@ -73,20 +97,8 @@
                                     <div class="toggle-switch">
                                         <span class="switch"></span>
                                     </div>
-
-
-                            
-        
+                                </li>
                             </ul>
-                             
-
-                        </div>
-                        
-                    </div>
-
-
-                    
- 
     </div>
     <div id="chart-container">
         <h2>Predicted Values</h2>
