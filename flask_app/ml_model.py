@@ -2,6 +2,7 @@ import requests
 from datetime import datetime
 import pickle
 import pandas as pd
+import os
 
 
 def fetch_weather_data(lat, lng):
@@ -67,9 +68,11 @@ df3['weekday_num'] = df3['time_of_day'].dt.weekday + 1
 
 
 def predict_bike_availability(df):
-    with open('your_model.pkl', 'rb') as file:
+    cwd = os.getcwd()  # Get the current working directory (cwd)
+    files = os.listdir(cwd)  # Get all the files in that directory
+    print("Files in %r: %s" % (cwd, files))
+    with open('flask_app/your_model.pkl', 'rb') as file:
         model = pickle.load(file)
     predictions = model.predict(df)
     
     return predictions
-

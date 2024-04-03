@@ -26,11 +26,7 @@
         <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
     </head>
     <body>
-      
-       <!-- Map container -->
        <div id="map"></div>
-
-
                     <nav class="sidebar close">
                     <header>
                         <i class="bx bx-chevron-right toggle" id="openToggle"></i>
@@ -38,32 +34,45 @@
 
                     <div class="menu-bar">
                         <li id="time"></li>
-                    </li>
-                    <li class="search-box">
-                        <i class="bx bx-search icon"></i>
-                            <input type="text" id="station-searcher" placeholder="Search for stations...">
-                    </li>
-                    <div class ="mode-text text" id="errorResult"></div>
-                    <div id="search-results-stations"></div>
-
-
                         <div class="menu">
+                            <form id="searchinput" onsubmit="searchDest(event)">
                                 <li class="search-box">
-                                    <i class="bx bx-bus icon"></i>
-                                    <form id="searchinput" onsubmit="searchDest(event)">
-                                    <input type="search" id="searchLocation" placeholder="Search location" />
-                                    <input type="search" id="searchDestination" placeholder="Search destination" />
-                                    </form>
-                                    
+                                    <i class='bx bx-current-location icon'></i>
+                                    <input type="search" id="searchLocation" placeholder=" Search location" />
                                 </li>
-                                <li class="nav-link">
-                                    <a href="#">
+                                <li class="search-box">
+                                    <i class='bx bx-cycling icon'></i>
+                                    <box-icon name='cycling'></box-icon>
+                                    <input type="search" id="searchDestination" placeholder=" Search destination" />
+                                </li>
+                                <li>
+                                    <button class ="button" type="submit">Search</button>
+                                </li>
+                            </form>
+                                <li class="search-box">
+                                    <i class="bx bx-right-arrow-alt icon"></i>
+                                        <input type="text" id="station-searcher" placeholder=" Search for stations...">
+                                </li>
+                                <div class ="mode-text text" id="errorResult"></div>
+                                <div id="search-results-stations"></div>
+                                <li class="box"> 
+                                    <a href="#">   
+                                    <i class="bx bx-calendar icon"></i>
+                                    <span class="text nav-text">Date/Time</span>
+                                </a>
+                                </li>
+                                <li class="box"> 
+                                    <a href="#">     
+                                    <i class="bx bx-cloud icon"></i>
+                                    <span class="text nav-text">Weather</span>
+                                </a>
+                                </li>
+                                <li class="box">
+                                    <a href="#">    
                                         <i class="bx bx-bar-chart-alt icon"></i>
                                         <span class="text nav-text">Analytics</span>
                                     </a>
                                 </li>
-
-                                
                                 <li class="mode">
                                     <div class="moon-sun">
                                         <i class="bx bx-moon icon moon"></i>
@@ -74,20 +83,8 @@
                                     <div class="toggle-switch">
                                         <span class="switch"></span>
                                     </div>
-
-
-                            
-        
+                                </li>
                             </ul>
-                             
-
-                        </div>
-                        
-                    </div>
-
-
-                    
- 
     </div>
     <div id="chart-container">
         <h2>Predicted Values</h2>
