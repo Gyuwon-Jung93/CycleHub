@@ -32,28 +32,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initially set the correct display based on the sidebar state
     // Assuming the sidebar starts open, we hide the chart initially
-    chartContainer.style.display = 'none'; 
+    chartContainer.style.display = 'none';
 
     toggleButton.addEventListener('click', function () {
         if (toggleButton.classList.contains('bx-chevron-right')) {
             // If it contains "bx-chevron-right", replace it with "bx-chevron-left"
             toggleButton.classList.remove('bx-chevron-right');
             toggleButton.classList.add('bx-chevron-left');
-            
+
             // Show the chart container because the sidebar is now open
-            chartContainer.style.display = 'block'; 
+            chartContainer.style.display = 'block';
         } else {
             // If it contains "bx-chevron-left", replace it with "bx-chevron-right"
             toggleButton.classList.remove('bx-chevron-left');
             toggleButton.classList.add('bx-chevron-right');
-            
+
             // Hide the chart container because the sidebar is now closed
-            chartContainer.style.display = 'none'; 
+            chartContainer.style.display = 'none';
         }
     });
 });
-
-
 
 const body = document.querySelector('body'),
     sidebar = body.querySelector('.sidebar'),
@@ -62,9 +60,18 @@ const body = document.querySelector('body'),
     modeSwitch = body.querySelector('.toggle-switch'),
     modeText = body.querySelector('.mode-text');
 
+document.addEventListener('DOMContentLoaded', function () {
+    let autoListener = document.getElementById('autocomplete');
+
+    autoListener.addEventListener('input', function () {
+        var value = this.value;
+        if (value.length > 3) {
+            initAutocomplete();
+        }
+    });
+});
 // Create an info window
 let infoWindow;
-
 modeSwitch.addEventListener('click', () => {
     body.classList.toggle('dark');
     if (darkModeFlag == false) {
@@ -129,15 +136,15 @@ async function findNearestStation(loca) {
         errorResult.innerHTML = 'Directions request failed. Try again';
         throw error;
     }
-};
+}
 
 //When the user inputs a location it will be a trigger
 function searchDest(event) {
     event.preventDefault(); // Prevent the usual form submission behavior
-    let locationInput = document.getElementById('searchLocation');
-    let destInput = document.getElementById('searchDestination');
+    let locationInput = document.getElementsByClassName('autocompleteD');
+    let destInput = document.getElementsByClassName('autocompleteA');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
-};
+}
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
         const geocoder = new google.maps.Geocoder();
@@ -151,7 +158,7 @@ function geocodeAddress(address) {
             }
         });
     });
-};
+}
 // Google Directions API
 let previousDirectionsRenderer = null;
 
@@ -321,7 +328,7 @@ async function initMap() {
         if (bikeAvailability == 0) {
             markerImg.src = './static/image/redMarker.png';
         } else if (bikeAvailability > 0 && bikeAvailability < 40) {
-            markerImg.src = './static/image/orangeMarker.png'; 
+            markerImg.src = './static/image/orangeMarker.png';
         } else {
             markerImg.src = './static/image/greenMarker.png';
         }
@@ -369,7 +376,7 @@ async function initMap() {
         map.setCenter(cluster.getCenter());
         map.setZoom(map.getZoom() + 3);
     });
-};
+}
 
 let dateInput = document.getElementById('dateinput');
 function getTodayDate() {
@@ -380,11 +387,11 @@ function getTodayDate() {
         day: '2-digit',
     };
     let todayDate = new Date().toLocaleDateString('en-GB', options);
-    todayDate =  todayDate.replace(/\//g, '-');
+    todayDate = todayDate.replace(/\//g, '-');
     dateInput.min = todayDate;
-}; 
+}
 
-// Fix weather 
+// Fix weather
 async function getWeather() {
     fetch(`/weather?city=dublin`)
         .then((response) => response.json())
@@ -395,10 +402,21 @@ async function getWeather() {
             let daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             let currentDay = daysOfWeek[dayOfWeek];
             const temperature = document.getElementById('weatherText');
-            temperature.innerHTML = data.weather[0].description + " " + data.main.temp.toFixed() + '°C ' + '</br>' + 'High: ' + data.main.temp_max.toFixed() + '°C ' + '   Low: ' + data.main.temp_min.toFixed() + '°C ';
+            temperature.innerHTML =
+                data.weather[0].description +
+                ' ' +
+                data.main.temp.toFixed() +
+                '°C ' +
+                '</br>' +
+                'High: ' +
+                data.main.temp_max.toFixed() +
+                '°C ' +
+                '   Low: ' +
+                data.main.temp_min.toFixed() +
+                '°C ';
         })
         .catch((error) => console.log('Error:', error));
-};
+}
 
 // when user clicks on specific date, statistics returns
 // to be finished later using ML model
@@ -412,7 +430,7 @@ async function dateTimeSelected(inputType) {
     }
 
     // more to come
-};
+}
 
 //Reuse same flask call
 document.getElementById('station-searcher').addEventListener('input', async function (e) {
@@ -487,16 +505,24 @@ function displayResults(stations) {
 }
 
 // Trigger search function when Enter key is pressed in the input field (destination or location)
-document.getElementById('searchDestination').addEventListener('keypress', function (event) {
+document.getElementsByClassName('autocompleteA').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
         event.preventDefault();
         searchDest(event);
     }
 });
 
-document.getElementById('searchLocation').addEventListener('keypress', function (event) {
+document.getElementById('autocompleteD').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
         event.preventDefault();
         searchDest(event);
+    }
+    function initAutocomplete() {
+        // Assuming that autocomplete is already available as a global variable
+        // Only recreate the Autocomplete if it's not already created.
+        if (typeof autocomplete === 'undefined' || autocomplete === null) {
+            var input = document.getElementById('autocomplete');
+            autocomplete = new google.maps.places.Autocomplete(input);
+        }
     }
 });
