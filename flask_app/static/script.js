@@ -26,20 +26,34 @@ document.addEventListener('DOMContentLoaded', function () {
         dateDisplay.classList.toggle('closed');
     });
 
-    // Toggles the open sidebar icon
+    // Toggles the open sidebar icon and the chart visibility
     let toggleButton = document.getElementById('openToggle');
+    let chartContainer = document.getElementById('chart-container'); // Get the chart container
+
+    // Initially set the correct display based on the sidebar state
+    // Assuming the sidebar starts open, we hide the chart initially
+    chartContainer.style.display = 'none'; 
+
     toggleButton.addEventListener('click', function () {
         if (toggleButton.classList.contains('bx-chevron-right')) {
             // If it contains "bx-chevron-right", replace it with "bx-chevron-left"
             toggleButton.classList.remove('bx-chevron-right');
             toggleButton.classList.add('bx-chevron-left');
+            
+            // Show the chart container because the sidebar is now open
+            chartContainer.style.display = 'block'; 
         } else {
             // If it contains "bx-chevron-left", replace it with "bx-chevron-right"
             toggleButton.classList.remove('bx-chevron-left');
             toggleButton.classList.add('bx-chevron-right');
+            
+            // Hide the chart container because the sidebar is now closed
+            chartContainer.style.display = 'none'; 
         }
     });
 });
+
+
 
 const body = document.querySelector('body'),
     sidebar = body.querySelector('.sidebar'),
