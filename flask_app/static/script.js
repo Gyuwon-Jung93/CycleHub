@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initially set the correct display based on the sidebar state
     // Assuming the sidebar starts open, we hide the chart initially
     chartContainer.style.display = 'none';
+    chartContainer.style.display = 'none';
 
     toggleButton.addEventListener('click', function () {
         if (toggleButton.classList.contains('bx-chevron-right')) {
@@ -40,14 +41,18 @@ document.addEventListener('DOMContentLoaded', function () {
             toggleButton.classList.remove('bx-chevron-right');
             toggleButton.classList.add('bx-chevron-left');
 
+
             // Show the chart container because the sidebar is now open
+            chartContainer.style.display = 'block';
             chartContainer.style.display = 'block';
         } else {
             // If it contains "bx-chevron-left", replace it with "bx-chevron-right"
             toggleButton.classList.remove('bx-chevron-left');
             toggleButton.classList.add('bx-chevron-right');
 
+
             // Hide the chart container because the sidebar is now closed
+            chartContainer.style.display = 'none';
             chartContainer.style.display = 'none';
         }
     });
@@ -128,6 +133,7 @@ async function findNearestStation(loca) {
         throw error;
     }
 }
+}
 
 //When the user inputs a location it will be a trigger
 function searchDest(event) {
@@ -135,6 +141,7 @@ function searchDest(event) {
     let locationInput = document.getElementById('searchLocation');
     let destInput = document.getElementById('searchDestination');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
+}
 }
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
@@ -149,6 +156,7 @@ function geocodeAddress(address) {
             }
         });
     });
+}
 }
 // Google Directions API
 let previousDirectionsRenderer = null;
@@ -320,6 +328,7 @@ async function initMap() {
             markerImg.src = './static/image/redMarker.png';
         } else if (bikeAvailability > 0 && bikeAvailability < 40) {
             markerImg.src = './static/image/orangeMarker.png';
+            markerImg.src = './static/image/orangeMarker.png';
         } else {
             markerImg.src = './static/image/greenMarker.png';
         }
@@ -370,6 +379,7 @@ async function initMap() {
         map.setZoom(map.getZoom() + 3);
     });
 }
+}
 
 let dateInput = document.getElementById('dateinput');
 function getTodayDate() {
@@ -381,9 +391,12 @@ function getTodayDate() {
     };
     let todayDate = new Date().toLocaleDateString('en-GB', options);
     todayDate = todayDate.replace(/\//g, '-');
+    todayDate = todayDate.replace(/\//g, '-');
     dateInput.min = todayDate;
 }
+}
 
+// Fix weather
 // Fix weather
 async function getWeather() {
     fetch(`/weather?city=dublin`)
@@ -407,8 +420,21 @@ async function getWeather() {
                 '   Low: ' +
                 data.main.temp_min.toFixed() +
                 '°C ';
+            temperature.innerHTML =
+                data.weather[0].description +
+                ' ' +
+                data.main.temp.toFixed() +
+                '°C ' +
+                '</br>' +
+                'High: ' +
+                data.main.temp_max.toFixed() +
+                '°C ' +
+                '   Low: ' +
+                data.main.temp_min.toFixed() +
+                '°C ';
         })
         .catch((error) => console.log('Error:', error));
+}
 }
 
 // when user clicks on specific date, statistics returns
@@ -423,6 +449,7 @@ async function dateTimeSelected(inputType) {
     }
 
     // more to come
+}
 }
 
 //Reuse same flask call
@@ -510,4 +537,9 @@ document.getElementById('searchLocation').addEventListener('keypress', function 
         event.preventDefault();
         searchDest(event);
     }
+    function initAutocomplete() {
+        var input = document.getElementById('autocomplete');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+    }
 });
+
