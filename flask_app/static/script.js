@@ -32,28 +32,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initially set the correct display based on the sidebar state
     // Assuming the sidebar starts open, we hide the chart initially
-    chartContainer.style.display = 'none'; 
+    chartContainer.style.display = 'none';
 
     toggleButton.addEventListener('click', function () {
         if (toggleButton.classList.contains('bx-chevron-right')) {
             // If it contains "bx-chevron-right", replace it with "bx-chevron-left"
             toggleButton.classList.remove('bx-chevron-right');
             toggleButton.classList.add('bx-chevron-left');
-            
+
             // Show the chart container because the sidebar is now open
-            chartContainer.style.display = 'block'; 
+            chartContainer.style.display = 'block';
         } else {
             // If it contains "bx-chevron-left", replace it with "bx-chevron-right"
             toggleButton.classList.remove('bx-chevron-left');
             toggleButton.classList.add('bx-chevron-right');
-            
+
             // Hide the chart container because the sidebar is now closed
-            chartContainer.style.display = 'none'; 
+            chartContainer.style.display = 'none';
         }
     });
 });
-
-
 
 const body = document.querySelector('body'),
     sidebar = body.querySelector('.sidebar'),
@@ -129,7 +127,7 @@ async function findNearestStation(loca) {
         errorResult.innerHTML = 'Directions request failed. Try again';
         throw error;
     }
-};
+}
 
 //When the user inputs a location it will be a trigger
 function searchDest(event) {
@@ -137,7 +135,7 @@ function searchDest(event) {
     let locationInput = document.getElementById('searchLocation');
     let destInput = document.getElementById('searchDestination');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
-};
+}
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
         const geocoder = new google.maps.Geocoder();
@@ -151,7 +149,7 @@ function geocodeAddress(address) {
             }
         });
     });
-};
+}
 // Google Directions API
 let previousDirectionsRenderer = null;
 
@@ -307,10 +305,10 @@ async function initMap() {
         });
 
         // Parse the HTML response
-        const htmlContent = await response.text();
+        var htmlContent = await response.text();
 
         // Display the chart in a modal or another container
-        document.getElementById('chart-container').innerHTML = htmlContent;
+        document.getElementById('predictionChart').innerHTML = htmlContent;
     }
 
     // Add some markers to the map
@@ -321,7 +319,7 @@ async function initMap() {
         if (bikeAvailability == 0) {
             markerImg.src = './static/image/redMarker.png';
         } else if (bikeAvailability > 0 && bikeAvailability < 40) {
-            markerImg.src = './static/image/orangeMarker.png'; 
+            markerImg.src = './static/image/orangeMarker.png';
         } else {
             markerImg.src = './static/image/greenMarker.png';
         }
@@ -345,7 +343,9 @@ async function initMap() {
         <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
         <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
         <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-        <p class="stationdetails">Status: ${station.status}</p>`,
+        <p class="stationdetails">Status: ${station.status}</p>
+        <p class="stationdetails">Predicted Values for Station: ${station.number}</p>
+        <div id="predictionChart"></div>`,
                 // You can add more station details here
             });
             infoWindow.open(map, marker);
@@ -369,7 +369,7 @@ async function initMap() {
         map.setCenter(cluster.getCenter());
         map.setZoom(map.getZoom() + 3);
     });
-};
+}
 
 let dateInput = document.getElementById('dateinput');
 function getTodayDate() {
@@ -380,11 +380,11 @@ function getTodayDate() {
         day: '2-digit',
     };
     let todayDate = new Date().toLocaleDateString('en-GB', options);
-    todayDate =  todayDate.replace(/\//g, '-');
+    todayDate = todayDate.replace(/\//g, '-');
     dateInput.min = todayDate;
-}; 
+}
 
-// Fix weather 
+// Fix weather
 async function getWeather() {
     fetch(`/weather?city=dublin`)
         .then((response) => response.json())
@@ -395,10 +395,21 @@ async function getWeather() {
             let daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             let currentDay = daysOfWeek[dayOfWeek];
             const temperature = document.getElementById('weatherText');
-            temperature.innerHTML = data.weather[0].description + " " + data.main.temp.toFixed() + '°C ' + '</br>' + 'High: ' + data.main.temp_max.toFixed() + '°C ' + '   Low: ' + data.main.temp_min.toFixed() + '°C ';
+            temperature.innerHTML =
+                data.weather[0].description +
+                ' ' +
+                data.main.temp.toFixed() +
+                '°C ' +
+                '</br>' +
+                'High: ' +
+                data.main.temp_max.toFixed() +
+                '°C ' +
+                '   Low: ' +
+                data.main.temp_min.toFixed() +
+                '°C ';
         })
         .catch((error) => console.log('Error:', error));
-};
+}
 
 // when user clicks on specific date, statistics returns
 // to be finished later using ML model
@@ -412,7 +423,7 @@ async function dateTimeSelected(inputType) {
     }
 
     // more to come
-};
+}
 
 //Reuse same flask call
 document.getElementById('station-searcher').addEventListener('input', async function (e) {

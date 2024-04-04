@@ -3,6 +3,9 @@ from flask import Flask,jsonify, request
 from flask import Flask, render_template
 import requests
 from flask_cors import CORS
+
+import matplotlib as plt
+plt.use('Agg')
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
@@ -10,6 +13,7 @@ from ml_model import predict_bike_availability
 from ml_model import df3
 import json
 import os
+
 # Create our flask app. Static files are served from 'static' directory
 app = Flask(__name__, static_url_path='/static')
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -38,6 +42,7 @@ def predict():
     
     
     #Plot the predictions
+    
     plt.figure(figsize=(3, 3))
     plt.plot(times, predictions, label='Predicted', color='orange')
     plt.xlabel('Time')
@@ -54,19 +59,8 @@ def predict():
     plt.close()
     
     # Construct the HTML response with the embedded plot
-    html_response = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Predictions</title>
-    </head>
-    <body>
-        <h1>Predicted Values for Station {station_id}</h1>
+    html_response = f""" 
         <img src="data:image/png;base64,{plot_data}" alt="Predicted Plot">
-    </body>
-    </html>
     """
     
     
