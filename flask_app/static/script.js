@@ -60,18 +60,9 @@ const body = document.querySelector('body'),
     modeSwitch = body.querySelector('.toggle-switch'),
     modeText = body.querySelector('.mode-text');
 
-document.addEventListener('DOMContentLoaded', function () {
-    let autoListener = document.getElementById('autocomplete');
-
-    autoListener.addEventListener('input', function () {
-        var value = this.value;
-        if (value.length > 3) {
-            initAutocomplete();
-        }
-    });
-});
 // Create an info window
 let infoWindow;
+
 modeSwitch.addEventListener('click', () => {
     body.classList.toggle('dark');
     if (darkModeFlag == false) {
@@ -141,8 +132,8 @@ async function findNearestStation(loca) {
 //When the user inputs a location it will be a trigger
 function searchDest(event) {
     event.preventDefault(); // Prevent the usual form submission behavior
-    let locationInput = document.getElementsByClassName('autocompleteD');
-    let destInput = document.getElementsByClassName('autocompleteA');
+    let locationInput = document.getElementById('searchLocation');
+    let destInput = document.getElementById('searchDestination');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
 }
 function geocodeAddress(address) {
@@ -505,24 +496,20 @@ function displayResults(stations) {
 }
 
 // Trigger search function when Enter key is pressed in the input field (destination or location)
-document.getElementsByClassName('autocompleteA').addEventListener('keypress', function (event) {
+document.getElementById('searchDestination').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
         event.preventDefault();
         searchDest(event);
     }
 });
 
-document.getElementById('autocompleteD').addEventListener('keypress', function (event) {
+document.getElementById('searchLocation').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
         event.preventDefault();
         searchDest(event);
     }
     function initAutocomplete() {
-        // Assuming that autocomplete is already available as a global variable
-        // Only recreate the Autocomplete if it's not already created.
-        if (typeof autocomplete === 'undefined' || autocomplete === null) {
-            var input = document.getElementById('autocomplete');
-            autocomplete = new google.maps.places.Autocomplete(input);
-        }
+        var input = document.getElementById('autocomplete');
+        var autocomplete = new google.maps.places.Autocomplete(input);
     }
 });
