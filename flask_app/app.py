@@ -3,7 +3,8 @@ from flask import Flask,jsonify, request
 from flask import Flask, render_template
 import requests
 from flask_cors import CORS
-
+from matplotlib.dates import date2num
+import pandas as pd
 import seaborn as sns
 import matplotlib as plt
 plt.use('Agg')
@@ -37,10 +38,10 @@ def predict():
     #Filter the DataFrame for the specified station_id
     df_station = df3[df3['station_id'] == station_id].copy()
     times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]
+    bike_stands = df3.iloc[df3[df3["station_id"]==station_id].index]["bike_stands"].iloc[0]
+
     times_formatted = times.dt.strftime('%d %H')
 
-   
-    
     #Perform prediction using the machine learning model
     predictions = predict_bike_availability(df_station)
     
@@ -51,7 +52,7 @@ def predict():
     sns.set_context("paper")
     plt.figure(figsize=(3, 3))
 
-    plot = sns.lineplot(x=times_formatted, y=predictions, color='orange')
+    plot = sns.barplot(x=times_formatted, y=predictions, color='orange')
     plt.xlabel('Time', color='grey')
     plt.ylabel('Bikes', color='grey')
     plt.title('Actual vs Predicted Values Over Time', color='grey')
@@ -62,6 +63,7 @@ def predict():
 
     plt.xticks(rotation=45)  
     plot.xaxis.set_major_locator(ticker.LinearLocator(6))
+    plt.ylim(0, bike_stands)
 
     plt.tight_layout()  
 
