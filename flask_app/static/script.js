@@ -221,7 +221,7 @@ async function initMap() {
         <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
         <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
         <p class="stationdetails">Status: ${station.status}</p>
-        <p class="stationdetails">Predicted Values for Station: ${station.number}</p>
+        <p class="stationdetails">Station: ${station.number}</p>
         <div id="predictionChart"></div>`,
                 // You can add more station details here
             });

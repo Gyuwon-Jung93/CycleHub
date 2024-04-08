@@ -45,30 +45,27 @@ def predict():
     predictions = predict_bike_availability(df_station)
     
     
-    #Plot the predictions
 
-
-# Assuming 'times' and 'predictions' are defined
-    # and contain the data you want to plot
 
     sns.set_style("ticks")
     sns.set_context("paper")
-    plt.figure(figsize=(3, 3))
+    plt.figure(figsize=(5, 5))
 
     plot = sns.lineplot(x=times_formatted, y=predictions, color='orange')
+    plt.xlabel('Time', color='grey')
+    plt.ylabel('Bikes', color='grey')
+    plt.title('Actual vs Predicted Values Over Time', color='grey')
+    plt.tick_params(axis='x', colors='grey')
+    plt.tick_params(axis='y', colors='grey')
 
-    plt.xlabel('Time')
-   
-    plt.title('Forcasted Available Bikes')
 
-
- 
     plt.xticks(rotation=45)  
     plot.xaxis.set_major_locator(ticker.LinearLocator(6))
 
-    plt.tight_layout()  #
+    plt.tight_layout()  
 
-    # Convert the plot to a base64-encoded image
+
+
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
     buffer.seek(0)
