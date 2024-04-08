@@ -37,12 +37,12 @@
                             <form id="searchinput" onsubmit="searchDest(event)">
                                 <li class="search-box">
                                     <i class='bx bx-current-location icon'></i>
-                                    <input type="search" id="autocompleteD" class="searchLocation" placeholder=" Search location" />
+                                    <input type="search" id="searchLocation" placeholder=" Search location" />
                                 </li>
                                 <li class="search-box">
                                     <i class='bx bx-cycling icon'></i>
                                     <box-icon name='cycling'></box-icon>
-                                    <input type="search" id="autocompleteA" class="searchDestination" placeholder=" Search destination" />
+                                    <input type="search" id="searchDestination" placeholder=" Search destination" />
                                 </li>
                                 <li>
                                     <button class ="button" type="submit">Search</button>
@@ -100,8 +100,7 @@
                                 </li>
                             </ul>
     </div>
-    <div id="chart-container">
-        <div id="chart"></div>
+
     </div>
 </nav>
       
@@ -109,8 +108,8 @@
                 <script src="/static/mapCustomise.js"></script>
                 <script src="/static/mapCustomise_dark.js"></script>
                 <script async
-                    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&callback=initMap&initAutocomplete&libraries=geometry"
-                ></script>
+                    src="https://maps.googleapis.com/maps/api/js?&key=AIzaSyBINaD4_hG8AjjzFJbXTnr9Q0gYxgVebWI&language=en&libraries=places" async defer ></script>
                 <script src="https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
             </body>
         </html>
+

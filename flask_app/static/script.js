@@ -3,9 +3,16 @@ document.addEventListener('DOMContentLoaded', function () {
     getWeather();
     dateTimeSelected();
     getTodayDate();
-
     const weatherToggle = document.getElementById('weatherToggle');
     const weatherDisplay = document.getElementById('weatherdisplay');
+
+    //AutoComplete
+
+    /* AutoComplete Variable */
+    const searchLocationInput = document.getElementById('searchLocation');
+    const searchDestinationInput = document.getElementById('searchDestination');
+    initializeAutocomplete(searchLocationInput);
+    initializeAutocomplete(searchDestinationInput);
 
     // Initially hide the weather display
     weatherDisplay.classList.add('closed');
@@ -28,12 +35,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Toggles the open sidebar icon and the chart visibility
     let toggleButton = document.getElementById('openToggle');
-    let chartContainer = document.getElementById('chart-container'); // Get the chart container
 
     // Initially set the correct display based on the sidebar state
     // Assuming the sidebar starts open, we hide the chart initially
-    chartContainer.style.display = 'none';
-    chartContainer.style.display = 'none';
 
     toggleButton.addEventListener('click', function () {
         if (toggleButton.classList.contains('bx-chevron-right')) {
@@ -41,19 +45,13 @@ document.addEventListener('DOMContentLoaded', function () {
             toggleButton.classList.remove('bx-chevron-right');
             toggleButton.classList.add('bx-chevron-left');
 
-
             // Show the chart container because the sidebar is now open
-            chartContainer.style.display = 'block';
-            chartContainer.style.display = 'block';
         } else {
             // If it contains "bx-chevron-left", replace it with "bx-chevron-right"
             toggleButton.classList.remove('bx-chevron-left');
             toggleButton.classList.add('bx-chevron-right');
 
-
             // Hide the chart container because the sidebar is now closed
-            chartContainer.style.display = 'none';
-            chartContainer.style.display = 'none';
         }
     });
 });
@@ -65,160 +63,20 @@ const body = document.querySelector('body'),
     modeSwitch = body.querySelector('.toggle-switch'),
     modeText = body.querySelector('.mode-text');
 
-// Create an info window
-let infoWindow;
-
-modeSwitch.addEventListener('click', () => {
-    body.classList.toggle('dark');
-    if (darkModeFlag == false) {
-        darkModeFlag = true;
-    } else {
-        darkModeFlag = false;
-    }
-    initMap();
-});
-
-toggle.addEventListener('click', () => {
-    sidebar.classList.toggle('close');
-});
-
-// Function to calculate the distance between two points using the Haversine formula
-function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of the earth in km
-    const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c;
-    return d;
-}
-
-function deg2rad(deg) {
-    return deg * (Math.PI / 180);
-}
-
-// Calculate distances and find the closest destination
-let closestDestination = null;
-let closestDistance = Infinity;
-
-async function findNearestStation(loca) {
-    let closestDestination = null;
-    let closestDistance = Infinity;
-    const responseFind = await fetch('/stations');
-    const stations_info_stat = await responseFind.json();
-    const destinations = stations_info_stat.map((station) => ({
-        lat: station.position.lat,
-        lng: station.position.lng,
-    }));
-    try {
-        const location = await geocodeAddress(loca);
-        destinations.forEach((destination) => {
-            const distance = getDistanceFromLatLonInKm(
-                location.lat(),
-                location.lng(),
-                destination.lat,
-                destination.lng
-            );
-            if (distance < closestDistance) {
-                closestDistance = distance;
-                closestDestination = destination;
-            }
-        });
-        return closestDestination;
-    } catch (error) {
-        console.error('Error finding nearest station:', error);
-        errorResult.innerHTML = 'Directions request failed. Try again';
-        throw error;
-    }
-}
-}
-
-//When the user inputs a location it will be a trigger
-function searchDest(event) {
-    event.preventDefault(); // Prevent the usual form submission behavior
-    let locationInput = document.getElementById('searchLocation');
-    let destInput = document.getElementById('searchDestination');
-    calculateAndDisplayRoute(locationInput.value, destInput.value);
-}
-}
-function geocodeAddress(address) {
-    return new Promise((resolve, reject) => {
-        const geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ address: address }, (results, status) => {
-            if (status === 'OK') {
-                const location = results[0].geometry.location;
-                resolve(location);
-            } else {
-                reject('Geocode was not successful for the following reason: ' + status);
-                errorResult.innerHTML = 'Directions request failed. Try again';
-            }
-        });
-    });
-}
-}
-// Google Directions API
-let previousDirectionsRenderer = null;
-
-async function calculateAndDisplayRoute(loc, dest) {
-    const errorResult = document.getElementById('errorResult');
-    errorResult.innerHTML = '';
-    try {
-        const dest1 = await findNearestStation(loc);
-        const dest2 = await findNearestStation(dest);
-        console.log(loc, dest, dest1, dest2);
-
-        let directionsService = new google.maps.DirectionsService();
-        let directionsRenderer = new google.maps.DirectionsRenderer();
-        directionsRenderer.setMap(map);
-
-        if (previousDirectionsRenderer) {
-            previousDirectionsRenderer.setMap(null); // Remove previous renderer from the map
-        }
-        previousDirectionsRenderer = directionsRenderer; // Update previous renderer reference
-
-        directionsService.route(
-            {
-                origin: loc,
-                destination: dest,
-                waypoints: [
-                    {
-                        location: dest1,
-                        stopover: true,
-                    },
-                    {
-                        location: dest2,
-                        stopover: true,
-                    },
-                ],
-                provideRouteAlternatives: false,
-                travelMode: google.maps.TravelMode.DRIVING,
-            },
-            (response, status) => {
-                if (status === 'OK') {
-                    directionsRenderer.setDirections(response);
-                } else {
-                    console.error('Directions request failed:', status);
-                    errorResult.innerHTML = 'Directions request failed. Try again';
-                    setTimeout(() => {
-                        errorResult.innerHTML = ''; // Remove the error message
-                    }, 3000);
-                }
-            }
-        );
-    } catch (error) {
-        console.error('Error calculating and displaying route:', error);
-    }
-}
-
 let darkModeFlag = true;
 let map;
 let markers = [];
 let currLatLng;
+
+//AutoCompletion
+let searchLocationInput;
+let searchDestinationInput;
+let autocompleteObj;
+
+/*** Main map Defintion ***/
 async function initMap() {
     let locations = [];
-    const { Map } = await google.maps.importLibrary('maps');
+    let { Map } = await google.maps.importLibrary('maps');
     //fetch station information data from the flask Server
     //install pip3 flask-cors to fetch data
     const response = await fetch('/stations');
@@ -315,7 +173,6 @@ async function initMap() {
         // Parse the HTML response
         var htmlContent = await response.text();
 
-        // Display the chart in a modal or another container
         document.getElementById('predictionChart').innerHTML = htmlContent;
     }
 
@@ -328,7 +185,6 @@ async function initMap() {
             markerImg.src = './static/image/redMarker.png';
         } else if (bikeAvailability > 0 && bikeAvailability < 40) {
             markerImg.src = './static/image/orangeMarker.png';
-            markerImg.src = './static/image/orangeMarker.png';
         } else {
             markerImg.src = './static/image/greenMarker.png';
         }
@@ -338,6 +194,23 @@ async function initMap() {
             title: station.name, // Optional: add a title
             icon: { url: markerImg.src, scaledSize: new google.maps.Size(25, 25) },
         });
+
+        // searchDestionAuto.addEventListener('input', async function (e) {
+        //     if (input.length >= 3) {
+        //         let destinAuto = new google.maps.places.Autocomplete(searchDestionAuto.value);
+        //         locationInputElement.addEventListener('input', function () {
+        //             let value = this.value;
+        //             if (searchDestionAuto.value.length >= 3) {
+        //                 // 사용자가 3글자 이상 입력했을 때 자동완성 기능 활성화
+        //                 destinAuto.setOptions({ disable: false });
+        //             } else {
+        //                 // 그렇지 않을 경우, 자동완성 기능 비활성화
+        //                 locationAuto.setOptions({ disable: true });
+        //             }
+        //         });
+        //     } else {
+        //     }
+        // });
 
         // Create an info window
         marker.addListener('click', () => {
@@ -379,7 +252,6 @@ async function initMap() {
         map.setZoom(map.getZoom() + 3);
     });
 }
-}
 
 let dateInput = document.getElementById('dateinput');
 function getTodayDate() {
@@ -391,12 +263,9 @@ function getTodayDate() {
     };
     let todayDate = new Date().toLocaleDateString('en-GB', options);
     todayDate = todayDate.replace(/\//g, '-');
-    todayDate = todayDate.replace(/\//g, '-');
     dateInput.min = todayDate;
 }
-}
 
-// Fix weather
 // Fix weather
 async function getWeather() {
     fetch(`/weather?city=dublin`)
@@ -420,21 +289,8 @@ async function getWeather() {
                 '   Low: ' +
                 data.main.temp_min.toFixed() +
                 '°C ';
-            temperature.innerHTML =
-                data.weather[0].description +
-                ' ' +
-                data.main.temp.toFixed() +
-                '°C ' +
-                '</br>' +
-                'High: ' +
-                data.main.temp_max.toFixed() +
-                '°C ' +
-                '   Low: ' +
-                data.main.temp_min.toFixed() +
-                '°C ';
         })
         .catch((error) => console.log('Error:', error));
-}
 }
 
 // when user clicks on specific date, statistics returns
@@ -450,7 +306,6 @@ async function dateTimeSelected(inputType) {
 
     // more to come
 }
-}
 
 //Reuse same flask call
 document.getElementById('station-searcher').addEventListener('input', async function (e) {
@@ -459,7 +314,6 @@ document.getElementById('station-searcher').addEventListener('input', async func
 
     if (input.length >= 3) {
         const response = await fetch('/stationSearch');
-        console.log(response);
         const stations = await response.json();
         resultsDiv.innerHTML = ''; // Clear previous results
 
@@ -482,8 +336,6 @@ document.getElementById('station-searcher').addEventListener('input', async func
                         let searchLng = station.position.lng;
                         map.setCenter(new google.maps.LatLng(searchLat, searchLng));
                         map.setZoom(16);
-
-                        console.log(station);
                         // Assuming we have stored InfoWindow objects in a map or similar structure
                         // This part assumes you have an existing mechanism to match markers with InfoWindows
                         // For simplicity, let's assume each marker's 'title' property matches the station name and use it to find the corresponding InfoWindow
@@ -524,6 +376,151 @@ function displayResults(stations) {
     });
 }
 
+// Create an info window
+let infoWindow;
+
+modeSwitch.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    darkModeFlag = !darkModeFlag;
+
+    if (darkModeFlag) {
+        map.setOptions({ styles: darkStyleArray });
+    } else {
+        map.setOptions({ styles: brightStyleArray });
+    }
+});
+
+toggle.addEventListener('click', () => {
+    sidebar.classList.toggle('close');
+});
+
+// Function to calculate the distance between two points using the Haversine formula
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c;
+    return d;
+}
+
+function deg2rad(deg) {
+    return deg * (Math.PI / 180);
+}
+
+// Calculate distances and find the closest destination
+let closestDestination = null;
+let closestDistance = Infinity;
+
+async function findNearestStation(loca) {
+    let closestDestination = null;
+    let closestDistance = Infinity;
+    const responseFind = await fetch('/stations');
+    const stations_info_stat = await responseFind.json();
+    const destinations = stations_info_stat.map((station) => ({
+        lat: station.position.lat,
+        lng: station.position.lng,
+    }));
+    try {
+        const location = await geocodeAddress(loca);
+        destinations.forEach((destination) => {
+            const distance = getDistanceFromLatLonInKm(
+                location.lat(),
+                location.lng(),
+                destination.lat,
+                destination.lng
+            );
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestDestination = destination;
+            }
+        });
+        return closestDestination;
+    } catch (error) {
+        console.error('Error finding nearest station:', error);
+        errorResult.innerHTML = 'Directions request failed. Try again';
+        throw error;
+    }
+}
+
+//When the user inputs a location it will be a trigger
+function searchDest(event) {
+    event.preventDefault(); // Prevent the usual form submission behavior
+    let locationInput = document.getElementById('searchLocation');
+    let destInput = document.getElementById('searchDestination');
+    calculateAndDisplayRoute(locationInput.value, destInput.value);
+}
+function geocodeAddress(address) {
+    return new Promise((resolve, reject) => {
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ address: address }, (results, status) => {
+            if (status === 'OK') {
+                const location = results[0].geometry.location;
+                resolve(location);
+            } else {
+                reject('Geocode was not successful for the following reason: ' + status);
+                errorResult.innerHTML = 'Directions request failed. Try again';
+            }
+        });
+    });
+}
+// Google Directions API
+let previousDirectionsRenderer = null;
+
+async function calculateAndDisplayRoute(loc, dest) {
+    const errorResult = document.getElementById('errorResult');
+    errorResult.innerHTML = '';
+    try {
+        const dest1 = await findNearestStation(loc);
+        const dest2 = await findNearestStation(dest);
+        console.log(loc, dest, dest1, dest2);
+
+        let directionsService = new google.maps.DirectionsService();
+        let directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+
+        if (previousDirectionsRenderer) {
+            previousDirectionsRenderer.setMap(null); // Remove previous renderer from the map
+        }
+        previousDirectionsRenderer = directionsRenderer; // Update previous renderer reference
+
+        directionsService.route(
+            {
+                origin: loc,
+                destination: dest,
+                waypoints: [
+                    {
+                        location: dest1,
+                        stopover: true,
+                    },
+                    {
+                        location: dest2,
+                        stopover: true,
+                    },
+                ],
+                provideRouteAlternatives: false,
+                travelMode: google.maps.TravelMode.DRIVING,
+            },
+            (response, status) => {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(response);
+                } else {
+                    console.error('Directions request failed:', status);
+                    errorResult.innerHTML = 'Directions request failed. Try again';
+                    setTimeout(() => {
+                        errorResult.innerHTML = ''; // Remove the error message
+                    }, 3000);
+                }
+            }
+        );
+    } catch (error) {
+        console.error('Error calculating and displaying route:', error);
+    }
+}
+
 // Trigger search function when Enter key is pressed in the input field (destination or location)
 document.getElementById('searchDestination').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
@@ -537,9 +534,19 @@ document.getElementById('searchLocation').addEventListener('keypress', function 
         event.preventDefault();
         searchDest(event);
     }
-    function initAutocomplete() {
-        var input = document.getElementById('autocomplete');
-        var autocomplete = new google.maps.places.Autocomplete(input);
-    }
 });
 
+function initializeAutocomplete(inputElement) {
+    // input 이벤트 리스너를 추가
+    inputElement.addEventListener('input', function () {
+        const value = this.value;
+        if (value.length >= 3) {
+            // 문자열 길이가 3글자 이상일 때만 Autocomplete 기능 활성화
+            if (!autocompleteObj) {
+                autocompleteObj = new google.maps.places.Autocomplete(this, { types: ['geocode'] });
+            }
+        } else {
+            autocompleteObj = null;
+        }
+    });
+}
