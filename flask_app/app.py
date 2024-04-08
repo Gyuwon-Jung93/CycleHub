@@ -4,9 +4,12 @@ from flask import Flask, render_template
 import requests
 from flask_cors import CORS
 
+import seaborn as sns
 import matplotlib as plt
 plt.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+
 from io import BytesIO
 import base64
 from ml_model import predict_bike_availability
@@ -34,6 +37,7 @@ def predict():
     #Filter the DataFrame for the specified station_id
     df_station = df3[df3['station_id'] == station_id].copy()
     times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]
+    times_formatted = times.dt.strftime('%d %H')
 
    
     
@@ -42,15 +46,28 @@ def predict():
     
     
     #Plot the predictions
-    
+
+
+# Assuming 'times' and 'predictions' are defined
+    # and contain the data you want to plot
+
+    sns.set_style("ticks")
+    sns.set_context("paper")
     plt.figure(figsize=(3, 3))
-    plt.plot(times, predictions, label='Predicted', color='orange')
+
+    plot = sns.lineplot(x=times_formatted, y=predictions, color='orange')
+
     plt.xlabel('Time')
-    plt.ylabel('Value')
-    plt.title('Predicted Values Over Time')
-    plt.legend()
-    plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-    
+   
+    plt.title('Forcasted Available Bikes')
+
+
+ 
+    plt.xticks(rotation=45)  
+    plot.xaxis.set_major_locator(ticker.LinearLocator(6))
+
+    plt.tight_layout()  #
+
     # Convert the plot to a base64-encoded image
     buffer = BytesIO()
     plt.savefig(buffer, format='png')

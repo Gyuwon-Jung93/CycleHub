@@ -52,6 +52,7 @@ df = df.set_index('time_of_day').reindex(hourly_range).reset_index()
 df.rename(columns={'index': 'time_of_day'}, inplace=True)
 df_interpolated = df.interpolate(method='linear')
 df_interpolated['description'] = df_interpolated['description'].fillna(method='ffill')
+df_interpolated = df_interpolated.iloc[:24]
 
 
 
