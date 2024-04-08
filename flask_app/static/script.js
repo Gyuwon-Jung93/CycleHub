@@ -75,7 +75,7 @@ const body = document.querySelector('body'),
     modeSwitch = body.querySelector('.toggle-switch'),
     modeText = body.querySelector('.mode-text');
 
-let darkModeFlag = true;
+let darkModeFlag = false;
 let map;
 let markers = [];
 let currLatLng;
