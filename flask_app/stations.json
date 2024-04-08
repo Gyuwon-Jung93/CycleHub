@@ -116,7 +116,7 @@
         "available_bike_stands": 18,
         "available_bikes": 2,
         "status": "OPEN",
-        "last_update": 1712614583000
+        "last_update": 1712615187000
     },
     {
         "number": 18,
@@ -266,10 +266,10 @@
         "banking": false,
         "bonus": false,
         "bike_stands": 30,
-        "available_bike_stands": 15,
-        "available_bikes": 15,
+        "available_bike_stands": 16,
+        "available_bikes": 14,
         "status": "OPEN",
-        "last_update": 1712614827000
+        "last_update": 1712615157000
     },
     {
         "number": 1,
@@ -575,7 +575,7 @@
         "available_bike_stands": 29,
         "available_bikes": 1,
         "status": "OPEN",
-        "last_update": 1712614562000
+        "last_update": 1712615167000
     },
     {
         "number": 9,
@@ -949,7 +949,7 @@
         "available_bike_stands": 14,
         "available_bikes": 16,
         "status": "OPEN",
-        "last_update": 1712614961000
+        "last_update": 1712615201000
     },
     {
         "number": 115,
@@ -1068,7 +1068,7 @@
         "available_bike_stands": 6,
         "available_bikes": 24,
         "status": "OPEN",
-        "last_update": 1712614589000
+        "last_update": 1712615195000
     },
     {
         "number": 82,
@@ -1102,7 +1102,7 @@
         "available_bike_stands": 21,
         "available_bikes": 17,
         "status": "OPEN",
-        "last_update": 1712614604000
+        "last_update": 1712615208000
     },
     {
         "number": 71,
@@ -1558,10 +1558,10 @@
         "banking": true,
         "bonus": false,
         "bike_stands": 16,
-        "available_bike_stands": 12,
-        "available_bikes": 4,
+        "available_bike_stands": 13,
+        "available_bikes": 3,
         "status": "OPEN",
-        "last_update": 1712614886000
+        "last_update": 1712615197000
     },
     {
         "number": 100,
@@ -1765,7 +1765,7 @@
         "available_bike_stands": 16,
         "available_bikes": 4,
         "status": "OPEN",
-        "last_update": 1712614576000
+        "last_update": 1712615181000
     },
     {
         "number": 3,

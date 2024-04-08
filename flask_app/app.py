@@ -9,7 +9,7 @@ import matplotlib as plt
 plt.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-
+from matplotlib.ticker import MaxNLocator
 from io import BytesIO
 import base64
 from ml_model import predict_bike_availability
@@ -58,6 +58,7 @@ def predict():
     plt.tick_params(axis='x', colors='grey')
     plt.tick_params(axis='y', colors='grey')
 
+    plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
 
     plt.xticks(rotation=45)  
     plot.xaxis.set_major_locator(ticker.LinearLocator(6))
