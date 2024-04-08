@@ -54,6 +54,18 @@ document.addEventListener('DOMContentLoaded', function () {
             // Hide the chart container because the sidebar is now closed
         }
     });
+
+    // Journey reverse function
+    document.getElementById('changeButton').addEventListener('click', function () {
+        // Get the input elements
+        var searchLocation = document.getElementById('searchLocation');
+        var searchDestination = document.getElementById('searchDestination');
+
+        // Swap their values
+        var temp = searchLocation.value;
+        searchLocation.value = searchDestination.value;
+        searchDestination.value = temp;
+    });
 });
 
 const body = document.querySelector('body'),
@@ -63,7 +75,7 @@ const body = document.querySelector('body'),
     modeSwitch = body.querySelector('.toggle-switch'),
     modeText = body.querySelector('.mode-text');
 
-let darkModeFlag = false;
+let darkModeFlag = true;
 let map;
 let markers = [];
 let currLatLng;
@@ -195,23 +207,6 @@ async function initMap() {
             icon: { url: markerImg.src, scaledSize: new google.maps.Size(25, 25) },
         });
 
-        // searchDestionAuto.addEventListener('input', async function (e) {
-        //     if (input.length >= 3) {
-        //         let destinAuto = new google.maps.places.Autocomplete(searchDestionAuto.value);
-        //         locationInputElement.addEventListener('input', function () {
-        //             let value = this.value;
-        //             if (searchDestionAuto.value.length >= 3) {
-        //                 // 사용자가 3글자 이상 입력했을 때 자동완성 기능 활성화
-        //                 destinAuto.setOptions({ disable: false });
-        //             } else {
-        //                 // 그렇지 않을 경우, 자동완성 기능 비활성화
-        //                 locationAuto.setOptions({ disable: true });
-        //             }
-        //         });
-        //     } else {
-        //     }
-        // });
-
         // Create an info window
         marker.addListener('click', () => {
             // if infoWindow is already exist, close the current window.
@@ -221,7 +216,7 @@ async function initMap() {
 
             infoWindow = new google.maps.InfoWindow({
                 content: `
-        <h3 class="stationdetails">${station.name}</h3>
+        <h3 class="stationdetails">${station.number}. ${station.name}</h3>
         <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
         <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
         <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
@@ -342,7 +337,7 @@ document.getElementById('station-searcher').addEventListener('input', async func
 
                         let infoWindow = new google.maps.InfoWindow({
                             content: `
-                                <h3 class="stationdetails">${station.name}</h3>
+                                <h3 class="stationdetails">${station.number}. ${station.name}</h3>
                                 <p class="stationdetails">Address: ${station.address}</p>
                                 <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
                                 <p class="stationdetails">Available bikes: ${station.available_bikes}</p>

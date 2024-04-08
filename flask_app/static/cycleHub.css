@@ -50,7 +50,7 @@ body {
 }
 /* Adjust sidebar style */
 .sidebar {
-    margin: 150px 10px 30px 20px;
+    margin: 100px 10px 30px 20px;
     max-width: 400px;
     z-index: 3;
     width: 20%;
@@ -131,6 +131,32 @@ body {
 .sidebar header .image-text {
     display: flex;
     align-items: center;
+}
+
+.swap-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    position: absolute; /* Position it relative to its parent */
+    top: 50%; /* Center vertically */
+    right: -2rem; /* Adjust based on your layout */
+    transform: translateY(-50%);
+}
+
+.swap-button:hover {
+    background-color: var(--primary-color-light); /* Light background on hover */
+}
+
+.swap-button i {
+    /* Use the 'i' tag for the icon */
+    color: var(--primary-color); /* Color of the icon */
+    font-size: 1.5rem; /* Size of the icon */
 }
 
 header .image-text .header-text {
@@ -345,6 +371,79 @@ body.dark #clockimage {
 
 #searchLocation {
     margin-bottom: 10px;
+    margin-right: 30px;
+}
+#searchDestination {
+    margin-right: 30px;
+}
+
+.swap-button {
+    position: absolute;
+    margin-top: -170px;
+    margin-right: 35px;
+}
+
+#timetext {
+    background-color: #fff; /* or any color you prefer */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* subtle shadow */
+    margin-bottom: 10px; /* Adds space below the date/time picker */
+    border-radius: 5px; /* rounded corners */
+    margin: auto; /* center the form in the middle of the page */
+    position: relative; /* To use z-index */
+    z-index: 10; /* Higher than the below content but lower than the sidebar if it has a z-index */
+    max-width: 100%; /* Ensures it doesn't overflow the sidebar */
+    box-sizing: border-box; /* Includes padding in the width */
+}
+
+#timetext h5 {
+    margin-bottom: 10px;
+    font-size: 18px; /* or your preferred size */
+    font-weight: normal;
+    color: #333; /* or any color you prefer */
+    text-align: center; /* if you want it centered */
+}
+
+#timetext form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* center the form items */
+    gap: 10px; /* space between form items */
+}
+
+#timetext input[type='date'],
+#timetext input[type='time'] {
+    border: 1px solid #ccc; /* light grey border */
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+#timetext button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff; /* Bootstrap primary button color */
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#timetext button:hover {
+    background-color: #0056b3; /* Darken the button color on hover */
+}
+
+/* You might need to adjust the width of the inputs and button if needed */
+@media (max-width: 768px) {
+    #timetext form {
+        flex-direction: column;
+    }
+
+    #timetext input[type='date'],
+    #timetext input[type='time'],
+    #timetext button {
+        width: 100%;
+    }
 }
 
 /* sidebar shortMode */
@@ -387,11 +486,14 @@ body.dark #clockimage {
     aspect-ratio: 16 / 9; /* Optional: Sets a fixed aspect ratio for the chart */
 }
 
-
 #weatherdisplay.closed {
     display: none;
 }
 
 #datetimedisplay.closed {
+    display: none;
+}
+
+.sidebar.close .swap-button {
     display: none;
 }

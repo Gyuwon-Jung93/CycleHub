@@ -37,16 +37,16 @@
                             <form id="searchinput" onsubmit="searchDest(event)">
                                 <li class="search-box">
                                     <i class='bx bx-current-location icon'></i>
-                                    <input type="search" id="searchLocation" placeholder=" Search location" />
+                                    <input type="search" id="searchLocation" placeholder="Search location" />
                                 </li>
                                 <li class="search-box">
                                     <i class='bx bx-cycling icon'></i>
-                                    <box-icon name='cycling'></box-icon>
-                                    <input type="search" id="searchDestination" placeholder=" Search destination" />
+                                    <input type="search" id="searchDestination" placeholder="Search destination" />
                                 </li>
-                                <li>
-                                    <button class ="button" type="submit">Search</button>
-                                </li>
+                                <!-- Swap button with an arrow icon -->
+                                <button id="changeButton" class="swap-button">
+                                    <i class='bx bx-transfer-alt'></i> <!-- You might need to replace with the actual icon class you have -->
+                                </button>
                             </form>
                                 <li class="search-box">
                                     <i class="bx bx-right-arrow-alt icon"></i>
@@ -112,4 +112,5 @@
                 <script src="https://unpkg.com/@google/markerclustererplus@4.0.1/dist/markerclustererplus.min.js"></script>
             </body>
         </html>
+
 
