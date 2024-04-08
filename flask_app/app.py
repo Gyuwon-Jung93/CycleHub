@@ -49,7 +49,7 @@ def predict():
 
     sns.set_style("ticks")
     sns.set_context("paper")
-    plt.figure(figsize=(5, 5))
+    plt.figure(figsize=(3, 3))
 
     plot = sns.lineplot(x=times_formatted, y=predictions, color='orange')
     plt.xlabel('Time', color='grey')
