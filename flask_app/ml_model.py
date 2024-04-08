@@ -68,6 +68,6 @@ df3['weekday_num'] = df3['time_of_day'].dt.weekday + 1
 def predict_bike_availability(df):
     with open('your_model.pkl', 'rb') as file:
         model = pickle.load(file)
-    predictions = model.predict(df)
+    predictions = model.predict(df).round()
     
     return predictions
