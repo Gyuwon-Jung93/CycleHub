@@ -55,7 +55,7 @@ def predict():
     plot = sns.barplot(x=times_formatted, y=predictions, color='orange')
     plt.xlabel('Time', color='grey')
     plt.ylabel('Bikes', color='grey')
-    plt.title('Actual vs Predicted Values Over Time', color='grey')
+    plt.title('Forecasted Bike Availability', color='grey')
     plt.tick_params(axis='x', colors='grey')
     plt.tick_params(axis='y', colors='grey')
 
