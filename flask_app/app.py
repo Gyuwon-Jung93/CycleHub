@@ -99,21 +99,22 @@ def get_stations():
         stations_query = session.query(Station).all()
         session.close()
 
-        # Convert each Station object to a dictionary
         stations = [
             {
-                'station_id': station.station_id,
-                'name': station.name,
-                'address': station.address,
-                'position_lat': station.position_lat,
-                'position_lng': station.position_lng,
-                'banking': bool(station.banking),  # Assuming banking is stored as int but represents a boolean
-                'bonus': bool(station.bonus)  # Similarly for bonus
+                "stationId": station.station_id,
+                "stationName": station.name,
+                "stationAddress": station.address,
+                "position": {  
+                    "lat": station.position_lat,
+                    "long": station.position_lng
+                },
+                "banking": bool(station.banking),  
+                "bonus": bool(station.bonus)  
+               
             }
             for station in stations_query
         ]
         
-        # Save the stations data to a JSON file
         with open('stations_data.json', 'w') as f:
             json.dump(stations, f, indent=4)
         
