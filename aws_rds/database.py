@@ -1,8 +1,6 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session,sessionmaker
+from sqlalchemy.orm import sessionmaker
 from aws_rds.models import Base
-import pymysql
-pymysql.install_as_MySQLdb()
 #Connection Details
 URI = "cyclehub-db.cpywewmkcpo2.eu-north-1.rds.amazonaws.com"
 PORT = "3306"
