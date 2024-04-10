@@ -1,8 +1,14 @@
-#!/usr/bin/env python
+
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from flask import Flask,jsonify, request
 from flask import Flask, render_template
 import requests
 from flask_cors import CORS
+from matplotlib.dates import date2num
+import pandas as pd
 import seaborn as sns
 import matplotlib as plt
 plt.use('Agg')
@@ -14,7 +20,8 @@ import base64
 from ml_model import predict_bike_availability
 from ml_model import df3
 import json
-import os
+from aws_rds.database import Base,USER,DB,engine
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # Create our flask app. Static files are served from 'static' directory
 app = Flask(__name__, static_url_path='/static')
@@ -86,16 +93,34 @@ def predict():
 # it has to be changed to get data from DataBase later.
 # We need to hide the API keys later
 @app.route('/stations')
-def get_stations():
-    contract_name = "dublin"
-    api_key = '99d3e65801ab0bdae585264b25d443c5545365b5'
-    base_url = f"https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}"
-    response = requests.get(base_url)
-    stations = response.json()
-    with open('stations.json', 'w') as file:
-        json.dump(stations, file, indent=4)
-    return jsonify(stations)
-    
+def get_stations(): 
+    try:
+        table = DB.Table('station', Base.metadata, autoload=True, autoload_with=engine)
+        sql = "SELECT * FROM station"
+        rows = app.database.execute(sql, USER)
+        for record in rows:
+            stations = []
+            stations.append(dict(rows))
+            print(record)
+        return jsonify(stations)
+    except Exception as e:
+        print("Failed to load datßa from DB")
+
+        try:
+            contract_name = "dublin"
+            api_key = '99d3e65801ab0bdae585264b25d443c5545365b5'
+            base_url = f"https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}"
+            response = requests.get(base_url)
+            stations = response.json()
+            with open('stations.json', 'w') as file:
+                json.dump(stations, file, indent=4)
+            return jsonify(stations)
+        except requests.RequestException  as e:
+            print(f"Failed to fetch data from API: {e}")
+            return jsonify({"error": "Cannot Load data"})
+
+
+
 @app.route('/weather', methods=['GET'])
 def get_weather():
     ## city = request.args.get('city')
