@@ -14,11 +14,15 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib.ticker import MaxNLocator
 from io import BytesIO
+from sqlalchemy.exc import SQLAlchemyError
+
 import base64
 from ml_model import predict_bike_availability
 from ml_model import df3
 import json
-from aws_rds.database import Base,USER,DB,engine
+from aws_rds.database import Session
+from aws_rds.models import Station
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # Create our flask app. Static files are served from 'static' directory
@@ -87,22 +91,66 @@ def predict():
     return html_response
 
 
-# Scrapping DATA
-# it has to be changed to get data from DataBase later.
-# We need to hide the API keys later
+
+@app.route('/stations')
+def get_stations():
+    try:
+        session = Session()
+        stations_query = session.query(Station).all()
+        session.close()
+
+        # Convert each Station object to a dictionary
+        stations = [
+            {
+                'station_id': station.station_id,
+                'name': station.name,
+                'address': station.address,
+                'position_lat': station.position_lat,
+                'position_lng': station.position_lng,
+                'banking': bool(station.banking),  # Assuming banking is stored as int but represents a boolean
+                'bonus': bool(station.bonus)  # Similarly for bonus
+            }
+            for station in stations_query
+        ]
+        
+        # Save the stations data to a JSON file
+        with open('stations_data.json', 'w') as f:
+            json.dump(stations, f, indent=4)
+        
+        return jsonify(stations)
+    except SQLAlchemyError as e:
+        print(f"Database access failed: {e}")
+        return jsonify({"error": "Database access failed"}), 500
+
+
+
+
+
+"""
 @app.route('/stations')
 def get_stations(): 
     try:
-        table = DB.Table('station', Base.metadata, autoload=True, autoload_with=engine)
-        sql = "SELECT * FROM station"
-        rows = app.database.execute(sql, USER)
-        for record in rows:
-            stations = []
-            stations.append(dict(rows))
-            print(record)
+        session = Session()
+        stations_query = session.query(Station).all()
+        session.close()
+
+        # Convert each Station object to a dictionary
+        stations = [
+            {
+                'station_id': station.station_id,
+                'name': station.name,
+                'address': station.address,
+                'position_lat': station.position_lat,
+                'position_lng': station.position_lng,
+                'banking': station.banking,
+                'bonus': station.bonus
+            }
+            for station in stations_query
+        ]
+        
         return jsonify(stations)
-    except Exception as e:
-        print("Failed to load datßa from DB")
+    except SQLAlchemyError as e:
+        print(f"Database access failed: {e}, attempting API fallback.")
 
         try:
             contract_name = "dublin"
@@ -117,7 +165,7 @@ def get_stations():
             print(f"Failed to fetch data from API: {e}")
             return jsonify({"error": "Cannot Load data"})
 
-
+"""
 
 @app.route('/weather', methods=['GET'])
 def get_weather():
