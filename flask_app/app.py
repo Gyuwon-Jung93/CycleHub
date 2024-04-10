@@ -3,8 +3,6 @@ from flask import Flask,jsonify, request
 from flask import Flask, render_template
 import requests
 from flask_cors import CORS
-from matplotlib.dates import date2num
-import pandas as pd
 import seaborn as sns
 import matplotlib as plt
 plt.use('Agg')
