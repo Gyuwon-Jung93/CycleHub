@@ -3,35 +3,12 @@ document.addEventListener('DOMContentLoaded', function () {
     getWeather();
     // dateTimeSelected();
     getTodayDate();
-    const weatherToggle = document.getElementById('weatherToggle');
-    const weatherDisplay = document.getElementById('weatherdisplay');
-
-    //AutoComplete
 
     /* AutoComplete Variable */
     const searchLocationInput = document.getElementById('searchLocation');
     const searchDestinationInput = document.getElementById('searchDestination');
     initializeAutocomplete(searchLocationInput);
     initializeAutocomplete(searchDestinationInput);
-
-    // Initially hide the weather display
-    weatherDisplay.classList.add('closed');
-
-    // Toggle the visibility of the weather display when the toggle is clicked
-    weatherToggle.addEventListener('click', function () {
-        weatherDisplay.classList.toggle('closed');
-    });
-
-    // const dateToggle = document.getElementById('datetoggle');
-    // const dateDisplay = document.getElementById('datetimedisplay');
-
-    // // Initially hide the weather display
-    // dateDisplay.classList.add('open');
-
-    // // Toggle the visibility of the weather display when the toggle is clicked
-    // dateToggle.addEventListener('click', function () {
-    //     dateDisplay.classList.toggle('open');
-    // });
 
     // Toggles the open sidebar icon and the chart visibility
     let toggleButton = document.getElementById('openToggle');
@@ -116,8 +93,7 @@ function updateDateTime() {
     setTimeout(function () {
         dateTimeSelection.innerHTML = 'Pick a date and time';
     }, 3000);
-};
-
+}
 
 // window counter
 let allInfoWindows = [];
@@ -331,12 +307,11 @@ async function initMap() {
                     body: `station_id=${stationId}`,
                 });
             }
-        
+
             // Parse the HTML response
             let htmlContent = await response.text();
             document.getElementById('predictionChart').innerHTML = htmlContent;
         }
-        
 
         // Add some markers to the map
         stations_info.forEach((station) => {
