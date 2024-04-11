@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     initMap();
     getWeather();
-    dateTimeSelected();
+    // dateTimeSelected();
     getTodayDate();
     const weatherToggle = document.getElementById('weatherToggle');
     const weatherDisplay = document.getElementById('weatherdisplay');
@@ -22,16 +22,16 @@ document.addEventListener('DOMContentLoaded', function () {
         weatherDisplay.classList.toggle('closed');
     });
 
-    const dateToggle = document.getElementById('datetoggle');
-    const dateDisplay = document.getElementById('datetimedisplay');
+    // const dateToggle = document.getElementById('datetoggle');
+    // const dateDisplay = document.getElementById('datetimedisplay');
 
-    // Initially hide the weather display
-    dateDisplay.classList.add('closed');
+    // // Initially hide the weather display
+    // dateDisplay.classList.add('open');
 
-    // Toggle the visibility of the weather display when the toggle is clicked
-    dateToggle.addEventListener('click', function () {
-        dateDisplay.classList.toggle('closed');
-    });
+    // // Toggle the visibility of the weather display when the toggle is clicked
+    // dateToggle.addEventListener('click', function () {
+    //     dateDisplay.classList.toggle('open');
+    // });
 
     // Toggles the open sidebar icon and the chart visibility
     let toggleButton = document.getElementById('openToggle');
@@ -91,7 +91,33 @@ let markers = [];
 let markerCluster;
 let currLatLng;
 // **** time variable ****
-let dateInput = document.getElementById('dateinput');
+// let dateInput = document.getElementById('dateinput');
+let day;
+let hour;
+
+// Date Time change function that changes to predictions to specified hour and day of the week
+
+// theres a weird bug where you need to press the button twice for this to work, will fix later!
+
+function updateDateTime() {
+    console.log(day, hour);
+    // Get the date and time input elements
+    let dateInput = document.getElementById('dateinput');
+    let timeInput = document.getElementById('timeinput');
+
+    // Get the selected date and time values
+    day = dateInput.value;
+    hour = timeInput.value;
+
+    const dateTimeSelection = document.getElementById('DateTimeSelection');
+    dateTimeSelection.innerHTML = 'Day and Time Updated!';
+
+    // Set a timeout to revert the text after 3 seconds
+    setTimeout(function () {
+        dateTimeSelection.innerHTML = 'Pick a date and time';
+    }, 3000);
+};
+
 
 // window counter
 let allInfoWindows = [];
@@ -279,22 +305,32 @@ async function initMap() {
             }
         });
 
-        // Function to generate and display the chart
         async function generateChart(stationId) {
+            let response;
             // Make a POST request to the /predict endpoint
-            const response = await fetch('/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `station_id=${stationId}`,
-            });
-
+            if (day && hour) {
+                response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `station_id=${stationId}&day=${day}&hour=${hour}`,
+                });
+            } else {
+                response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `station_id=${stationId}`,
+                });
+            }
+        
             // Parse the HTML response
-            var htmlContent = await response.text();
-
+            let htmlContent = await response.text();
             document.getElementById('predictionChart').innerHTML = htmlContent;
         }
+        
 
         // Add some markers to the map
         stations_info.forEach((station) => {
@@ -379,7 +415,7 @@ function getTodayDate() {
         };
         let todayDate = new Date().toLocaleDateString('en-GB', options);
         todayDate = todayDate.replace(/\//g, '-');
-        dateInput.min = todayDate;
+        // dateInput.min = todayDate;
     } catch (error) {
         console.error('GetTodayDate error:', error);
     }
@@ -415,20 +451,20 @@ async function getWeather() {
 // when user clicks on specific date, statistics returns
 // to be finished later using ML model
 
-async function dateTimeSelected(inputType) {
-    try {
-        let selectedValue;
-        if (inputType === 'date') {
-            selectedValue = document.getElementById('dateInput').value;
-        } else if (inputType === 'time') {
-            selectedValue = document.getElementById('timeInput').value;
-        }
-    } catch (e) {
-        console.error('There is an issue on dateTimeSelected function', e);
-    }
+// async function dateTimeSelected(inputType) {
+//     try {
+//         let selectedValue;
+//         if (inputType === 'date') {
+//             selectedValue = document.getElementById('dateInput').value;
+//         } else if (inputType === 'time') {
+//             selectedValue = document.getElementById('timeInput').value;
+//         }
+//     } catch (e) {
+//         console.error('There is an issue on dateTimeSelected function', e);
+//     }
 
-    // more to come
-}
+//     // more to come
+// }
 
 function displayResults(stations) {
     try {

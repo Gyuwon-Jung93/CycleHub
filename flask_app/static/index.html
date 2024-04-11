@@ -49,61 +49,75 @@
                                     <i class='bx bx-current-location icon'></i>
                                     <input type="search" id="searchLocation" placeholder="Search location" />
                                 </li>
+                                 <!-- Swap button with an arrow icon -->
+                                 <button id="changeButton" class="swap-button">
+                                    <i class='bx bx-transfer-alt'></i> <!-- You might need to replace with the actual icon class you have -->
+                                </button>
                                 <li class="search-box">
                                     <i class='bx bx-cycling icon'></i>
                                     <input type="search" id="searchDestination" placeholder="Search destination" />
                                 </li>
-                                <!-- Swap button with an arrow icon -->
-                                <button id="changeButton" class="swap-button">
-                                    <i class='bx bx-transfer-alt'></i> <!-- You might need to replace with the actual icon class you have -->
-                                </button>
                             </form>
+                            <li class="date-box">
+                                <i class="bx bx-calendar icon"></i>
+                                <div class ="greybox">
+                                <form>
+                                    <label>
+                                        <h7 id="DateTimeSelection">Pick a date and time</h7>
+                                        <!-- Dropdown for selecting day of the week -->
+                                        <select id="dateinput">
+                                            <option value="1">Monday</option>
+                                            <option value="2">Tuesday</option>
+                                            <option value="3">Wednesday</option>
+                                            <option value="4">Thursday</option>
+                                            <option value="5">Friday</option>
+                                            <option value="6">Saturday</option>
+                                            <option value="7">Sunday</option>
+                                        </select>
+                                        <select id="timeinput">
+                                            <option value="5">5am</option>
+                                            <option value="6">6am</option>
+                                            <option value="7">7am</option>
+                                            <option value="8">8am</option>
+                                            <option value="9">9am</option>
+                                            <option value="10">10am</option>
+                                            <option value="11">11am</option>
+                                            <option value="12">12am</option>
+                                            <option value="13">1pm</option>
+                                            <option value="14">2pm</option>
+                                            <option value="15">3pm</option>
+                                            <option value="16">4pm</option>
+                                            <option value="17">5pm</option>
+                                            <option value="18">6pm</option>
+                                            <option value="19">7pm</option>
+                                            <option value="20">8pm</option>
+                                            <option value="21">9pm</option>
+                                            <option value="22">10pm</option>
+                                            <option value="23">11pm</option>
+                                            <option value="24">12pm</option>
+                                        </select>
+                                        <button onclick="updateDateTime()">Submit</button>
+                                    </label>
+                                </form>
+                            </div>
+                                </li>
                                 <li class="search-box">
                                     <i class="bx bx-right-arrow-alt icon"></i>
                                         <input type="text" id="station-searcher" placeholder=" Search for stations...">
                                 </li>
                                 <div class ="mode-text text" id="errorResult"></div>
                                 <div id="search-results-stations"></div>
-                                <li class="box" id = "datetoggle"> 
-                                    <a href="#">   
-                                    <i class="bx bx-calendar icon"></i>
-                                    <span class="text nav-text">Date/Time</span>
-                                </a>
-                                </li>
-                                <li id="datetimedisplay">
-                                    <div class="text nav-text" id ="timetext">
-                                        <form>
-                                            <label>
-                                              <h5>Pick a date and time</h5>
-                                                <input id="dateinput" type="date" min="2024-02-01" onchange="dateTimeSelected('date')"/>
-                                                <input id="timeinput" type="time" onchange="dateTimeSelected('time')">
-                                                <button onsubmit ="">Submit</button>
-                                            </label>
-                                          </form>
-                                    </div>
-                                </li>
-                                <li class="box" id="weatherToggle"> 
-                                    <a href="#">     
+                                <li class = "date-box">
                                     <i class="bx bx-cloud icon"></i>
-                                    <span class="text nav-text">Weather</span>
-                                </a>
-                                </li>
-                                <li id="weatherdisplay">
+                                    <div class ="greybox">
                                     <div class="text nav-text" id ="weatherText"></div>
-                                </li>
-                                <li class="box">
-                                    <a href="#">    
-                                        <i class="bx bx-bar-chart-alt icon"></i>
-                                        <span class="text nav-text">Analytics</span>
-                                    </a>
+                                </div>
                                 </li>
                                 <li class="mode">
-                                    <div class="moon-sun">
-                                        <i class="bx bx-moon icon moon"></i>
-                                        <i class="bx bx-sun icon sun"></i>
+                                    <i class="bx bx-moon icon moon"></i>
+                                    <div class="moon-sun">   
                                     </div>
                                     <span class="mode-text text">Dark Mode</span>
-
                                     <div class="toggle-switch">
                                         <span class="switch"></span>
                                     </div>

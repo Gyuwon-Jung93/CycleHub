@@ -18,6 +18,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 import base64
 from ml_model import predict_bike_availability
+# from ml_model import predict_date_time
 from ml_model import df3
 import json
 from aws_rds.database import Session
@@ -43,11 +44,20 @@ def root():
 def predict():
 
     station_id = int(request.form['station_id'])
+    # try:
+    #     day = int(request.form['day'])
+    #     hour = int(request.form['day'])
+    # except Exception as e:
+    #     error_message = f"An error occurred: {str(e)}"
+    #     return error_message
+    
+    
     df_station = df3[df3['station_id'] == station_id].copy()
     times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]
     bike_stands = df3.iloc[df3[df3["station_id"]==station_id].index]["bike_stands"].iloc[0]
     times_formatted = times.dt.strftime('%a %d:%H')
     predictions = predict_bike_availability(df_station)
+    # predictions = predict_date_time(df_station, day, hour)
     
 
     sns.set_style("ticks")
@@ -109,7 +119,7 @@ def get_stations():
             Availability.station_id == latest_update_subq.c.station_id,
             Availability.last_update == latest_update_subq.c.max_last_update
         )).all()
-        print(stations_with_latest_availability)
+        # print(stations_with_latest_availability)
         stations_data = []
         for (station_id, name, address, position_lat, position_lng, banking, bonus, available_bike_stands, bike_stands, available_bikes, status, last_update) in stations_with_latest_availability:
             station_data = {

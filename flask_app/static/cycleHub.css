@@ -88,6 +88,8 @@ body {
 .sidebar #logo {
     display: none;
 }
+
+
 /* ===== SideBar ===== */
 .sidebar {
     position: fixed;
@@ -247,8 +249,54 @@ body.dark .sidebar header .toggle {
     padding: 0;
     margin: 0;
 }
+
+.sidebar.close label {
+    display: none;
+}
+
 .search-box input {
     height: 100%;
+    width: 100%;
+    outline: none;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary-color-light);
+}
+.greybox form {
+    height: 110%;
+    width: 100%;
+    outline: none;
+    border: none;
+    display: center;
+    overflow: hidden;
+    margin-left: 10px;
+}
+select {
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+  }
+.greybox button {
+    border: none;
+}
+.sidebar.close .greybox {
+    display: none;
+}
+#DateTimeSelection {
+    display: flex;
+}
+.sidebar.close #weatherText {
+    display: none;
+
+}
+#weatherText {
+    margin-left: 13px;
+    margin-top: 2px;
+}
+.greybox {
+    height: 110%;
     width: 100%;
     outline: none;
     border: none;
@@ -410,7 +458,7 @@ body.dark #clockimage {
 
 .swap-button {
     position: absolute;
-    margin-top: -170px;
+    margin-top: -130px;
     margin-right: 35px;
 }
 
