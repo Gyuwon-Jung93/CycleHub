@@ -142,7 +142,7 @@ document.getElementById('station-searcher').addEventListener('input', async func
 
                         let infoWindow = new google.maps.InfoWindow({
                             content: `
-                                <h3 class="stationdetails">${station.number}. ${station.name}</h3>
+                                <h3 class="stationdetails">${station.name}</h3>
                                 <p class="stationdetails">Address: ${station.address}</p>
                                 <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
                                 <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
@@ -177,6 +177,12 @@ modeSwitch.addEventListener('click', () => {
 });
 
 // Trigger search function when Enter key is pressed in the input field (destination or location)
+document.getElementById('searchLocation').addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        searchDest(event);
+    }
+});
 document.getElementById('searchDestination').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
         event.preventDefault();
@@ -184,12 +190,6 @@ document.getElementById('searchDestination').addEventListener('keypress', functi
     }
 });
 
-document.getElementById('searchLocation').addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        searchDest(event);
-    }
-});
 // ********************** Function Statement **********************
 
 /*** Main map Defintion ***/
@@ -324,7 +324,7 @@ async function initMap() {
 
                 infoWindow = new google.maps.InfoWindow({
                     content: `
-            <h3 class="stationdetails">${station.number}. ${station.name}</h3>
+            <h3 class="stationdetails">${station.name}</h3>
             <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
             <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
             <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
@@ -697,7 +697,7 @@ async function getStationInfoByLatLng(latlng) {
 function generateInfoWindowContent(station) {
     try {
         return `
-        <h3 class="stationdetails">${station.number}. ${station.name}</h3>
+        <h3 class="stationdetails">${station.name}</h3>
         <p class="stationdetails">Address: ${station.address}</p>
         <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
         <p class="stationdetails">Available bikes: ${station.available_bikes}</p>

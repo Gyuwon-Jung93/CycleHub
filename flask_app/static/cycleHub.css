@@ -50,7 +50,7 @@ body {
 }
 /* Adjust sidebar style */
 .sidebar {
-    margin: 100px 10px 30px 20px;
+    margin: 30px 10px 30px 20px;
     max-width: 400px;
     z-index: 3;
     width: 20%;
@@ -62,7 +62,32 @@ body {
     height: 100%;
     width: auto;
 }
+/* Logo */
 
+#logoBox {
+    box-sizing: border-box;
+    margin-top: 20px;
+    margin-bottom: 0;
+    width: 100%;
+    height: 60%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#logo2 {
+    width: 200px;
+    height: 100px;
+    margin: 0;
+}
+.sidebar.close #logo2 {
+    display: none;
+}
+.sidebar.close #logo {
+    display: block;
+}
+.sidebar #logo {
+    display: none;
+}
 /* ===== SideBar ===== */
 .sidebar {
     position: fixed;
@@ -215,7 +240,13 @@ body.dark .sidebar header .toggle {
     background: var(--primary-color-light);
     border-radius: 6px;
 }
-
+.sidebar.close #logo {
+    width: 100%;
+    height: 70%;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
 .search-box input {
     height: 100%;
     width: 100%;
