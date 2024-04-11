@@ -68,6 +68,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// ********** Addlistener && Common Variables **********
+
 //Journey reset listener
 // Add a click event listener for the reset button
 document.addEventListener('click', function (e) {
@@ -101,6 +103,95 @@ let autocompleteObj;
 let currentOpenInfoWindow = null;
 
 let currentInfoWindow;
+
+// Create an info window
+let infoWindow;
+
+//Reuse same flask call
+document.getElementById('station-searcher').addEventListener('input', async function (e) {
+    const input = this.value;
+    const resultsDiv = document.getElementById('search-results-stations');
+
+    if (input.length >= 3) {
+        const response = await fetch('/stationSearch');
+        const stations = await response.json();
+        resultsDiv.innerHTML = ''; // Clear previous results
+
+        stations
+            .filter((station) => station.name.toLowerCase().includes(input.toLowerCase()))
+            .forEach((station) => {
+                // Make div for searching result
+                const div = document.createElement('div');
+                div.innerHTML = station.name; // Display station name
+                div.className = 'station-result';
+                // Move zoom to the target station the user clicked
+                div.onclick = function () {
+                    resultsDiv.style.display = 'None';
+                    // Find the marker that matches the clicked station
+                    // Object's index name changes when we change marker style(Advanced=>Legacy Marker)
+                    const markerObj = markers.find((m) => m.title === station.name);
+                    if (markerObj) {
+                        // Move the map to the selected marker
+                        let searchLat = station.position.lat;
+                        let searchLng = station.position.lng;
+                        map.setCenter(new google.maps.LatLng(searchLat, searchLng));
+                        map.setZoom(16);
+                        // Assuming we have stored InfoWindow objects in a map or similar structure
+                        // This part assumes you have an existing mechanism to match markers with InfoWindows
+                        // For simplicity, let's assume each marker's 'title' property matches the station name and use it to find the corresponding InfoWindow
+
+                        let infoWindow = new google.maps.InfoWindow({
+                            content: `
+                                <h3 class="stationdetails">${station.number}. ${station.name}</h3>
+                                <p class="stationdetails">Address: ${station.address}</p>
+                                <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
+                                <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
+                                <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
+                                <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+                                <p class="stationdetails">Status: ${station.status}</p>
+                            `,
+                        });
+
+                        // Open the InfoWindow on the map at the marker's location
+                        infoWindow.open(map, markerObj);
+                    }
+                };
+                resultsDiv.appendChild(div);
+            });
+
+        resultsDiv.style.display = 'block';
+    } else {
+        resultsDiv.style.display = 'none';
+    }
+});
+// **** mode change ****
+modeSwitch.addEventListener('click', () => {
+    body.classList.toggle('dark');
+    darkModeFlag = !darkModeFlag;
+
+    if (darkModeFlag) {
+        map.setOptions({ styles: darkStyleArray });
+    } else {
+        map.setOptions({ styles: brightStyleArray });
+    }
+});
+
+// Trigger search function when Enter key is pressed in the input field (destination or location)
+document.getElementById('searchDestination').addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        searchDest(event);
+    }
+});
+
+document.getElementById('searchLocation').addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        searchDest(event);
+    }
+});
+// ********************** Function Statement **********************
+
 /*** Main map Defintion ***/
 async function initMap() {
     try {
@@ -333,94 +424,27 @@ async function dateTimeSelected(inputType) {
             selectedValue = document.getElementById('timeInput').value;
         }
     } catch (e) {
-        console.error('THere is an issue on dateTimeSelected function', e);
+        console.error('There is an issue on dateTimeSelected function', e);
     }
 
     // more to come
 }
 
-//Reuse same flask call
-document.getElementById('station-searcher').addEventListener('input', async function (e) {
-    const input = this.value;
-    const resultsDiv = document.getElementById('search-results-stations');
-
-    if (input.length >= 3) {
-        const response = await fetch('/stationSearch');
-        const stations = await response.json();
-        resultsDiv.innerHTML = ''; // Clear previous results
-
-        stations
-            .filter((station) => station.name.toLowerCase().includes(input.toLowerCase()))
-            .forEach((station) => {
-                // Make div for searching result
-                const div = document.createElement('div');
-                div.innerHTML = station.name; // Display station name
-                div.className = 'station-result';
-                // Move zoom to the target station the user clicked
-                div.onclick = function () {
-                    resultsDiv.style.display = 'None';
-                    // Find the marker that matches the clicked station
-                    // Object's index name changes when we change marker style(Advanced=>Legacy Marker)
-                    const markerObj = markers.find((m) => m.title === station.name);
-                    if (markerObj) {
-                        // Move the map to the selected marker
-                        let searchLat = station.position.lat;
-                        let searchLng = station.position.lng;
-                        map.setCenter(new google.maps.LatLng(searchLat, searchLng));
-                        map.setZoom(16);
-                        // Assuming we have stored InfoWindow objects in a map or similar structure
-                        // This part assumes you have an existing mechanism to match markers with InfoWindows
-                        // For simplicity, let's assume each marker's 'title' property matches the station name and use it to find the corresponding InfoWindow
-
-                        let infoWindow = new google.maps.InfoWindow({
-                            content: `
-                                <h3 class="stationdetails">${station.number}. ${station.name}</h3>
-                                <p class="stationdetails">Address: ${station.address}</p>
-                                <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
-                                <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
-                                <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
-                                <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-                                <p class="stationdetails">Status: ${station.status}</p>
-                            `,
-                        });
-
-                        // Open the InfoWindow on the map at the marker's location
-                        infoWindow.open(map, markerObj);
-                    }
-                };
-                resultsDiv.appendChild(div);
-            });
-
-        resultsDiv.style.display = 'block';
-    } else {
-        resultsDiv.style.display = 'none';
-    }
-});
 function displayResults(stations) {
-    const resultsContainer = document.getElementById('search-results');
-    resultsContainer.innerHTML = ''; // Clear previous results
+    try {
+        const resultsContainer = document.getElementById('search-results');
+        resultsContainer.innerHTML = ''; // Clear previous results
 
-    stations.forEach((station) => {
-        const div = document.createElement('div');
-        div.className = 'station-result';
-        div.textContent = station.name;
-        resultsContainer.appendChild(div);
-    });
-}
-
-// Create an info window
-let infoWindow;
-
-modeSwitch.addEventListener('click', () => {
-    body.classList.toggle('dark');
-    darkModeFlag = !darkModeFlag;
-
-    if (darkModeFlag) {
-        map.setOptions({ styles: darkStyleArray });
-    } else {
-        map.setOptions({ styles: brightStyleArray });
+        stations.forEach((station) => {
+            const div = document.createElement('div');
+            div.className = 'station-result';
+            div.textContent = station.name;
+            resultsContainer.appendChild(div);
+        });
+    } catch (e) {
+        console.error('Fail to load station Data', e);
     }
-});
+}
 
 toggle.addEventListener('click', () => {
     sidebar.classList.toggle('close');
@@ -558,106 +582,86 @@ async function calculateAndDisplayRoute(loc, dest) {
     }
 }
 
-function clearMarkersAndCluster() {
-    // Clear out the markers array
-    for (let i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-    }
-    markers = [];
-
-    // Clear cluster
-    if (markerCluster) {
-        markerCluster.clearMarkers();
-    }
-}
-
-// Trigger search function when Enter key is pressed in the input field (destination or location)
-document.getElementById('searchDestination').addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        searchDest(event);
-    }
-});
-
-document.getElementById('searchLocation').addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        searchDest(event);
-    }
-});
-
 function initializeAutocomplete(inputElement) {
-    //Addlistener for input
-    inputElement.addEventListener('input', function () {
-        const value = this.value;
-        if (value.length >= 2) {
-            //The length of character is over 3 words, activate Autocomplete
-            if (!autocompleteObj) {
-                autocompleteObj = new google.maps.places.Autocomplete(this, { types: ['geocode'] });
+    try {
+        //Addlistener for input
+        inputElement.addEventListener('input', function () {
+            const value = this.value;
+            if (value.length >= 2) {
+                //The length of character is over 3 words, activate Autocomplete
+                if (!autocompleteObj) {
+                    autocompleteObj = new google.maps.places.Autocomplete(this, { types: ['geocode'] });
+                }
+            } else {
+                autocompleteObj = null;
             }
-        } else {
-            autocompleteObj = null;
-        }
-    });
+        });
+    } catch (e) {
+        console.error('Fail to initialise Autocomplete', error);
+    }
 }
 async function showInfoWindowsForStops(locations) {
-    const sidebar = document.querySelector('.sidebar');
-    if (!sidebar.classList.contains('close')) {
-        sidebar.classList.add('close');
-    }
-
-    if (locations.length !== 2) {
-        console.error('This function expects exactly two locations to properly center the map.');
-        return;
-    }
-
-    // Calculate the midpoint between the two locations
-    const midpoint = {
-        lat: (locations[0].lat + locations[1].lat) / 2,
-        lng: (locations[0].lng + locations[1].lng) / 2,
-    };
-
-    // Set the center of the map to the midpoint
-    map.setCenter(midpoint);
-
-    // Optionally adjust the zoom level here if needed
-    // map.setZoom(desiredZoomLevel);
-
-    // Display the info windows for each location
-    for (let location of locations) {
-        const stationInfo = await getStationInfoByLatLng(location);
-        if (stationInfo) {
-            // Close the previous infoWindow if it exists
-
-            // Create the new info window
-            const infoWindow = new google.maps.InfoWindow({
-                content: generateInfoWindowContent(stationInfo),
-            });
-            allInfoWindows.push(infoWindow);
-            // Create the marker for this location
-            const marker = new google.maps.Marker({
-                position: location,
-                map: map,
-            });
-
-            // Open the info window
-            infoWindow.open(map, marker);
-
-            // Update the reference to the current open info window
-            currentOpenInfoWindow = infoWindow;
-
-            // Add a 'closeclick' event listener to set the currentOpenInfoWindow to null when the info window is closed
-            google.maps.event.addListener(infoWindow, 'closeclick', function () {
-                currentOpenInfoWindow = null;
-            });
+    try {
+        const sidebar = document.querySelector('.sidebar');
+        if (!sidebar.classList.contains('close')) {
+            sidebar.classList.add('close');
         }
-    }
 
-    // Fit the map to the bounds that include both locations
-    const bounds = new google.maps.LatLngBounds();
-    bounds.extend(locations[0]);
-    bounds.extend(locations[1]);
-    map.fitBounds(bounds);
+        if (locations.length !== 2) {
+            console.error('This function expects exactly two locations to properly center the map.');
+            return;
+        }
+
+        // Calculate the midpoint between the two locations
+        const midpoint = {
+            lat: (locations[0].lat + locations[1].lat) / 2,
+            lng: (locations[0].lng + locations[1].lng) / 2,
+        };
+
+        // Set the center of the map to the midpoint
+        map.setCenter(midpoint);
+
+        // Optionally adjust the zoom level here if needed
+        // map.setZoom(desiredZoomLevel);
+
+        // Display the info windows for each location
+        for (let location of locations) {
+            const stationInfo = await getStationInfoByLatLng(location);
+            if (stationInfo) {
+                // Close the previous infoWindow if it exists
+
+                // Create the new info window
+                const infoWindow = new google.maps.InfoWindow({
+                    content: generateInfoWindowContent(stationInfo),
+                });
+                allInfoWindows.push(infoWindow);
+                // Create the marker for this location
+                const marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                });
+
+                // Open the info window
+                infoWindow.open(map, marker);
+
+                // Update the reference to the current open info window
+                currentOpenInfoWindow = infoWindow;
+
+                // Add a 'closeclick' event listener to set the currentOpenInfoWindow to null when the info window is closed
+                google.maps.event.addListener(infoWindow, 'closeclick', function () {
+                    currentOpenInfoWindow = null;
+                });
+            }
+        }
+
+        // Fit the map to the bounds that include both locations
+        const bounds = new google.maps.LatLngBounds();
+        bounds.extend(locations[0]);
+        bounds.extend(locations[1]);
+        map.fitBounds(bounds);
+    } catch (e) {
+        console.error('There is an issue in showInfoWindowsForStops', e);
+    }
 }
 
 async function getStationInfoByLatLng(latlng) {
@@ -691,7 +695,8 @@ async function getStationInfoByLatLng(latlng) {
 }
 
 function generateInfoWindowContent(station) {
-    return `
+    try {
+        return `
         <h3 class="stationdetails">${station.number}. ${station.name}</h3>
         <p class="stationdetails">Address: ${station.address}</p>
         <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
@@ -701,41 +706,60 @@ function generateInfoWindowContent(station) {
         <p class="stationdetails">Status: ${station.status}</p>
         <div id="predictionChart"></div>
         <button class="journeyReset">Reset Route</button>`;
+    } catch (e) {
+        console.error('Fail to load station Data', e);
+    }
 }
 
 function resetRoute() {
-    allInfoWindows.forEach(function (infowindow) {
-        infowindow.close();
-    });
+    try {
+        allInfoWindows.forEach(function (infowindow) {
+            infowindow.close();
+        });
 
-    // Close the current open InfoWindow if it exists
-    if (currentOpenInfoWindow) {
-        currentOpenInfoWindow.close();
+        // Close the current open InfoWindow if it exists
+        if (currentOpenInfoWindow) {
+            currentOpenInfoWindow.close();
+        }
+
+        // Remove the current directions from the map
+        if (previousDirectionsRenderer) {
+            previousDirectionsRenderer.setMap(null);
+        }
+
+        // Reset the search input fields
+        let locationInput = document.getElementById('searchLocation');
+        let destInput = document.getElementById('searchDestination');
+        locationInput.value = '';
+        destInput.value = '';
+        let openToggleButton = document.getElementById('openToggle');
+        if (openToggleButton) {
+            // Remove existing classes if necessary
+            openToggleButton.classList.remove('bx-chevron-left');
+
+            // Add the new classes
+            openToggleButton.classList.add('bx');
+            openToggleButton.classList.add('toggle');
+            openToggleButton.classList.add('bx-chevron-right');
+        }
+        initMap();
+    } catch (e) {
+        console.error('There is an issue on resetRoute', e);
     }
-
-    // Remove the current directions from the map
-    if (previousDirectionsRenderer) {
-        previousDirectionsRenderer.setMap(null);
-    }
-
-    // Reset the search input fields
-    let locationInput = document.getElementById('searchLocation');
-    let destInput = document.getElementById('searchDestination');
-    locationInput.value = '';
-    destInput.value = '';
-    let openToggleButton = document.getElementById('openToggle');
-    if (openToggleButton) {
-        // Remove existing classes if necessary
-        openToggleButton.classList.remove('bx-chevron-left');
-
-        // Add the new classes
-        openToggleButton.classList.add('bx');
-        openToggleButton.classList.add('toggle');
-        openToggleButton.classList.add('bx-chevron-right');
-    }
-    initMap();
 }
+function clearMarkersAndCluster() {
+    try {
+        // Clear out the markers array
+        for (let i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
+        markers = [];
 
-function displayMarkers() {}
-
-function displayClusters() {}
+        // Clear cluster
+        if (markerCluster) {
+            markerCluster.clearMarkers();
+        }
+    } catch (e) {
+        console.error('There is an issue on clearMarkersAndCluster', e);
+    }
+}
