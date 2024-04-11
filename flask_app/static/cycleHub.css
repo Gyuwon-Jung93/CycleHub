@@ -169,7 +169,7 @@ body {
     border-radius: 50%;
     transition: background-color 0.3s ease;
     position: absolute; /* Position it relative to its parent */
-    top: 50%; /* Center vertically */
+    top: 59%; /* Center vertically */
     right: -2rem; /* Adjust based on your layout */
     transform: translateY(-50%);
 }

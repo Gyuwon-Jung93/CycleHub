@@ -85,7 +85,7 @@ const body = document.querySelector('body'),
     modeSwitch = body.querySelector('.toggle-switch'),
     modeText = body.querySelector('.mode-text');
 
-let darkModeFlag = false;
+let darkModeFlag = true;
 let map;
 let markers = [];
 let markerCluster;
@@ -171,8 +171,14 @@ modeSwitch.addEventListener('click', () => {
 
     if (darkModeFlag) {
         map.setOptions({ styles: darkStyleArray });
+        document.getElementById('logo2').src = '/static/image/LogoBlack.png';
+        document.getElementById('logo').src = '/static/image/DarkLogo.png';
     } else {
         map.setOptions({ styles: brightStyleArray });
+        document.getElementById('logo2').src = '/static/image/LogoWhite.png';
+        document.getElementById('logo').src = '/static/image/White.png';
+
+        //document.getElementById('logo').setAttribute.src = 'static/image/LogoWhite.png';
     }
 });
 
