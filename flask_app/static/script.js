@@ -68,6 +68,14 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+//Journey reset listener
+// Add a click event listener for the reset button
+document.addEventListener('click', function (e) {
+    if (e.target && e.target.classList.contains('journeyReset')) {
+        resetRoute();
+    }
+});
+
 const body = document.querySelector('body'),
     sidebar = body.querySelector('.sidebar'),
     toggle = body.querySelector('.toggle'),
@@ -80,6 +88,9 @@ let map;
 let markers = [];
 let markerCluster;
 let currLatLng;
+
+// window counter
+let allInfoWindows = [];
 
 //AutoCompletion
 let searchLocationInput;
@@ -599,7 +610,7 @@ async function showInfoWindowsForStops(locations) {
             const infoWindow = new google.maps.InfoWindow({
                 content: generateInfoWindowContent(stationInfo),
             });
-
+            allInfoWindows.push(infoWindow);
             // Create the marker for this location
             const marker = new google.maps.Marker({
                 position: location,
@@ -665,5 +676,43 @@ function generateInfoWindowContent(station) {
         <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
         <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
         <p class="stationdetails">Status: ${station.status}</p>
-        <div id="predictionChart"></div>`;
+        <div id="predictionChart"></div>
+        <button class="journeyReset">Reset Route</button>`;
 }
+
+function resetRoute() {
+    allInfoWindows.forEach(function (infowindow) {
+        infowindow.close();
+    });
+
+    // Close the current open InfoWindow if it exists
+    if (currentOpenInfoWindow) {
+        currentOpenInfoWindow.close();
+    }
+
+    // Remove the current directions from the map
+    if (previousDirectionsRenderer) {
+        previousDirectionsRenderer.setMap(null);
+    }
+
+    // Reset the search input fields
+    let locationInput = document.getElementById('searchLocation');
+    let destInput = document.getElementById('searchDestination');
+    locationInput.value = '';
+    destInput.value = '';
+    let openToggleButton = document.getElementById('openToggle');
+    if (openToggleButton) {
+        // Remove existing classes if necessary
+        openToggleButton.classList.remove('bx-chevron-left');
+
+        // Add the new classes
+        openToggleButton.classList.add('bx');
+        openToggleButton.classList.add('toggle');
+        openToggleButton.classList.add('bx-chevron-right');
+    }
+    initMap();
+}
+
+function displayMarkers() {}
+
+function displayClusters() {}
