@@ -85,7 +85,9 @@ let currLatLng;
 let searchLocationInput;
 let searchDestinationInput;
 let autocompleteObj;
+let currentOpenInfoWindow = null;
 
+let currentInfoWindow;
 /*** Main map Defintion ***/
 async function initMap() {
     let locations = [];
@@ -565,15 +567,63 @@ function initializeAutocomplete(inputElement) {
     });
 }
 async function showInfoWindowsForStops(locations) {
+    const sidebar = document.querySelector('.sidebar');
+    if (!sidebar.classList.contains('close')) {
+        sidebar.classList.add('close');
+    }
+
+    if (locations.length !== 2) {
+        console.error('This function expects exactly two locations to properly center the map.');
+        return;
+    }
+
+    // Calculate the midpoint between the two locations
+    const midpoint = {
+        lat: (locations[0].lat + locations[1].lat) / 2,
+        lng: (locations[0].lng + locations[1].lng) / 2,
+    };
+
+    // Set the center of the map to the midpoint
+    map.setCenter(midpoint);
+
+    // Optionally adjust the zoom level here if needed
+    // map.setZoom(desiredZoomLevel);
+
+    // Display the info windows for each location
     for (let location of locations) {
         const stationInfo = await getStationInfoByLatLng(location);
         if (stationInfo) {
+            // Close the previous infoWindow if it exists
+
+            // Create the new info window
             const infoWindow = new google.maps.InfoWindow({
                 content: generateInfoWindowContent(stationInfo),
             });
-            infoWindow.open(map, new google.maps.Marker({ position: location, map: map }));
+
+            // Create the marker for this location
+            const marker = new google.maps.Marker({
+                position: location,
+                map: map,
+            });
+
+            // Open the info window
+            infoWindow.open(map, marker);
+
+            // Update the reference to the current open info window
+            currentOpenInfoWindow = infoWindow;
+
+            // Add a 'closeclick' event listener to set the currentOpenInfoWindow to null when the info window is closed
+            google.maps.event.addListener(infoWindow, 'closeclick', function () {
+                currentOpenInfoWindow = null;
+            });
         }
     }
+
+    // Fit the map to the bounds that include both locations
+    const bounds = new google.maps.LatLngBounds();
+    bounds.extend(locations[0]);
+    bounds.extend(locations[1]);
+    map.fitBounds(bounds);
 }
 
 async function getStationInfoByLatLng(latlng) {
@@ -615,5 +665,5 @@ function generateInfoWindowContent(station) {
         <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
         <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
         <p class="stationdetails">Status: ${station.status}</p>
-    `;
+        <div id="predictionChart"></div>`;
 }

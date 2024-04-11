@@ -2,7 +2,6 @@
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from sqlalchemy import and_
 
 from flask import Flask,jsonify, request
 from flask import Flask
@@ -62,7 +61,7 @@ def predict():
     sns.set_context("paper")
     plt.figure(figsize=(3, 3))
 
-    plot = sns.lineplot(x=times_formatted, y=predictions, color='orange')
+    plot = sns.barplot(x=times_formatted, y=predictions, color='orange')
     plt.xlabel('Time', color='grey')
     plt.ylabel('Bikes', color='grey')
     plt.title('Forecasted Bike Availability', color='grey')
@@ -99,57 +98,57 @@ def predict():
 def get_stations():
     try:
         session = Session()
- 
-        latest_update_subq = session.query(
+
+        # Subquery to get the most recent last_update for each station_id
+        subq = session.query(
             Availability.station_id,
             func.max(Availability.last_update).label('max_last_update')
-        ).group_by(Availability.station_id).subquery('latest_updates')
+        ).group_by(Availability.station_id).subquery()
 
-        stations_with_latest_availability = session.query(
-            Station.station_id,
-            Station.name,
-            Station.address,
-            Station.position_lat,
-            Station.position_lng,
-            Station.banking,
-            Station.bonus,
-            Availability.available_bike_stands,
-            Availability.bike_stands,
-            Availability.available_bikes,
-            Availability.status,
-            Availability.last_update
-        ).join(Availability, Station.station_id == Availability.station_id
-        ).join(latest_update_subq, and_(
-            Availability.station_id == latest_update_subq.c.station_id,
-            Availability.last_update == latest_update_subq.c.max_last_update
-        )).all()
-        print(stations_with_latest_availability)
-        stations_data = []
-        for (station_id, name, address, position_lat, position_lng, banking, bonus, available_bike_stands, bike_stands, available_bikes, status, last_update) in stations_with_latest_availability:
-            station_data = {
-                "number": station_id,
-                "contract_name": "dublin", 
-                "name": name,
-                "address": address,
-                "position": {"lat": position_lat, "lng": position_lng},
-                "banking": bool(banking),
-                "bonus": bool(bonus),
-                "bike_stands": bike_stands,
-                "available_bike_stands": available_bike_stands,
-                "available_bikes": available_bikes,
-                "status": status,
-                "last_update": last_update.timestamp() * 1000 
-            }
-            stations_data.append(station_data)
+        # Aliased to join on the same table with conditions
+        latest_availability = aliased(Availability)
+
+        # Query stations and join with the subquery to fetch latest availability details
+        stations_query = session.query(
+            Station,
+            latest_availability.available_bike_stands,
+            latest_availability.bike_stands,
+            latest_availability.available_bikes,
+            latest_availability.status,
+            latest_availability.last_update
+        ).outerjoin(
+            latest_availability, 
+            (Station.station_id == latest_availability.station_id) & 
+            (latest_availability.last_update == subq.c.max_last_update)
+        ).all()
 
         session.close()
 
-        # Writing to a JSON file
-        with open('stations_data.json', 'w') as f:
-            json.dump(stations_data, f, indent=4)
-
-        # Returning JSON response
-        return jsonify(stations_data)
+        stations = [
+            {
+                "number": station.station_id,
+                "contract_name": "dublin",
+                "name": station.name,
+                "address": station.address,
+                "position": {
+                    "lat": station.position_lat,
+                    "lng": station.position_lng
+                },
+                "banking": bool(station.banking),
+                "bonus": bool(station.bonus),
+                "bike_stands": availability.bike_stands if availability else 0,
+                "available_bike_stands": availability.available_bike_stands if availability else 0,
+                "available_bikes": availability.available_bikes if availability else 0,
+                "status": availability.status if availability else "UNKNOWN",
+                "last_update": availability.last_update.timestamp() * 1000 if availability else 0  # Convert to milliseconds
+            }
+            for station, availability in stations_query
+        ]
+        
+        with open('stations.json', 'w') as f:
+            json.dump(stations, f, indent=4)
+        
+        return jsonify(stations)
     except SQLAlchemyError as e:
         print(f"Database access failed: {e}, attempting API fallback.")
         try:
