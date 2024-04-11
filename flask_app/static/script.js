@@ -78,6 +78,7 @@ const body = document.querySelector('body'),
 let darkModeFlag = false;
 let map;
 let markers = [];
+let markerCluster;
 let currLatLng;
 
 //AutoCompletion
@@ -236,13 +237,13 @@ async function initMap() {
     // Function to generate and render the chart for a specific station
 
     //marker cluster
-    let clusterer = new MarkerClusterer(map, markers, {
+    markerCluster = new MarkerClusterer(map, markers, {
         minimumClusterSize: 4,
         imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
         zoomOnClick: false,
     });
     //Cluster click listener
-    google.maps.event.addListener(clusterer, 'click', (cluster) => {
+    google.maps.event.addListener(markerCluster, 'click', (markerCluster) => {
         map.setCenter(cluster.getCenter());
         map.setZoom(map.getZoom() + 3);
     });
@@ -471,7 +472,9 @@ async function calculateAndDisplayRoute(loc, dest) {
     try {
         const dest1 = await findNearestStation(loc);
         const dest2 = await findNearestStation(dest);
-        console.log(loc, dest, dest1, dest2);
+        console.log(dest1, dest2);
+
+        clearMarkersAndCluster();
 
         let directionsService = new google.maps.DirectionsService();
         let directionsRenderer = new google.maps.DirectionsRenderer();
@@ -501,7 +504,10 @@ async function calculateAndDisplayRoute(loc, dest) {
             },
             (response, status) => {
                 if (status === 'OK') {
+                    console.log(response);
+                    console.log('결과');
                     directionsRenderer.setDirections(response);
+                    showInfoWindowsForStops([dest1, dest2]);
                 } else {
                     console.error('Directions request failed:', status);
                     errorResult.innerHTML = 'Directions request failed. Try again';
@@ -513,6 +519,19 @@ async function calculateAndDisplayRoute(loc, dest) {
         );
     } catch (error) {
         console.error('Error calculating and displaying route:', error);
+    }
+}
+
+function clearMarkersAndCluster() {
+    // Clear out the markers array
+    for (let i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    markers = [];
+
+    // Clear cluster
+    if (markerCluster) {
+        markerCluster.clearMarkers();
     }
 }
 
@@ -532,11 +551,11 @@ document.getElementById('searchLocation').addEventListener('keypress', function 
 });
 
 function initializeAutocomplete(inputElement) {
-    // input 이벤트 리스너를 추가
+    //Addlistener for input
     inputElement.addEventListener('input', function () {
         const value = this.value;
-        if (value.length >= 3) {
-            // 문자열 길이가 3글자 이상일 때만 Autocomplete 기능 활성화
+        if (value.length >= 2) {
+            //The length of character is over 3 words, activate Autocomplete
             if (!autocompleteObj) {
                 autocompleteObj = new google.maps.places.Autocomplete(this, { types: ['geocode'] });
             }
@@ -544,4 +563,57 @@ function initializeAutocomplete(inputElement) {
             autocompleteObj = null;
         }
     });
+}
+async function showInfoWindowsForStops(locations) {
+    for (let location of locations) {
+        const stationInfo = await getStationInfoByLatLng(location);
+        if (stationInfo) {
+            const infoWindow = new google.maps.InfoWindow({
+                content: generateInfoWindowContent(stationInfo),
+            });
+            infoWindow.open(map, new google.maps.Marker({ position: location, map: map }));
+        }
+    }
+}
+
+async function getStationInfoByLatLng(latlng) {
+    try {
+        responseFind = await fetch('/stations');
+        if (!responseFind.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const stations = await responseFind.json();
+        // Find the station closest to the given latlng
+        let closestStation = null;
+        let closestDistance = Infinity;
+
+        for (const station of stations) {
+            const distance = getDistanceFromLatLonInKm(
+                latlng.lat,
+                latlng.lng,
+                station.position.lat,
+                station.position.lng
+            );
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestStation = station;
+            }
+        }
+        return closestStation;
+    } catch (error) {
+        console.error('Could not get station information:', error);
+        return null;
+    }
+}
+
+function generateInfoWindowContent(station) {
+    return `
+        <h3 class="stationdetails">${station.number}. ${station.name}</h3>
+        <p class="stationdetails">Address: ${station.address}</p>
+        <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
+        <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
+        <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
+        <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+        <p class="stationdetails">Status: ${station.status}</p>
+    `;
 }
