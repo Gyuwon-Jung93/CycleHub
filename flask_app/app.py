@@ -89,9 +89,18 @@ def predict():
     
     
     return html_response
-
-
-
+"""
+@app.route('/stations')
+def get_stations():
+    contract_name = "dublin"
+    api_key = '99d3e65801ab0bdae585264b25d443c5545365b5'
+    base_url = f"https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}"
+    response = requests.get(base_url)
+    stations = response.json()
+    with open('stations.json', 'w') as file:
+        json.dump(stations, file, indent=4)
+    return jsonify(stations)
+"""
 @app.route('/stations')
 def get_stations():
     try:
@@ -101,58 +110,26 @@ def get_stations():
 
         stations = [
             {
-                "stationId": station.station_id,
-                "stationName": station.name,
-                "stationAddress": station.address,
+                "number": station.station_id,  # Assuming station_id maps to 'number'
+                "contract_name": "dublin",  # Assuming all stations are part of the 'dublin' contract
+                "name": station.name,
+                "address": station.address,
                 "position": {  
                     "lat": station.position_lat,
-                    "long": station.position_lng
+                    "lng": station.position_lng
                 },
-                "banking": bool(station.banking),  
-                "bonus": bool(station.bonus)  
-               
+                "banking": bool(station.banking),
+                "bonus": bool(station.bonus),
             }
             for station in stations_query
         ]
         
-        with open('stations_data.json', 'w') as f:
+        with open('stations.json', 'w') as f:
             json.dump(stations, f, indent=4)
         
         return jsonify(stations)
     except SQLAlchemyError as e:
-        print(f"Database access failed: {e}")
-        return jsonify({"error": "Database access failed"}), 500
-
-
-
-
-
-"""
-@app.route('/stations')
-def get_stations(): 
-    try:
-        session = Session()
-        stations_query = session.query(Station).all()
-        session.close()
-
-        # Convert each Station object to a dictionary
-        stations = [
-            {
-                'station_id': station.station_id,
-                'name': station.name,
-                'address': station.address,
-                'position_lat': station.position_lat,
-                'position_lng': station.position_lng,
-                'banking': station.banking,
-                'bonus': station.bonus
-            }
-            for station in stations_query
-        ]
-        
-        return jsonify(stations)
-    except SQLAlchemyError as e:
         print(f"Database access failed: {e}, attempting API fallback.")
-
         try:
             contract_name = "dublin"
             api_key = '99d3e65801ab0bdae585264b25d443c5545365b5'
@@ -166,7 +143,8 @@ def get_stations():
             print(f"Failed to fetch data from API: {e}")
             return jsonify({"error": "Cannot Load data"})
 
-"""
+
+
 
 @app.route('/weather', methods=['GET'])
 def get_weather():
