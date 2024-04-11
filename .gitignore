@@ -1,1 +1,6 @@
 .DS_Store
+
+stations.json
+aws_rds/__pycache__/__init__.cpython-312.pyc
+aws_rds/__pycache__/database.cpython-312.pyc
+aws_rds/__pycache__/models.cpython-312.pyc

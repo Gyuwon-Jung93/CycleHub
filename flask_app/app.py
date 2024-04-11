@@ -21,7 +21,9 @@ from ml_model import predict_bike_availability
 from ml_model import df3
 import json
 from aws_rds.database import Session
-from aws_rds.models import Station
+from aws_rds.models import Station, Availability
+from sqlalchemy.sql import func
+from sqlalchemy.orm import aliased
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -89,39 +91,58 @@ def predict():
     
     
     return html_response
-"""
-@app.route('/stations')
-def get_stations():
-    contract_name = "dublin"
-    api_key = '99d3e65801ab0bdae585264b25d443c5545365b5'
-    base_url = f"https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}"
-    response = requests.get(base_url)
-    stations = response.json()
-    with open('stations.json', 'w') as file:
-        json.dump(stations, file, indent=4)
-    return jsonify(stations)
-"""
+
+
+
 @app.route('/stations')
 def get_stations():
     try:
         session = Session()
-        stations_query = session.query(Station).all()
+
+        # Subquery to get the most recent last_update for each station_id
+        subq = session.query(
+            Availability.station_id,
+            func.max(Availability.last_update).label('max_last_update')
+        ).group_by(Availability.station_id).subquery()
+
+        # Aliased to join on the same table with conditions
+        latest_availability = aliased(Availability)
+
+        # Query stations and join with the subquery to fetch latest availability details
+        stations_query = session.query(
+            Station,
+            latest_availability.available_bike_stands,
+            latest_availability.bike_stands,
+            latest_availability.available_bikes,
+            latest_availability.status,
+            latest_availability.last_update
+        ).outerjoin(
+            latest_availability, 
+            (Station.station_id == latest_availability.station_id) & 
+            (latest_availability.last_update == subq.c.max_last_update)
+        ).all()
+
         session.close()
 
         stations = [
             {
-                "number": station.station_id,  # Assuming station_id maps to 'number'
-                "contract_name": "dublin",  # Assuming all stations are part of the 'dublin' contract
+                "number": station.station_id,
+                "contract_name": "dublin",
                 "name": station.name,
                 "address": station.address,
-                "position": {  
+                "position": {
                     "lat": station.position_lat,
                     "lng": station.position_lng
                 },
                 "banking": bool(station.banking),
                 "bonus": bool(station.bonus),
+                "bike_stands": availability.bike_stands if availability else 0,
+                "available_bike_stands": availability.available_bike_stands if availability else 0,
+                "available_bikes": availability.available_bikes if availability else 0,
+                "status": availability.status if availability else "UNKNOWN",
+                "last_update": availability.last_update.timestamp() * 1000 if availability else 0  # Convert to milliseconds
             }
-            for station in stations_query
+            for station, availability in stations_query
         ]
         
         with open('stations.json', 'w') as f:
