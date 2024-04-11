@@ -88,6 +88,8 @@ let map;
 let markers = [];
 let markerCluster;
 let currLatLng;
+// **** time variable ****
+let dateInput = document.getElementById('dateinput');
 
 // window counter
 let allInfoWindows = [];
@@ -101,178 +103,195 @@ let currentOpenInfoWindow = null;
 let currentInfoWindow;
 /*** Main map Defintion ***/
 async function initMap() {
-    let locations = [];
-    let { Map } = await google.maps.importLibrary('maps');
-    //fetch station information data from the flask Server
-    //install pip3 flask-cors to fetch data
-    const response = await fetch('/stations');
-    const stations_info = await response.json();
+    try {
+        var locations = [];
+        let { Map } = await google.maps.importLibrary('maps');
+        //fetch station information data from the flask Server
+        //install pip3 flask-cors to fetch data
+        const response = await fetch('/stations');
+        const stations_info = await response.json();
 
-    locations = stations_info.map((station) => ({
-        lat: station.position.lat,
-        lng: station.position.lng,
-    }));
+        locations = stations_info.map((station) => ({
+            lat: station.position.lat,
+            lng: station.position.lng,
+        }));
 
-    // Current Users Location
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                currLatLng = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                };
-                let markerImg = document.createElement('img');
-                markerImg.src = '/static/image/home_icon.png';
-                markerImg.width = 50; // Width in pixels
-                markerImg.height = 50; // Height in pixels
+        // Current Users Location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    currLatLng = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+                    let markerImg = document.createElement('img');
+                    markerImg.src = '/static/image/home_icon.png';
+                    markerImg.width = 50; // Width in pixels
+                    markerImg.height = 50; // Height in pixels
 
-                new google.maps.Marker({
-                    position: currLatLng,
-                    map: map,
-                    title: 'Your Location',
-                    icon: {
-                        url: markerImg.src,
-                        scaledSize: new google.maps.Size(50, 50), // Adjust size as needed
-                    },
-                });
-            },
-            (error) => {
-                console.error(error);
-            },
-            {
-                //enableHighAccuracy added 21/3/2024 Gyuwon
-                enableHighAccuracy: true, // This requests the highest possible accuracy.
-                timeout: 10000, // Maximum time in milliseconds to wait for a response.
-                maximumAge: 0, // Maximum age in milliseconds of a possible cached position that is acceptable to return.
-            }
-        );
-    }
-
-    //Googlemaps loading
-    const mapDiv = document.getElementById('map');
-    const mapCenter = { lat: 53.344979, lng: -6.27209 };
-
-    //Current location add
-    const locationButton = document.createElement('button');
-    locationButton.classList.add('custom-map-control-button');
-
-    //GoogleMaps Style Select
-
-    if (darkModeFlag) {
-        customStyle = darkStyleArray;
-    } else {
-        customStyle = brightStyleArray;
-    }
-
-    if (mapDiv) {
-        map = new Map(mapDiv, {
-            center: mapCenter,
-            zoom: 14.3,
-            zoomControl: true,
-            mapTypeControl: false,
-            streetViewControl: false,
-            zoomControlOptions: {
-                position: google.maps.ControlPosition.RIGHT_BOTTOM,
-            },
-            fullscreenControl: false,
-
-            styles: customStyle,
-        });
-    }
-    map.addListener('click', () => {
-        if (infoWindow) {
-            infoWindow.close();
+                    new google.maps.Marker({
+                        position: currLatLng,
+                        map: map,
+                        title: 'Your Location',
+                        icon: {
+                            url: markerImg.src,
+                            scaledSize: new google.maps.Size(50, 50), // Adjust size as needed
+                        },
+                    });
+                },
+                (error) => {
+                    console.error(error);
+                },
+                {
+                    //enableHighAccuracy added 21/3/2024 Gyuwon
+                    enableHighAccuracy: true, // This requests the highest possible accuracy.
+                    timeout: 10000, // Maximum time in milliseconds to wait for a response.
+                    maximumAge: 0, // Maximum age in milliseconds of a possible cached position that is acceptable to return.
+                }
+            );
         }
-    });
 
-    // Function to generate and display the chart
-    async function generateChart(stationId) {
-        // Make a POST request to the /predict endpoint
-        const response = await fetch('/predict', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `station_id=${stationId}`,
-        });
+        //Googlemaps loading
+        const mapDiv = document.getElementById('map');
+        const mapCenter = { lat: 53.344979, lng: -6.27209 };
 
-        // Parse the HTML response
-        var htmlContent = await response.text();
+        //Current location add
+        const locationButton = document.createElement('button');
+        locationButton.classList.add('custom-map-control-button');
 
-        document.getElementById('predictionChart').innerHTML = htmlContent;
-    }
+        //GoogleMaps Style Select
 
-    // Add some markers to the map
-    stations_info.forEach((station) => {
-        let markerImg = document.createElement('img');
-        markerImg.src = '/static/image/redMarker.png';
-        let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
-        if (bikeAvailability == 0) {
-            markerImg.src = './static/image/redMarker.png';
-        } else if (bikeAvailability > 0 && bikeAvailability < 40) {
-            markerImg.src = './static/image/orangeMarker.png';
+        if (darkModeFlag) {
+            customStyle = darkStyleArray;
         } else {
-            markerImg.src = './static/image/greenMarker.png';
+            customStyle = brightStyleArray;
         }
-        const marker = new google.maps.Marker({
-            map: map,
-            position: new google.maps.LatLng(station.position.lat, station.position.lng),
-            title: station.name, // Optional: add a title
-            icon: { url: markerImg.src, scaledSize: new google.maps.Size(25, 25) },
-        });
 
-        // Create an info window
-        marker.addListener('click', () => {
-            // if infoWindow is already exist, close the current window.
+        if (mapDiv) {
+            map = new Map(mapDiv, {
+                center: mapCenter,
+                zoom: 14.3,
+                zoomControl: true,
+                mapTypeControl: false,
+                streetViewControl: false,
+                zoomControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_BOTTOM,
+                },
+                fullscreenControl: false,
+
+                styles: customStyle,
+            });
+        }
+        map.addListener('click', () => {
             if (infoWindow) {
                 infoWindow.close();
             }
-
-            infoWindow = new google.maps.InfoWindow({
-                content: `
-        <h3 class="stationdetails">${station.number}. ${station.name}</h3>
-        <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
-        <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
-        <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-        <p class="stationdetails">Status: ${station.status}</p>
-        <p class="stationdetails">Station: ${station.number}</p>
-        <div id="predictionChart"></div>`,
-                // You can add more station details here
-            });
-            infoWindow.open(map, marker);
-            // Call a function to generate and render the chart
-            generateChart(station.number);
         });
 
-        markers.push(marker);
-    });
+        // Function to generate and display the chart
+        async function generateChart(stationId) {
+            // Make a POST request to the /predict endpoint
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `station_id=${stationId}`,
+            });
 
-    // Function to generate and render the chart for a specific station
+            // Parse the HTML response
+            var htmlContent = await response.text();
 
-    //marker cluster
-    markerCluster = new MarkerClusterer(map, markers, {
-        minimumClusterSize: 4,
-        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
-        zoomOnClick: false,
-    });
-    //Cluster click listener
-    google.maps.event.addListener(markerCluster, 'click', (markerCluster) => {
-        map.setCenter(cluster.getCenter());
-        map.setZoom(map.getZoom() + 3);
-    });
+            document.getElementById('predictionChart').innerHTML = htmlContent;
+        }
+
+        // Add some markers to the map
+        stations_info.forEach((station) => {
+            let markerImg = document.createElement('img');
+            markerImg.src = '/static/image/redMarker.png';
+            let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
+            if (bikeAvailability == 0) {
+                markerImg.src = './static/image/redMarker.png';
+            } else if (bikeAvailability > 0 && bikeAvailability < 40) {
+                markerImg.src = './static/image/orangeMarker.png';
+            } else {
+                markerImg.src = './static/image/greenMarker.png';
+            }
+            const marker = new google.maps.Marker({
+                map: map,
+                position: new google.maps.LatLng(station.position.lat, station.position.lng),
+                title: station.name, // Optional: add a title
+                icon: { url: markerImg.src, scaledSize: new google.maps.Size(25, 25) },
+            });
+
+            // Create an info window
+            marker.addListener('click', () => {
+                // if infoWindow is already exist, close the current window.
+                if (infoWindow) {
+                    infoWindow.close();
+                }
+
+                infoWindow = new google.maps.InfoWindow({
+                    content: `
+            <h3 class="stationdetails">${station.number}. ${station.name}</h3>
+            <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
+            <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
+            <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+            <p class="stationdetails">Status: ${station.status}</p>
+            <p class="stationdetails">Station: ${station.number}</p>
+            <div id="predictionChart"></div>`,
+                    // You can add more station details here
+                });
+                infoWindow.open(map, marker);
+                // Call a function to generate and render the chart
+                generateChart(station.number);
+            });
+
+            markers.push(marker);
+        });
+
+        // Function to generate and render the chart for a specific station
+
+        //marker cluster
+        markerCluster = new MarkerClusterer(map, markers, {
+            minimumClusterSize: 4,
+            imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+            zoomOnClick: false,
+        });
+        //Cluster click listener
+        google.maps.event.addListener(markerCluster, 'click', (markerCluster) => {
+            map.setCenter(cluster.getCenter());
+            map.setZoom(map.getZoom() + 3);
+        });
+    } catch (error) {
+        console.error('InitMap Error:', error);
+
+        // If mapDiv exists and an error occurred during map initialization, show an alert
+        const mapDiv = document.getElementById('map');
+        if (mapDiv) {
+            mapDiv.innerHTML = '<div class="map-error-alert">Google maps failed to load.</div>';
+            mapDiv.style.display = 'flex';
+            mapDiv.style.justifyContent = 'center';
+            mapDiv.style.alignItems = 'center';
+            mapDiv.style.height = '100%'; // Make sure your map container has a height, so the message will be visible
+        }
+    }
 }
 
-let dateInput = document.getElementById('dateinput');
 function getTodayDate() {
-    const options = {
-        timeZone: 'Europe/London',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    };
-    let todayDate = new Date().toLocaleDateString('en-GB', options);
-    todayDate = todayDate.replace(/\//g, '-');
-    dateInput.min = todayDate;
+    try {
+        const options = {
+            timeZone: 'Europe/London',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        };
+        let todayDate = new Date().toLocaleDateString('en-GB', options);
+        todayDate = todayDate.replace(/\//g, '-');
+        dateInput.min = todayDate;
+    } catch (error) {
+        console.error('GetTodayDate error:', error);
+    }
 }
 
 // Fix weather
@@ -306,11 +325,15 @@ async function getWeather() {
 // to be finished later using ML model
 
 async function dateTimeSelected(inputType) {
-    let selectedValue;
-    if (inputType === 'date') {
-        selectedValue = document.getElementById('dateInput').value;
-    } else if (inputType === 'time') {
-        selectedValue = document.getElementById('timeInput').value;
+    try {
+        let selectedValue;
+        if (inputType === 'date') {
+            selectedValue = document.getElementById('dateInput').value;
+        } else if (inputType === 'time') {
+            selectedValue = document.getElementById('timeInput').value;
+        }
+    } catch (e) {
+        console.error('THere is an issue on dateTimeSelected function', e);
     }
 
     // more to come
