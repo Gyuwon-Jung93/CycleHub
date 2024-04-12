@@ -41,7 +41,7 @@ def predict():
     df_station = df3[df3['station_id'] == station_id].copy()
     times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]
     bike_stands = df3.iloc[df3[df3["station_id"]==station_id].index]["bike_stands"].iloc[0]
-    times_formatted = times.dt.strftime('%a %d:%H')
+    times_formatted = times.dt.strftime('%a %H:%m')
     predictions = predict_bike_availability(df_station)
     
 

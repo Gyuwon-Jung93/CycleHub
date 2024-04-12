@@ -74,13 +74,4 @@ def predict_bike_availability(df):
     
     return predictions
 
-# def predict_date_time(station, hour, day_of_week):
-
-#     with open('flask_app/your_model.pkl', 'rb') as file:
-#         model = pickle.load(file)
-#     print(model)
-#     print(hour, day_of_week)
-#     predictions = model.predict(station).round()
-    
-#     return predictions
 
