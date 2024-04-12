@@ -1,4 +1,3 @@
-
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -15,7 +14,6 @@ import matplotlib.ticker as ticker
 from matplotlib.ticker import MaxNLocator
 from io import BytesIO
 from sqlalchemy.exc import SQLAlchemyError
-
 import base64
 from ml_model import predict_bike_availability
 # from ml_model import predict_date_time
@@ -24,40 +22,27 @@ import json
 from aws_rds.database import Session
 from aws_rds.models import Station, Availability
 from sqlalchemy.sql import func
-from sqlalchemy.orm import aliased
-
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-# Create our flask app. Static files are served from 'static' directory
+
+
+
 app = Flask(__name__, static_url_path='/static')
 CORS(app, resources={r"/*": {"origins": "*"}})
-
-# this route simply serves 'static/index.html'
 @app.route('/')
 def root():
     return app.send_static_file('index.html')
 
 
 
-# Define a route to handle form submission and display predictions
 @app.route('/predict', methods=['POST'])
 def predict():
-
     station_id = int(request.form['station_id'])
-    # try:
-    #     day = int(request.form['day'])
-    #     hour = int(request.form['day'])
-    # except Exception as e:
-    #     error_message = f"An error occurred: {str(e)}"
-    #     return error_message
-    
-    
     df_station = df3[df3['station_id'] == station_id].copy()
     times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]
     bike_stands = df3.iloc[df3[df3["station_id"]==station_id].index]["bike_stands"].iloc[0]
     times_formatted = times.dt.strftime('%a %d:%H')
     predictions = predict_bike_availability(df_station)
-    # predictions = predict_date_time(df_station, day, hour)
     
 
     sns.set_style("ticks")
@@ -86,7 +71,6 @@ def predict():
     html_response = f""" 
         <img src="data:image/png;base64,{plot_data}" alt="Predicted Plot">
     """
-    
     return html_response
 
 
@@ -119,7 +103,7 @@ def get_stations():
             Availability.station_id == latest_update_subq.c.station_id,
             Availability.last_update == latest_update_subq.c.max_last_update
         )).all()
-        # print(stations_with_latest_availability)
+
         stations_data = []
         for (station_id, name, address, position_lat, position_lng, banking, bonus, available_bike_stands, bike_stands, available_bikes, status, last_update) in stations_with_latest_availability:
             station_data = {
@@ -163,12 +147,10 @@ def get_stations():
 
 @app.route('/weather', methods=['GET'])
 def get_weather():
-    ## city = request.args.get('city')
     api_key = "6def6f5458e3226a4a33490f6635e269"
     lat = 53.346304
     lon = -6.2554112
     weather_url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric'
-    ## weather_url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
     response = requests.get(weather_url)
     weather_data = response.json()
     return jsonify(weather_data)

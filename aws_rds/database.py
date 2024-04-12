@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from aws_rds.models import Base
+
 #Connection Details
 URI = "cyclehub-db.cpywewmkcpo2.eu-north-1.rds.amazonaws.com"
 PORT = "3306"

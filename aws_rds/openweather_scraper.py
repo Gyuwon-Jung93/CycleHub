@@ -22,8 +22,6 @@ def update_database_weather():
     session = Session()
 
     rows = session.query(Station.position_lat, Station.position_lng, Station.station_id).all()
-
-    # Iterate through the points and make API requests
     for lat, lng, id in rows:
         weather_data = fetch_weather_data(lat, lng)
         if weather_data is not None:
