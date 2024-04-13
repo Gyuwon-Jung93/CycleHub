@@ -2,7 +2,9 @@ import requests
 from datetime import datetime
 import pickle
 import pandas as pd
+#Need to construct dataframe for next 24 hours to generate charts
 
+# For fetching future weather dtaa
 def fetch_weather_data(lat, lng):
     
     API_KEY = 'e09fe30aecb65a55bb36442eda372b92'
@@ -18,6 +20,7 @@ def fetch_weather_data(lat, lng):
     
 weather_data = fetch_weather_data(53.3498,-6.2603)
 
+#fetch up to date staion ids and bike stands
 def fetch_decaux_data():
     CONTRACT_NAME = "dublin"
     API_KEY = '99d3e65801ab0bdae585264b25d443c5545365b5'

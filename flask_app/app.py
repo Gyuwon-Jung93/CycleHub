@@ -35,45 +35,6 @@ def root():
 
 
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    station_id = int(request.form['station_id'])
-    df_station = df3[df3['station_id'] == station_id].copy()
-    times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]
-    bike_stands = df3.iloc[df3[df3["station_id"]==station_id].index]["bike_stands"].iloc[0]
-    times_formatted = times.dt.strftime('%a %H:%m')
-    predictions = predict_bike_availability(df_station)
-    
-
-    sns.set_style("ticks")
-    sns.set_context("paper")
-    plt.figure(figsize=(3, 3))
-    plot = sns.lineplot(x=times_formatted, y=predictions, color='orange')
-    plt.xlabel('Time', color='grey')
-    plt.ylabel('Bikes', color='grey')
-    plt.title('Forecasted Bike Availability', color='grey')
-    plt.tick_params(axis='x', colors='grey')
-    plt.tick_params(axis='y', colors='grey')
-    plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
-    plt.xticks(rotation=45)  
-    plot.xaxis.set_major_locator(ticker.LinearLocator(6))
-    plt.ylim(0, bike_stands)
-    plt.tight_layout()  
-
-
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-    plot_data = base64.b64encode(buffer.getvalue()).decode('utf-8')
-    plt.close()
-    
-  
-    html_response = f""" 
-        <img src="data:image/png;base64,{plot_data}" alt="Predicted Plot">
-    """
-    return html_response
-
-
 
 @app.route('/stations')
 def get_stations():
@@ -154,6 +115,47 @@ def get_weather():
     response = requests.get(weather_url)
     weather_data = response.json()
     return jsonify(weather_data)
+
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    station_id = int(request.form['station_id'])
+    df_station = df3[df3['station_id'] == station_id].copy()
+    times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]
+    bike_stands = df3.iloc[df3[df3["station_id"]==station_id].index]["bike_stands"].iloc[0]
+    times_formatted = times.dt.strftime('%a %H:%m')
+    predictions = predict_bike_availability(df_station)
+    
+
+    sns.set_style("ticks")
+    sns.set_context("paper")
+    plt.figure(figsize=(3, 3))
+    plot = sns.lineplot(x=times_formatted, y=predictions, color='orange')
+    plt.xlabel('Time', color='grey')
+    plt.ylabel('Bikes', color='grey')
+    plt.title('Forecasted Bike Availability', color='grey')
+    plt.tick_params(axis='x', colors='grey')
+    plt.tick_params(axis='y', colors='grey')
+    plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
+    plt.xticks(rotation=45)  
+    plot.xaxis.set_major_locator(ticker.LinearLocator(6))
+    plt.ylim(0, bike_stands)
+    plt.tight_layout()  
+
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plot_data = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    plt.close()
+    
+  
+    html_response = f""" 
+        <img src="data:image/png;base64,{plot_data}" alt="Predicted Plot">
+    """
+    return html_response
+
+
 
 
 @app.route('/stationSearch', methods=['GET'])

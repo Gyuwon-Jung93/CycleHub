@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // dateTimeSelected();
     getTodayDate();
 
-    /* AutoComplete Variable */
+    /* AutoComplete letiable */
     const searchLocationInput = document.getElementById('searchLocation');
     const searchDestinationInput = document.getElementById('searchDestination');
     initializeAutocomplete(searchLocationInput);
@@ -35,17 +35,17 @@ document.addEventListener('DOMContentLoaded', function () {
     // Journey reverse function
     document.getElementById('changeButton').addEventListener('click', function () {
         // Get the input elements
-        var searchLocation = document.getElementById('searchLocation');
-        var searchDestination = document.getElementById('searchDestination');
+        let searchLocation = document.getElementById('searchLocation');
+        let searchDestination = document.getElementById('searchDestination');
 
         // Swap their values
-        var temp = searchLocation.value;
+        let temp = searchLocation.value;
         searchLocation.value = searchDestination.value;
         searchDestination.value = temp;
     });
 });
 
-// ********** Addlistener && Common Variables **********
+// ********** Addlistener && Common letiables **********
 
 //Journey reset listener
 // Add a click event listener for the reset button
@@ -67,7 +67,7 @@ let map;
 let markers = [];
 let markerCluster;
 let currLatLng;
-// **** time variable ****
+// **** time letiable ****
 // let dateInput = document.getElementById('dateinput');
 let day;
 let hour;
@@ -203,7 +203,7 @@ document.getElementById('searchDestination').addEventListener('keypress', functi
 /*** Main map Defintion ***/
 async function initMap() {
     try {
-        var locations = [];
+        let locations = [];
         let { Map } = await google.maps.importLibrary('maps');
         //fetch station information data from the flask Server
         //install pip3 flask-cors to fetch data
@@ -542,10 +542,21 @@ function geocodeAddress(address) {
 }
 // Google Directions API
 let previousDirectionsRenderer = null;
-
 async function calculateAndDisplayRoute(loc, dest) {
     const errorResult = document.getElementById('errorResult');
     errorResult.innerHTML = '';
+
+    const now = new Date();
+    const currentHour = now.getHours(); 
+
+    if (currentHour >= 1 && currentHour <= 5) {
+        errorResult.innerHTML = 'Bikes unavailable at this time (1 AM - 5 AM).';
+        setTimeout(() => {
+            errorResult.innerHTML = '';
+        }, 10000);
+        return; 
+    }
+
     try {
         const dest1 = await findNearestStation(loc);
         const dest2 = await findNearestStation(dest);
@@ -598,6 +609,7 @@ async function calculateAndDisplayRoute(loc, dest) {
         console.error('Error calculating and displaying route:', error);
     }
 }
+
 
 function initializeAutocomplete(inputElement) {
     try {
