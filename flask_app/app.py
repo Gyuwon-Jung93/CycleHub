@@ -168,9 +168,3 @@ def get_stations_from_file():
 
 if __name__ == "__main__": 
     app.run(debug=True)
-
-
-
-
-
-
