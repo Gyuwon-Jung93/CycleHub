@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     initMap();
     getWeather();
-    // dateTimeSelected();
     getTodayDate();
 
     /* AutoComplete Variable */
@@ -68,32 +67,30 @@ let markers = [];
 let markerCluster;
 let currLatLng;
 // **** time variable ****
-// let dateInput = document.getElementById('dateinput');
-let day;
+let station;
 let hour;
 
-// Date Time change function that changes to predictions to specified hour and day of the week
+// Station Time change function that changes to predictions to specified hour and day of the week
 
-// theres a weird bug where you need to press the button twice for this to work, will fix later!
-
-function updateDateTime() {
-    console.log(day, hour);
-    // Get the date and time input elements
-    let dateInput = document.getElementById('dateinput');
+async function updateStationTime() {
+    // Get the station and time input elements
+    let stationInput = document.getElementById('stationinput');
     let timeInput = document.getElementById('timeinput');
 
     // Get the selected date and time values
-    day = dateInput.value;
+    station = stationInput.value;
     hour = timeInput.value;
-
-    const dateTimeSelection = document.getElementById('DateTimeSelection');
-    dateTimeSelection.innerHTML = 'Day and Time Updated!';
-
-    // Set a timeout to revert the text after 3 seconds
-    setTimeout(function () {
-        dateTimeSelection.innerHTML = 'Pick a date and time';
-    }, 3000);
-}
+    let response_bike;
+    response_bike = await fetch('/process_data', {
+        method: 'POST',
+        headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `station_id=${station}&hour=${hour}`,
+            });
+        let bike_nums = await response_bike.text();
+        document.getElementById('date_station_result').innerHTML = "Predicted Number of Bikes Available: " + bike_nums;
+    };
 
 // window counter
 let allInfoWindows = [];
@@ -289,16 +286,7 @@ async function initMap() {
 
         async function generateChart(stationId) {
             let response;
-            // Make a POST request to the /predict endpoint
-            if (day && hour) {
-                response = await fetch('/predict', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `station_id=${stationId}&day=${day}&hour=${hour}`,
-                });
-            } else {
+            // Make a POST request to the /predict endpoin
                 response = await fetch('/predict', {
                     method: 'POST',
                     headers: {
@@ -306,15 +294,18 @@ async function initMap() {
                     },
                     body: `station_id=${stationId}`,
                 });
-            }
-
             // Parse the HTML response
             let htmlContent = await response.text();
             document.getElementById('predictionChart').innerHTML = htmlContent;
-        }
+        };
 
         // Add some markers to the map
         stations_info.forEach((station) => {
+            const selectElement = document.getElementById("stationinput");
+            const option = document.createElement("option");
+            option.value = station.number;
+            option.textContent = station.name; 
+            selectElement.appendChild(option);
             let markerImg = document.createElement('img');
             markerImg.src = '/static/image/redMarker.png';
             let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
@@ -413,8 +404,10 @@ async function getWeather() {
             let daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             let currentDay = daysOfWeek[dayOfWeek];
             const temperature = document.getElementById('weatherText');
+            let description = data.weather[0].description;
+            let capitalizedDescription = description.charAt(0).toUpperCase() + description.slice(1);
             temperature.innerHTML =
-                data.weather[0].description +
+                capitalizedDescription +
                 ' ' +
                 data.main.temp.toFixed() +
                 '°C ' +

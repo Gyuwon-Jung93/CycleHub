@@ -60,20 +60,14 @@
                             </form>
                             <li class="date-box">
                                 <i class="bx bx-calendar icon"></i>
-                                <div class ="greybox">
+                                <div class ="greybox" id="large">
                                 <form>
                                     <label>
-                                        <h7 id="DateTimeSelection">Pick a date and time</h7>
+                                        <h7 class ="mode-text text" id="StationTimeSelection">Pick a Station and time</h7>
                                         <!-- Dropdown for selecting day of the week -->
-                                        <select id="dateinput">
-                                            <option value="1">Monday</option>
-                                            <option value="2">Tuesday</option>
-                                            <option value="3">Wednesday</option>
-                                            <option value="4">Thursday</option>
-                                            <option value="5">Friday</option>
-                                            <option value="6">Saturday</option>
-                                            <option value="7">Sunday</option>
+                                        <select id="stationinput">
                                         </select>
+                                        <button id="dateTimebtn" onclick="updateStationTime()">Submit</button>
                                         <select id="timeinput">
                                             <option value="5">5am</option>
                                             <option value="6">6am</option>
@@ -94,13 +88,13 @@
                                             <option value="21">9pm</option>
                                             <option value="22">10pm</option>
                                             <option value="23">11pm</option>
-                                            <option value="24">12pm</option>
                                         </select>
-                                        <button id="dateTimebtn" onclick="updateDateTime()">Submit</button>
+                                        
                                     </label>
                                 </form>
                             </div>
                                 </li>
+                                <div id="date_station_result"></div>
                                 <li class="search-box">
                                     <i class="bx bx-right-arrow-alt icon"></i>
                                         <input type="text" id="station-searcher" placeholder=" Search for stations...">

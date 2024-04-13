@@ -44,12 +44,11 @@ weather = [{'time_of_day': datetime.utcfromtimestamp(item['dt']),
 df = pd.DataFrame(weather)
 
 
-# To allow interpolation set index of df to every hour of the day
+
 start_date = df["time_of_day"].min()
 end_date = df["time_of_day"].max()
 hourly_range = pd.date_range(start=start_date, end=end_date, freq='H')
 df = df.set_index('time_of_day').reindex(hourly_range).reset_index()
-
 df.rename(columns={'index': 'time_of_day'}, inplace=True)
 df_interpolated = df.interpolate(method='linear')
 df_interpolated['description'] = df_interpolated['description'].fillna(method='ffill')
@@ -73,4 +72,16 @@ def predict_bike_availability(df):
         model = pickle.load(file)
     predictions = model.predict(df).round()
     
+    return predictions
+
+def predict_bike_availability_date_time(hour, station_id):
+    print("WORKING--------------------------------------------")
+    filtered_df = df3[(df3['hour'] == hour) & (df3['station_id'] == station_id)].copy()
+    with open('flask_app\your_model.pkl', 'rb') as file:
+        model = pickle.load(file)
+    predictions = model.predict(filtered_df).round()
+    print("-----------------------------------")
+    print(predictions)
+    print("-----------------------------------")
+
     return predictions

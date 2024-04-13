@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from sqlalchemy import and_
@@ -15,7 +16,7 @@ from matplotlib.ticker import MaxNLocator
 from io import BytesIO
 from sqlalchemy.exc import SQLAlchemyError
 import base64
-from ml_model import predict_bike_availability
+from ml_model import predict_bike_availability, predict_bike_availability_date_time
 # from ml_model import predict_date_time
 from ml_model import df3
 import json
@@ -33,10 +34,23 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 def root():
     return app.send_static_file('index.html')
 
+@app.route("/process_data", methods=["POST"])
+def process_data():
+    hour = int(request.form['hour'])
+    stat = int(request.form['station_id'])
+    result = predict_bike_availability_date_time(hour, stat)
+    print("WORKING APP ------------------------------------------------", result)
+    result.tostring()
+    result_str = int(result[0])
+    result_str = str(result_str)
 
+    print("WORKING APP ------------------------------------------------", result_str)
+
+    return result_str
 
 @app.route('/predict', methods=['POST'])
 def predict():
+
     station_id = int(request.form['station_id'])
     df_station = df3[df3['station_id'] == station_id].copy()
     times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]

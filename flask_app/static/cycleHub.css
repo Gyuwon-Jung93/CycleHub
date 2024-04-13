@@ -63,7 +63,9 @@ body {
     width: auto;
 }
 /* Logo */
-
+.li {
+    margin: 10px;
+}
 #logoBox {
     box-sizing: border-box;
     margin-top: 20px;
@@ -275,6 +277,7 @@ body.dark .sidebar header .toggle {
     margin-left: 10px;
 }
 select {
+    width: 60%;
     border: none;
     font-family: inherit;
     font-size: inherit;
@@ -285,6 +288,9 @@ select {
     border: none;
 }
 .sidebar.close .greybox {
+    display: none;
+}
+.sidebar.close #greybox-large {
     display: none;
 }
 #DateTimeSelection {
@@ -298,12 +304,17 @@ select {
     margin-top: 2px;
 }
 .greybox {
-    height: 110%;
+    height: 100%;
     width: 100%;
     outline: none;
     border: none;
     border-radius: 6px;
     background: var(--primary-color-light);
+}
+#large.greybox  {
+    margin-top: auto;
+    margin-bottom: auto;
+    height: 160%;
 }
 .sidebar li a {
     height: 100%;
