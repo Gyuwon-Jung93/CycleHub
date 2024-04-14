@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     getWeather();
     getTodayDate();
 
+    /*Check */
     /* AutoComplete letiable */
     const searchLocationInput = document.getElementById('searchLocation');
     const searchDestinationInput = document.getElementById('searchDestination');
@@ -31,9 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     // For changing hour and day
-    document.getElementById("timeinput").addEventListener("change", handleTimeInputChange);
-    document.getElementById("dateinput").addEventListener("change", handleTimeInputChange);
-
+    document.getElementById('timeinput').addEventListener('change', handleTimeInputChange);
+    document.getElementById('dateinput').addEventListener('change', handleTimeInputChange);
 
     // Journey reverse function
     document.getElementById('changeButton').addEventListener('click', function () {
@@ -76,17 +76,16 @@ let day = 0;
 let hour = 0;
 
 function handleTimeInputChange() {
-
-    let timeInput = document.getElementById("timeinput").value;
-    let dayInput = document.getElementById("dateinput").value;
+    let timeInput = document.getElementById('timeinput').value;
+    let dayInput = document.getElementById('dateinput').value;
     if (timeInput == 0 || dayInput == 0) {
         hour = 0;
         day = 0;
     } else {
         hour = timeInput;
         day = dayInput;
+    }
 }
-};
 
 // window counter
 let allInfoWindows = [];
@@ -283,24 +282,24 @@ async function initMap() {
         async function generateChart(stationId) {
             let response;
             // Make a POST request to the /predict endpoin
-                response = await fetch('/predict', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `station_id=${stationId}`,
-                });
+            response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `station_id=${stationId}`,
+            });
             // Parse the HTML response
             let htmlContent = await response.text();
             document.getElementById('predictionChart').innerHTML = htmlContent;
-        };
+        }
 
         // Add some markers to the map
         stations_info.forEach((station) => {
             // const selectElement = document.getElementById("stationinput");
             // const option = document.createElement("option");
             // option.value = station.number;
-            // option.textContent = station.name; 
+            // option.textContent = station.name;
             // selectElement.appendChild(option);
             let markerImg = document.createElement('img');
             markerImg.src = '/static/image/redMarker.png';
@@ -415,8 +414,7 @@ async function getWeather() {
                 '°C ';
         })
         .catch((error) => console.log('Error:', error));
-};
-
+}
 
 function displayResults(stations) {
     try {
@@ -488,7 +486,7 @@ async function findNearestStation(loca) {
         errorResult.innerHTML = 'Directions request failed. Try again';
         throw error;
     }
-};
+}
 
 //When the user inputs a location it will be a trigger
 function searchDest(event) {
@@ -496,7 +494,7 @@ function searchDest(event) {
     let locationInput = document.getElementById('searchLocation');
     let destInput = document.getElementById('searchDestination');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
-};
+}
 
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
@@ -511,7 +509,7 @@ function geocodeAddress(address) {
             }
         });
     });
-};
+}
 
 // Google Directions API
 let previousDirectionsRenderer = null;
@@ -520,14 +518,14 @@ async function calculateAndDisplayRoute(loc, dest) {
     errorResult.innerHTML = '';
 
     const now = new Date();
-    const currentHour = now.getHours(); 
+    const currentHour = now.getHours();
 
     if (currentHour >= 1 && currentHour <= 5) {
         errorResult.innerHTML = 'Bikes unavailable at this time (1 AM - 5 AM).';
         setTimeout(() => {
             errorResult.innerHTML = '';
         }, 10000);
-        return; 
+        return;
     }
 
     try {
@@ -578,7 +576,7 @@ async function calculateAndDisplayRoute(loc, dest) {
     } catch (error) {
         console.error('Error calculating and displaying route:', error);
     }
-};
+}
 
 function initializeAutocomplete(inputElement) {
     try {
@@ -597,7 +595,7 @@ function initializeAutocomplete(inputElement) {
     } catch (e) {
         console.error('Fail to initialise Autocomplete', error);
     }
-};
+}
 
 async function showInfoWindowsForStops(locations) {
     try {
@@ -661,7 +659,7 @@ async function showInfoWindowsForStops(locations) {
     } catch (e) {
         console.error('There is an issue in showInfoWindowsForStops', e);
     }
-};
+}
 
 async function getStationInfoByLatLng(latlng) {
     try {
@@ -691,7 +689,7 @@ async function getStationInfoByLatLng(latlng) {
         console.error('Could not get station information:', error);
         return null;
     }
-};
+}
 
 async function predict_time_day(hour, day, station_id) {
     try {
@@ -705,23 +703,21 @@ async function predict_time_day(hour, day, station_id) {
 
         if (!response.ok) {
             throw new Error('Failed to fetch data, possibly not enoguh data for that input');
-        };
+        }
 
-        const data = await response.text(); 
+        const data = await response.text();
         const available_bikes = parseInt(data, 10); // Parse the response string as an integer
         return available_bikes;
     } catch (error) {
         console.error('Error fetching prediction data:', error);
         throw error;
     }
-};
-
+}
 
 async function generateInfoWindowContent(station) {
-
     if (hour != 0 && day != 0) {
         available_bikes = await predict_time_day(hour, day, station.number);
-        available_bike_stands = (station.bike_stands - available_bikes);
+        available_bike_stands = station.bike_stands - available_bikes;
         if (available_bikes <= 5) {
             try {
                 return `
@@ -731,13 +727,15 @@ async function generateInfoWindowContent(station) {
                 <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
                 <p class="stationdetails">Available bikes: ${available_bikes}</p>
                 <p class="stationdetails">Available bike stands: ${available_bike_stands}</p>
-                <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p> <box-icon name='money-withdraw'></box-icon>
+                <p class="stationdetails">Banking: ${
+                    station.banking ? 'Yes' : 'No'
+                }</p> <box-icon name='money-withdraw'></box-icon>
                 <p class="stationdetails">Status: ${station.status}</p>
                 <div id="predictionChart"></div>
                 <button class="journeyReset">Reset Route</button>`;
             } catch (e) {
                 console.error('Fail to load station Data', e);
-            };
+            }
         } else {
             try {
                 return `
@@ -746,13 +744,15 @@ async function generateInfoWindowContent(station) {
                 <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
                 <p class="stationdetails">Available bikes: ${available_bikes}</p>
                 <p class="stationdetails">Available bike stands: ${available_bike_stands}</p>
-                <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p> <box-icon name='money-withdraw'></box-icon>
+                <p class="stationdetails">Banking: ${
+                    station.banking ? 'Yes' : 'No'
+                }</p> <box-icon name='money-withdraw'></box-icon>
                 <p class="stationdetails">Status: ${station.status}</p>
                 <div id="predictionChart"></div>
                 <button class="journeyReset">Reset Route</button>`;
             } catch (e) {
                 console.error('Fail to load station Data', e);
-            };
+            }
         }
     } else {
         try {
@@ -770,7 +770,7 @@ async function generateInfoWindowContent(station) {
             console.error('Fail to load station Data', e);
         }
     }
-};
+}
 
 function resetRoute() {
     try {
