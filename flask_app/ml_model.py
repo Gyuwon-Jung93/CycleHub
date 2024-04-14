@@ -73,9 +73,8 @@ def predict_bike_availability(df):
     
     return predictions
 
-def predict_bike_availability_date_time(hour, station_id):
-    print("WORKING--------------------------------------------")
-    filtered_df = df3[(df3['hour'] == hour) & (df3['station_id'] == station_id)].copy()
+def predict_bike_availability_date_time(hour, day, station_id):
+    filtered_df = df3[(df3['hour'] == hour) & (df3['weekday_num'] == day) & (df3['station_id'] == station_id)].copy()
     with open('flask_app\your_model.pkl', 'rb') as file:
         model = pickle.load(file)
     predictions = model.predict(filtered_df).round()

@@ -45,14 +45,13 @@
                         
                         <div class="menu">
                             <form id="searchinput" onsubmit="searchDest(event)">
+                                <button id="changeButton" class="swap-button">
+                                    <i class='bx bx-transfer-alt'></i>
+                                </button>
                                 <li class="search-box">
                                     <i class='bx bx-current-location icon'></i>
                                     <input type="search" id="searchLocation" placeholder="Search location" />
                                 </li>
-                                 <!-- Swap button with an arrow icon -->
-                                 <button id="changeButton" class="swap-button">
-                                    <i class='bx bx-transfer-alt'></i> <!-- You might need to replace with the actual icon class you have -->
-                                </button>
                                 <li class="search-box">
                                     <i class='bx bx-cycling icon'></i>
                                     <input type="search" id="searchDestination" placeholder="Search destination" />
@@ -60,15 +59,21 @@
                             </form>
                             <li class="date-box">
                                 <i class="bx bx-calendar icon"></i>
-                                <div class ="greybox" id="large">
+                                <div class ="greybox">
                                 <form>
                                     <label>
-                                        <h7 class ="mode-text text" id="StationTimeSelection">Pick a Station and time</h7>
-                                        <!-- Dropdown for selecting day of the week -->
-                                        <select id="stationinput">
+                                        <select id="dateinput">
+                                            <option value="0">Today</option>
+                                            <option value="1">Monday</option>
+                                            <option value="2">Tuesday</option>
+                                            <option value="3">Wednesday</option>
+                                            <option value="4">Thursday</option>
+                                            <option value="5">Friday</option>
+                                            <option value="6">Saturday</option>
+                                            <option value="7">Sunday</option>
                                         </select>
-                                        <button id="dateTimebtn" onclick="updateStationTime()">Submit</button>
                                         <select id="timeinput">
+                                            <option value="0">Now</option>
                                             <option value="5">5am</option>
                                             <option value="6">6am</option>
                                             <option value="7">7am</option>
@@ -89,7 +94,6 @@
                                             <option value="22">10pm</option>
                                             <option value="23">11pm</option>
                                         </select>
-                                        
                                     </label>
                                 </form>
                             </div>

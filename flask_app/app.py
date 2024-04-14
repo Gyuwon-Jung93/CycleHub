@@ -38,14 +38,12 @@ def root():
 def process_data():
     hour = int(request.form['hour'])
     stat = int(request.form['station_id'])
-    result = predict_bike_availability_date_time(hour, stat)
-    print("WORKING APP ------------------------------------------------", result)
-    result.tostring()
+    day = int(request.form['day'])
+    print("/predict working")
+    result = predict_bike_availability_date_time(hour, day, stat)
     result_str = int(result[0])
     result_str = str(result_str)
-
-    print("WORKING APP ------------------------------------------------", result_str)
-
+    print(result_str)
     return result_str
 
 @app.route('/predict', methods=['POST'])
