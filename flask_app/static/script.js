@@ -291,8 +291,6 @@ async function initMap() {
                     body: `station_id=${stationId}`,
                 });
             // Parse the HTML response
-            console.log("--------------------------------- generating without day and hour")
-            let htmlContent = await response.text();
             document.getElementById('predictionChart').innerHTML = htmlContent;
         };
 
@@ -395,7 +393,6 @@ async function getWeather() {
     fetch(`/weather?city=dublin`)
         .then((response) => response.json())
         .then((data) => {
-            // console.log(data);
             let currentDate = new Date();
             let dayOfWeek = currentDate.getDay();
             let daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -524,7 +521,6 @@ async function calculateAndDisplayRoute(loc, dest) {
     try {
         const dest1 = await findNearestStation(loc);
         const dest2 = await findNearestStation(dest);
-        console.log(dest1, dest2);
 
         clearMarkersAndCluster();
 
@@ -556,7 +552,6 @@ async function calculateAndDisplayRoute(loc, dest) {
             },
             (response, status) => {
                 if (status === 'OK') {
-                    console.log(response);
                     directionsRenderer.setDirections(response);
                     showInfoWindowsForStops([dest1, dest2]);
                 } else {
@@ -624,7 +619,7 @@ async function showInfoWindowsForStops(locations) {
 
                 // Create the new info window
                 const infoWindow = new google.maps.InfoWindow({
-                    content: generateInfoWindowContent(stationInfo),
+                    content: await generateInfoWindowContent(stationInfo),
                 });
                 allInfoWindows.push(infoWindow);
                 // Create the marker for this location
@@ -687,32 +682,38 @@ async function getStationInfoByLatLng(latlng) {
 };
 
 async function predict_time_day(hour, day, station_id) {
-    let predict_response;
-    // Make a POST request to the /predict endpoin
-        response = await fetch('/process_data', {
+    try {
+        const response = await fetch('/process_data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: `station_id=${station_id}&day=${day}&hour=${hour}`,
         });
-    // Parse the HTML response
-    let content = await predict_response;
-    return content
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch data, possibly not enoguh data for that input');
+        };
+
+        const data = await response.text(); 
+        const available_bikes = parseInt(data, 10); // Parse the response string as an integer
+        return available_bikes;
+    } catch (error) {
+        console.error('Error fetching prediction data:', error);
+        throw error;
+    }
 };
+
 
 async function generateInfoWindowContent(station) {
 
     if (hour != 0 && day != 0) {
-        console.log("--------------------------------- generating day and hour");
-        console.log(hour, day, station);
         available_bikes = await predict_time_day(hour, day, station.number);
-        console.log(available_bikes);
         available_bike_stands = (station.bike_stands - available_bikes);
-        if (available_bikes < 4) {
+        if (available_bikes <= 5) {
             try {
                 return `
-                <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available<h4>
+                <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available for time chosen<h4>
                 <h3 class="stationdetails">${station.name}</h3>
                 <p class="stationdetails">Address: ${station.address}</p>
                 <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
@@ -724,7 +725,7 @@ async function generateInfoWindowContent(station) {
                 <button class="journeyReset">Reset Route</button>`;
             } catch (e) {
                 console.error('Fail to load station Data', e);
-            }
+            };
         } else {
             try {
                 return `
@@ -739,7 +740,7 @@ async function generateInfoWindowContent(station) {
                 <button class="journeyReset">Reset Route</button>`;
             } catch (e) {
                 console.error('Fail to load station Data', e);
-            }
+            };
         }
     } else {
         try {
