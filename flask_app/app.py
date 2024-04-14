@@ -166,7 +166,6 @@ def predict():
         <img src="data:image/png;base64,{plot_data}" alt="Predicted Plot">
     """
 
-    print(html_response)
     return html_response
 
 
