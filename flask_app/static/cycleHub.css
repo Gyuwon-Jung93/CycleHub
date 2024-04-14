@@ -6,6 +6,9 @@
     margin: 0;
     box-sizing: border-box;
 }
+.p {
+    font-size: large;
+}
 
 :root {
     /* =====colors===== */
@@ -55,7 +58,9 @@ body {
     width: auto;
 }
 /* Logo */
-
+.li {
+    margin: 10px;
+}
 #logoBox {
     box-sizing: border-box;
     margin-top: 20px;
@@ -275,16 +280,24 @@ body.dark .sidebar header .toggle {
     margin-left: 10px;
 }
 select {
+    margin-top: 13px;
+    margin-right: 20px;
+    width: 100%;
     border: none;
     font-family: inherit;
-    font-size: inherit;
+    font-size: 17px;
     cursor: inherit;
     line-height: inherit;
+    background-color: transparent;
 }
 .greybox button {
     border: none;
+    width: 30%;
 }
 .sidebar.close .greybox {
+    display: none;
+}
+.sidebar.close #greybox-large {
     display: none;
 }
 #DateTimeSelection {
@@ -298,12 +311,17 @@ select {
     margin-top: 2px;
 }
 .greybox {
-    height: 110%;
+    height: 100%;
     width: 100%;
     outline: none;
     border: none;
     border-radius: 6px;
     background: var(--primary-color-light);
+}
+#large.greybox  {
+    margin-top: auto;
+    margin-bottom: auto;
+    height: 160%;
 }
 .sidebar li a {
     height: 100%;
@@ -496,34 +514,6 @@ body.dark #clockimage {
     padding: 10px;
     border-radius: 4px;
     font-size: 16px;
-}
-
-#timetext button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #007bff; /* Bootstrap primary button color */
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease-in-out;
-}
-
-#timetext button:hover {
-    background-color: #0056b3; /* Darken the button color on hover */
-}
-
-/* You might need to adjust the width of the inputs and button if needed */
-@media (max-width: 768px) {
-    #timetext form {
-        flex-direction: column;
-    }
-
-    #timetext input[type='date'],
-    #timetext input[type='time'],
-    #timetext button {
-        width: 100%;
-    }
 }
 
 /* sidebar shortMode */

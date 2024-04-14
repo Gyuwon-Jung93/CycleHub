@@ -1,4 +1,5 @@
 import sys
+import numpy as np
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from sqlalchemy import and_
@@ -15,7 +16,7 @@ from matplotlib.ticker import MaxNLocator
 from io import BytesIO
 from sqlalchemy.exc import SQLAlchemyError
 import base64
-from ml_model import predict_bike_availability
+from ml_model import predict_bike_availability, predict_bike_availability_date_time
 # from ml_model import predict_date_time
 from ml_model import future_data
 import json
@@ -33,6 +34,54 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 def root():
     return app.send_static_file('index.html')
 
+@app.route("/process_data", methods=["POST"])
+def process_data():
+    hour = int(request.form['hour'])
+    stat = int(request.form['station_id'])
+    day = int(request.form['day'])
+    result = predict_bike_availability_date_time(hour, day, stat)
+    result_str = int(result[0])
+    result_str = str(result_str)
+    return result_str
+
+@app.route('/predict', methods=['POST'])
+def predict():
+
+    station_id = int(request.form['station_id'])
+    df_station = df3[df3['station_id'] == station_id].copy()
+    times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]
+    bike_stands = df3.iloc[df3[df3["station_id"]==station_id].index]["bike_stands"].iloc[0]
+    times_formatted = times.dt.strftime('%a %H:%m')
+    predictions = predict_bike_availability(df_station)
+    
+
+    sns.set_style("ticks")
+    sns.set_context("paper")
+    plt.figure(figsize=(3, 3))
+    plot = sns.lineplot(x=times_formatted, y=predictions, color='orange')
+    plt.xlabel('Time', color='grey')
+    plt.ylabel('Bikes', color='grey')
+    plt.title('Forecasted Bike Availability', color='grey')
+    plt.tick_params(axis='x', colors='grey')
+    plt.tick_params(axis='y', colors='grey')
+    plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
+    plt.xticks(rotation=45)  
+    plot.xaxis.set_major_locator(ticker.LinearLocator(6))
+    plt.ylim(0, bike_stands)
+    plt.tight_layout()  
+
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plot_data = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    plt.close()
+    
+  
+    html_response = f""" 
+        <img src="data:image/png;base64,{plot_data}" alt="Predicted Plot">
+    """
+    return html_response
 
 
 
@@ -173,9 +222,3 @@ def get_stations_from_file():
 
 if __name__ == "__main__": 
     app.run(debug=True)
-
-
-
-
-
-

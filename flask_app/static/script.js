@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     initMap();
     getWeather();
-    // dateTimeSelected();
     getTodayDate();
 
     /* AutoComplete letiable */
@@ -31,6 +30,10 @@ document.addEventListener('DOMContentLoaded', function () {
             // Hide the chart container because the sidebar is now closed
         }
     });
+    // For changing hour and day
+    document.getElementById("timeinput").addEventListener("change", handleTimeInputChange);
+    document.getElementById("dateinput").addEventListener("change", handleTimeInputChange);
+
 
     // Journey reverse function
     document.getElementById('changeButton').addEventListener('click', function () {
@@ -67,33 +70,23 @@ let map;
 let markers = [];
 let markerCluster;
 let currLatLng;
-// **** time letiable ****
-// let dateInput = document.getElementById('dateinput');
-let day;
-let hour;
+// **** time variable ****
+let station;
+let day = 0;
+let hour = 0;
 
-// Date Time change function that changes to predictions to specified hour and day of the week
+function handleTimeInputChange() {
 
-// theres a weird bug where you need to press the button twice for this to work, will fix later!
-
-function updateDateTime() {
-    console.log(day, hour);
-    // Get the date and time input elements
-    let dateInput = document.getElementById('dateinput');
-    let timeInput = document.getElementById('timeinput');
-
-    // Get the selected date and time values
-    day = dateInput.value;
-    hour = timeInput.value;
-
-    const dateTimeSelection = document.getElementById('DateTimeSelection');
-    dateTimeSelection.innerHTML = 'Day and Time Updated!';
-
-    // Set a timeout to revert the text after 3 seconds
-    setTimeout(function () {
-        dateTimeSelection.innerHTML = 'Pick a date and time';
-    }, 3000);
+    let timeInput = document.getElementById("timeinput").value;
+    let dayInput = document.getElementById("dateinput").value;
+    if (timeInput == 0 || dayInput == 0) {
+        hour = 0;
+        day = 0;
+    } else {
+        hour = timeInput;
+        day = dayInput;
 }
+};
 
 // window counter
 let allInfoWindows = [];
@@ -289,16 +282,7 @@ async function initMap() {
 
         async function generateChart(stationId) {
             let response;
-            // Make a POST request to the /predict endpoint
-            if (day && hour) {
-                response = await fetch('/predict', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `station_id=${stationId}&day=${day}&hour=${hour}`,
-                });
-            } else {
+            // Make a POST request to the /predict endpoin
                 response = await fetch('/predict', {
                     method: 'POST',
                     headers: {
@@ -306,15 +290,17 @@ async function initMap() {
                     },
                     body: `station_id=${stationId}`,
                 });
-            }
-
             // Parse the HTML response
-            let htmlContent = await response.text();
             document.getElementById('predictionChart').innerHTML = htmlContent;
-        }
+        };
 
         // Add some markers to the map
         stations_info.forEach((station) => {
+            // const selectElement = document.getElementById("stationinput");
+            // const option = document.createElement("option");
+            // option.value = station.number;
+            // option.textContent = station.name; 
+            // selectElement.appendChild(option);
             let markerImg = document.createElement('img');
             markerImg.src = '/static/image/redMarker.png';
             let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
@@ -407,14 +393,15 @@ async function getWeather() {
     fetch(`/weather?city=dublin`)
         .then((response) => response.json())
         .then((data) => {
-            // console.log(data);
             let currentDate = new Date();
             let dayOfWeek = currentDate.getDay();
             let daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             let currentDay = daysOfWeek[dayOfWeek];
             const temperature = document.getElementById('weatherText');
+            let description = data.weather[0].description;
+            let capitalizedDescription = description.charAt(0).toUpperCase() + description.slice(1);
             temperature.innerHTML =
-                data.weather[0].description +
+                capitalizedDescription +
                 ' ' +
                 data.main.temp.toFixed() +
                 '°C ' +
@@ -427,25 +414,8 @@ async function getWeather() {
                 '°C ';
         })
         .catch((error) => console.log('Error:', error));
-}
+};
 
-// when user clicks on specific date, statistics returns
-// to be finished later using ML model
-
-// async function dateTimeSelected(inputType) {
-//     try {
-//         let selectedValue;
-//         if (inputType === 'date') {
-//             selectedValue = document.getElementById('dateInput').value;
-//         } else if (inputType === 'time') {
-//             selectedValue = document.getElementById('timeInput').value;
-//         }
-//     } catch (e) {
-//         console.error('There is an issue on dateTimeSelected function', e);
-//     }
-
-//     // more to come
-// }
 
 function displayResults(stations) {
     try {
@@ -517,7 +487,7 @@ async function findNearestStation(loca) {
         errorResult.innerHTML = 'Directions request failed. Try again';
         throw error;
     }
-}
+};
 
 //When the user inputs a location it will be a trigger
 function searchDest(event) {
@@ -525,7 +495,8 @@ function searchDest(event) {
     let locationInput = document.getElementById('searchLocation');
     let destInput = document.getElementById('searchDestination');
     calculateAndDisplayRoute(locationInput.value, destInput.value);
-}
+};
+
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
         const geocoder = new google.maps.Geocoder();
@@ -539,7 +510,8 @@ function geocodeAddress(address) {
             }
         });
     });
-}
+};
+
 // Google Directions API
 let previousDirectionsRenderer = null;
 async function calculateAndDisplayRoute(loc, dest) {
@@ -560,7 +532,6 @@ async function calculateAndDisplayRoute(loc, dest) {
     try {
         const dest1 = await findNearestStation(loc);
         const dest2 = await findNearestStation(dest);
-        console.log(dest1, dest2);
 
         clearMarkersAndCluster();
 
@@ -592,8 +563,6 @@ async function calculateAndDisplayRoute(loc, dest) {
             },
             (response, status) => {
                 if (status === 'OK') {
-                    console.log(response);
-                    console.log('결과');
                     directionsRenderer.setDirections(response);
                     showInfoWindowsForStops([dest1, dest2]);
                 } else {
@@ -608,8 +577,7 @@ async function calculateAndDisplayRoute(loc, dest) {
     } catch (error) {
         console.error('Error calculating and displaying route:', error);
     }
-}
-
+};
 
 function initializeAutocomplete(inputElement) {
     try {
@@ -628,7 +596,8 @@ function initializeAutocomplete(inputElement) {
     } catch (e) {
         console.error('Fail to initialise Autocomplete', error);
     }
-}
+};
+
 async function showInfoWindowsForStops(locations) {
     try {
         const sidebar = document.querySelector('.sidebar');
@@ -661,7 +630,7 @@ async function showInfoWindowsForStops(locations) {
 
                 // Create the new info window
                 const infoWindow = new google.maps.InfoWindow({
-                    content: generateInfoWindowContent(stationInfo),
+                    content: await generateInfoWindowContent(stationInfo),
                 });
                 allInfoWindows.push(infoWindow);
                 // Create the marker for this location
@@ -691,7 +660,7 @@ async function showInfoWindowsForStops(locations) {
     } catch (e) {
         console.error('There is an issue in showInfoWindowsForStops', e);
     }
-}
+};
 
 async function getStationInfoByLatLng(latlng) {
     try {
@@ -721,24 +690,86 @@ async function getStationInfoByLatLng(latlng) {
         console.error('Could not get station information:', error);
         return null;
     }
-}
+};
 
-function generateInfoWindowContent(station) {
+async function predict_time_day(hour, day, station_id) {
     try {
-        return `
-        <h3 class="stationdetails">${station.name}</h3>
-        <p class="stationdetails">Address: ${station.address}</p>
-        <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
-        <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
-        <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
-        <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-        <p class="stationdetails">Status: ${station.status}</p>
-        <div id="predictionChart"></div>
-        <button class="journeyReset">Reset Route</button>`;
-    } catch (e) {
-        console.error('Fail to load station Data', e);
+        const response = await fetch('/process_data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `station_id=${station_id}&day=${day}&hour=${hour}`,
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch data, possibly not enoguh data for that input');
+        };
+
+        const data = await response.text(); 
+        const available_bikes = parseInt(data, 10); // Parse the response string as an integer
+        return available_bikes;
+    } catch (error) {
+        console.error('Error fetching prediction data:', error);
+        throw error;
     }
-}
+};
+
+
+async function generateInfoWindowContent(station) {
+
+    if (hour != 0 && day != 0) {
+        available_bikes = await predict_time_day(hour, day, station.number);
+        available_bike_stands = (station.bike_stands - available_bikes);
+        if (available_bikes <= 5) {
+            try {
+                return `
+                <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available for time chosen<h4>
+                <h3 class="stationdetails">${station.name}</h3>
+                <p class="stationdetails">Address: ${station.address}</p>
+                <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
+                <p class="stationdetails">Available bikes: ${available_bikes}</p>
+                <p class="stationdetails">Available bike stands: ${available_bike_stands}</p>
+                <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p> <box-icon name='money-withdraw'></box-icon>
+                <p class="stationdetails">Status: ${station.status}</p>
+                <div id="predictionChart"></div>
+                <button class="journeyReset">Reset Route</button>`;
+            } catch (e) {
+                console.error('Fail to load station Data', e);
+            };
+        } else {
+            try {
+                return `
+                <h3 class="stationdetails">${station.name}</h3>
+                <p class="stationdetails">Address: ${station.address}</p>
+                <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
+                <p class="stationdetails">Available bikes: ${available_bikes}</p>
+                <p class="stationdetails">Available bike stands: ${available_bike_stands}</p>
+                <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p> <box-icon name='money-withdraw'></box-icon>
+                <p class="stationdetails">Status: ${station.status}</p>
+                <div id="predictionChart"></div>
+                <button class="journeyReset">Reset Route</button>`;
+            } catch (e) {
+                console.error('Fail to load station Data', e);
+            };
+        }
+    } else {
+        try {
+            return `
+            <h3 class="stationdetails">${station.name}</h3>
+            <p class="stationdetails">Address: ${station.address}</p>
+            <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
+            <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
+            <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
+            <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+            <p class="stationdetails">Status: ${station.status}</p>
+            <div id="predictionChart"></div>
+            <button class="journeyReset">Reset Route</button>`;
+        } catch (e) {
+            console.error('Fail to load station Data', e);
+        }
+    }
+};
 
 function resetRoute() {
     try {
