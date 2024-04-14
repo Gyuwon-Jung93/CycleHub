@@ -33,9 +33,6 @@ def fetch_decaux_data():
         return None
 
 
-      
-
-
 def process_data(weather_data, station_data):
     # Early exit if data fetching failed
     if weather_data is None or station_data is None:

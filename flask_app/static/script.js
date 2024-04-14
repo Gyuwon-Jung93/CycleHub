@@ -291,6 +291,7 @@ async function initMap() {
                     body: `station_id=${stationId}`,
                 });
             // Parse the HTML response
+            let htmlContent = await response.text();
             document.getElementById('predictionChart').innerHTML = htmlContent;
         };
 
