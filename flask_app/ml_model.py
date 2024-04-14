@@ -4,7 +4,7 @@ import pickle
 import pandas as pd
 #Need to construct dataframe for next 24 hours to generate charts
 
-# For fetching future weather dtaa
+# For fetching future weather data, collects 7 days in the future
 def fetch_weather_data(lat, lng):
     
     API_KEY = 'e09fe30aecb65a55bb36442eda372b92'
@@ -17,8 +17,6 @@ def fetch_weather_data(lat, lng):
     else:
         print(f"Error: {response.status_code}")
         return None
-    
-weather_data = fetch_weather_data(53.3498,-6.2603)
 
 #fetch up to date staion ids and bike stands
 def fetch_decaux_data():
@@ -33,40 +31,44 @@ def fetch_decaux_data():
     else:
         print(f"Error: {response.status_code}")
         return None
-    
-station_data = fetch_decaux_data()
+
+
+      
+
+
+def process_data(weather_data, station_data):
+    # Early exit if data fetching failed
+    if weather_data is None or station_data is None:
+        print("Error fetching data. Exiting.")
+        return None
+    else:
+        weather = [{'time_of_day': datetime.utcfromtimestamp(item['dt']),
+                    'wind_speed': item['wind']['speed'],
+                    'temperature': item['main']['temp'] - 273.15,
+                    'description': item['weather'][0]['description']}
+                for item in weather_data['list']]
+
+        df_weather = pd.DataFrame(weather)
+        # To allow interpolation set index of df to every hour of the day
+        start_date = df_weather["time_of_day"].min()
+        end_date = df_weather["time_of_day"].max()
+        hourly_range = pd.date_range(start=start_date, end=end_date, freq='H')
+        df_weather = df_weather.set_index('time_of_day').reindex(hourly_range).reset_index()
+
+        df_weather.rename(columns={'index': 'time_of_day'}, inplace=True)
+        df_interpolated = df_weather.interpolate(method='linear')
+        df_interpolated['description'] = df_interpolated['description'].fillna(method='ffill')
+        df_interpolated = df_interpolated.iloc[:24]
 
 
 
-weather = [{'time_of_day': datetime.utcfromtimestamp(item['dt']),
-            'wind_speed': item['wind']['speed'],
-            'temperature': item['main']['temp'] - 273.15,
-            'description': item['weather'][0]['description']}
-           for item in weather_data['list']]
-
-df = pd.DataFrame(weather)
-
-
-# To allow interpolation set index of df to every hour of the day
-start_date = df["time_of_day"].min()
-end_date = df["time_of_day"].max()
-hourly_range = pd.date_range(start=start_date, end=end_date, freq='H')
-df = df.set_index('time_of_day').reindex(hourly_range).reset_index()
-
-df.rename(columns={'index': 'time_of_day'}, inplace=True)
-df_interpolated = df.interpolate(method='linear')
-df_interpolated['description'] = df_interpolated['description'].fillna(method='ffill')
-df_interpolated = df_interpolated.iloc[:24]
-
-
-
-df = pd.DataFrame([{'station_id': d['number'], 'bike_stands': d['bike_stands']} for d in station_data])
-df3 = df_interpolated.merge(df, how ="cross")
-df3['month'] = pd.to_datetime(df3['time_of_day']).dt.month
-df3['day'] = pd.to_datetime(df3['time_of_day']).dt.day
-df3['hour'] = pd.to_datetime(df3['time_of_day']).dt.hour
-df3['weekday_num'] = df3['time_of_day'].dt.weekday + 1  
-
+        df_station = pd.DataFrame([{'station_id': d['number'], 'bike_stands': d['bike_stands']} for d in station_data])
+        future_data = df_interpolated.merge(df_station, how ="cross")
+        future_data['month'] = pd.to_datetime(future_data['time_of_day']).dt.month
+        future_data['day'] = pd.to_datetime(future_data['time_of_day']).dt.day
+        future_data['hour'] = pd.to_datetime(future_data['time_of_day']).dt.hour
+        future_data['weekday_num'] = future_data['time_of_day'].dt.weekday + 1 
+        return future_data
 
 
 
@@ -79,3 +81,7 @@ def predict_bike_availability(df):
     return predictions
 
 
+
+weather_data = fetch_weather_data(53.3498,-6.2603)
+station_data = fetch_decaux_data()
+future_data = process_data(weather_data,station_data)

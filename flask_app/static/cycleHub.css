@@ -48,15 +48,7 @@ body {
     margin: 0;
     padding: 0;
 }
-/* Adjust sidebar style */
-.sidebar {
-    margin: 30px 10px 30px 20px;
-    max-width: 400px;
-    z-index: 3;
-    width: 20%;
-    height: 100%;
-    border-radius: 20px;
-}
+
 
 #map {
     height: 100%;
@@ -94,12 +86,20 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    height: 65%;
-    width: 2800px;
+
     padding: 10px 14px;
     background: var(--sidebar-color);
     transition: var(--tran-05);
+    margin: 5% 10px 5% 20px;
+    max-width: 25%;
+    width: 400px;
+    z-index: 3;
+    border-radius: 20px;
+    height: 80%;
 }
+
+
+
 .sidebar.close {
     width: 88px;
 }
@@ -125,7 +125,7 @@ body {
 
 .sidebar li {
     height: 50px;
-    margin-top: 10px;
+    margin-top: 30px;
     list-style: none;
     display: flex;
     align-items: center;

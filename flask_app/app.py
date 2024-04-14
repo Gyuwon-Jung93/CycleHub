@@ -17,7 +17,7 @@ from sqlalchemy.exc import SQLAlchemyError
 import base64
 from ml_model import predict_bike_availability
 # from ml_model import predict_date_time
-from ml_model import df3
+from ml_model import future_data
 import json
 from aws_rds.database import Session
 from aws_rds.models import Station, Availability
@@ -119,10 +119,13 @@ def get_weather():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    if future_data is None:
+        html_response = '<div style="color: red;">ML_model error Chart not Available</div>'
+        return html_response
     station_id = int(request.form['station_id'])
-    df_station = df3[df3['station_id'] == station_id].copy()
-    times = df3.iloc[df3[df3["station_id"]==station_id].index]["time_of_day"]
-    bike_stands = df3.iloc[df3[df3["station_id"]==station_id].index]["bike_stands"].iloc[0]
+    df_station = future_data[future_data['station_id'] == station_id].copy()
+    times = future_data.iloc[future_data[future_data["station_id"]==station_id].index]["time_of_day"]
+    bike_stands = future_data.iloc[future_data[future_data["station_id"]==station_id].index]["bike_stands"].iloc[0]
     times_formatted = times.dt.strftime('%a %H:%m')
     predictions = predict_bike_availability(df_station)
     
@@ -133,7 +136,7 @@ def predict():
     plot = sns.lineplot(x=times_formatted, y=predictions, color='orange')
     plt.xlabel('Time', color='grey')
     plt.ylabel('Bikes', color='grey')
-    plt.title('Forecasted Bike Availability', color='grey')
+    plt.title('Forecasted Bike Availability, Next 24 hours', color='grey')
     plt.tick_params(axis='x', colors='grey')
     plt.tick_params(axis='y', colors='grey')
     plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
