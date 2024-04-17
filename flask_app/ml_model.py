@@ -72,7 +72,7 @@ def process_data(weather_data, station_data):
 
 def predict_bike_availability(df):
    
-    with open('your_model.pkl', 'rb') as file:
+    with open('flask_app\your_model.pkl', 'rb') as file:
         model = pickle.load(file)
     predictions = model.predict(df).round()
     
@@ -117,7 +117,7 @@ dat_time_predict = make_dataframe_without_day_restriction(weather_data,station_d
 def predict_bike_availability_date_time(hour, day, station_id):
     
     filtered_df = dat_time_predict[(dat_time_predict['hour'] == hour) & (dat_time_predict['weekday_num'] == day) & (dat_time_predict['station_id'] == station_id)].copy()
-    with open('your_model.pkl', 'rb') as file:
+    with open('flask_app\your_model.pkl', 'rb') as file:
         model = pickle.load(file)
     predictions = model.predict(filtered_df).round()
     return predictions

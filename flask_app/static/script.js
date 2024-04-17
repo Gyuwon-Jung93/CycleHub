@@ -100,6 +100,8 @@ let currentInfoWindow;
 
 // Create an info window
 let infoWindow;
+let infoWindowNew;
+
 
 //Reuse same flask call
 document.getElementById('station-searcher').addEventListener('input', async function (e) {
@@ -118,6 +120,7 @@ document.getElementById('station-searcher').addEventListener('input', async func
                 const div = document.createElement('div');
                 div.innerHTML = station.name; // Display station name
                 div.className = 'station-result';
+                div.style.cursor = 'pointer'; // Set cursor to pointer
                 // Move zoom to the target station the user clicked
                 div.onclick = function () {
                     resultsDiv.style.display = 'None';
@@ -133,21 +136,35 @@ document.getElementById('station-searcher').addEventListener('input', async func
                         // Assuming we have stored InfoWindow objects in a map or similar structure
                         // This part assumes you have an existing mechanism to match markers with InfoWindows
                         // For simplicity, let's assume each marker's 'title' property matches the station name and use it to find the corresponding InfoWindow
-
-                        let infoWindow = new google.maps.InfoWindow({
-                            content: `
-                                <h3 class="stationdetails">${station.name}</h3>
-                                <p class="stationdetails">Address: ${station.address}</p>
-                                <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
-                                <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
-                                <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
-                                <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-                                <p class="stationdetails">Status: ${station.status}</p>
-                            `,
-                        });
+                        if (station.available_bikes <= 5) {
+                            infoWindowNew = new google.maps.InfoWindow({
+                                content: `
+                                    <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available for time chosen<h4>
+                                    <h3 class="stationdetails">${station.name}</h3>
+                                    <p class="stationdetails">Address: ${station.address}</p>
+                                    <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
+                                    <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
+                                    <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
+                                    <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+                                    <p class="stationdetails">Status: ${station.status}</p>
+                                `,
+                            });
+                        } else {
+                            infoWindowNew = new google.maps.InfoWindow({
+                                content: `
+                                    <h3 class="stationdetails">${station.name}</h3>
+                                    <p class="stationdetails">Address: ${station.address}</p>
+                                    <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
+                                    <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
+                                    <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
+                                    <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+                                    <p class="stationdetails">Status: ${station.status}</p>
+                                `,
+                            });
+                        }
 
                         // Open the InfoWindow on the map at the marker's location
-                        infoWindow.open(map, markerObj);
+                        infoWindowNew.open(map, markerObj);
                     }
                 };
                 resultsDiv.appendChild(div);
@@ -325,17 +342,33 @@ async function initMap() {
                     infoWindow.close();
                 }
 
+                if (station.available_bikes <= 5) {
                 infoWindow = new google.maps.InfoWindow({
                     content: `
-            <h3 class="stationdetails">${station.name}</h3>
-            <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
-            <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
-            <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-            <p class="stationdetails">Status: ${station.status}</p>
-            <p class="stationdetails">Station: ${station.number}</p>
-            <div id="predictionChart"></div>`,
+                    <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available for time chosen<h4>
+                    <h3 class="stationdetails">${station.name}</h3>
+                    <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
+                    <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
+                    <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+                    <p class="stationdetails">Status: ${station.status}</p>
+                    <p class="stationdetails">Station: ${station.number}</p>
+                    <div id="predictionChart"></div>`,
                     // You can add more station details here
                 });
+            } else {
+                infoWindow = new google.maps.InfoWindow({
+                    content: `
+                    <h3 class="stationdetails">${station.name}</h3>
+                    <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
+                    <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
+                    <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+                    <p class="stationdetails">Status: ${station.status}</p>
+                    <p class="stationdetails">Station: ${station.number}</p>
+                    <div id="predictionChart"></div>`,
+                    // You can add more station details here
+                });
+
+            }
                 infoWindow.open(map, marker);
                 // Call a function to generate and render the chart
                 generateChart(station.number);
@@ -520,8 +553,8 @@ async function calculateAndDisplayRoute(loc, dest) {
     const now = new Date();
     const currentHour = now.getHours();
 
-    if (currentHour >= 1 && currentHour <= 5) {
-        errorResult.innerHTML = 'Bikes unavailable at this time (1 AM - 5 AM).';
+    if (currentHour >= 1 && currentHour <= 5 && day === 0 && hour === 0) {
+        errorResult.innerHTML = 'Bikes unavailable at this time (12 AM - 5 AM).';
         setTimeout(() => {
             errorResult.innerHTML = '';
         }, 10000);
@@ -755,6 +788,23 @@ async function generateInfoWindowContent(station) {
             }
         }
     } else {
+        if (available_bikes <= 5) {
+        try {
+            return `
+            <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available<h4>
+            <h3 class="stationdetails">${station.name}</h3>
+            <p class="stationdetails">Address: ${station.address}</p>
+            <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
+            <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
+            <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
+            <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+            <p class="stationdetails">Status: ${station.status}</p>
+            <div id="predictionChart"></div>
+            <button class="journeyReset">Reset Route</button>`;
+        } catch (e) {
+            console.error('Fail to load station Data', e);
+        }
+    } else {
         try {
             return `
             <h3 class="stationdetails">${station.name}</h3>
@@ -770,6 +820,7 @@ async function generateInfoWindowContent(station) {
             console.error('Fail to load station Data', e);
         }
     }
+}
 }
 
 function resetRoute() {
@@ -808,6 +859,7 @@ function resetRoute() {
         console.error('There is an issue on resetRoute', e);
     }
 }
+
 function clearMarkersAndCluster() {
     try {
         // Clear out the markers array
