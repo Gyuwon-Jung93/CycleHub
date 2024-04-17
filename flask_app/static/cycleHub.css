@@ -52,7 +52,6 @@ body {
     padding: 0;
 }
 
-
 #map {
     height: 100%;
     width: auto;
@@ -89,6 +88,12 @@ body {
 /* ===== SideBar ===== */
 .sidebar {
     position: fixed;
+    width: 400px;
+    height: 55%;
+    min-width: 400px;
+    max-width: 25%;
+    min-height: 700px;
+    max-height: 55%;
     top: 0;
     left: 0;
 
@@ -96,17 +101,16 @@ body {
     background: var(--sidebar-color);
     transition: var(--tran-05);
     margin: 5% 10px 5% 20px;
-    max-width: 25%;
-    width: 400px;
+
     z-index: 3;
     border-radius: 20px;
-    height: 80%;
 }
 
-
-
 .sidebar.close {
-    width: 88px;
+    min-width: 88px;
+    max-width: 88px;
+    min-height: 700px;
+    max-height: 200px;
 }
 
 /* ===== Reuable CSS ===== */
@@ -206,7 +210,7 @@ header .image-text .header-text {
 }
 .sidebar header .toggle {
     position: absolute;
-    top: 50px;
+    top: 40px;
     right: -25px;
     transform: translateY(-50%);
     height: 25px;
@@ -284,7 +288,7 @@ label {
 select {
     margin-top: 13px;
     margin-right: 20px;
-    width: 40%;
+    width: 100%;
     border: none;
     font-family: inherit;
     font-size: 17px;
@@ -320,7 +324,7 @@ select {
     border-radius: 6px;
     background: var(--primary-color-light);
 }
-#large.greybox  {
+#large.greybox {
     margin-top: auto;
     margin-bottom: auto;
     height: 160%;
@@ -479,7 +483,7 @@ body.dark #clockimage {
 
 .swap-button {
     position: absolute;
-    margin-top: -130px;
+    margin-top: -160px;
     margin-right: 35px;
 }
 
