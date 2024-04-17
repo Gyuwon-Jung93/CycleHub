@@ -754,9 +754,11 @@ async function predict_time_day(hour, day, station_id) {
 }
 
 async function generateInfoWindowContent(station) {
+    var available_bikes, available_bike_stands;
     if (hour != 0 && day != 0) {
         available_bikes = await predict_time_day(hour, day, station.number);
         available_bike_stands = station.bike_stands - available_bikes;
+
         if (available_bikes <= 5) {
             try {
                 return `
