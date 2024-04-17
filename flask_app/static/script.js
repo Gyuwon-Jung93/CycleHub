@@ -102,7 +102,6 @@ let currentInfoWindow;
 let infoWindow;
 let infoWindowNew;
 
-
 //Reuse same flask call
 document.getElementById('station-searcher').addEventListener('input', async function (e) {
     const input = this.value;
@@ -144,7 +143,9 @@ document.getElementById('station-searcher').addEventListener('input', async func
                                     <p class="stationdetails">Address: ${station.address}</p>
                                     <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
                                     <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
-                                    <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
+                                    <p class="stationdetails">Available bike stands: ${
+                                        station.available_bike_stands
+                                    }</p>
                                     <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
                                     <p class="stationdetails">Status: ${station.status}</p>
                                 `,
@@ -156,7 +157,9 @@ document.getElementById('station-searcher').addEventListener('input', async func
                                     <p class="stationdetails">Address: ${station.address}</p>
                                     <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
                                     <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
-                                    <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
+                                    <p class="stationdetails">Available bike stands: ${
+                                        station.available_bike_stands
+                                    }</p>
                                     <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
                                     <p class="stationdetails">Status: ${station.status}</p>
                                 `,
@@ -343,32 +346,35 @@ async function initMap() {
                 }
 
                 if (station.available_bikes <= 5) {
-                infoWindow = new google.maps.InfoWindow({
-                    content: `
+                    infoWindow = new google.maps.InfoWindow({
+                        content: `
                     <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available for time chosen<h4>
                     <h3 class="stationdetails">${station.name}</h3>
-                    <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
+                    <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${
+                            station.bike_stands
+                        }</p>
                     <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
                     <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
                     <p class="stationdetails">Status: ${station.status}</p>
                     <p class="stationdetails">Station: ${station.number}</p>
                     <div id="predictionChart"></div>`,
-                    // You can add more station details here
-                });
-            } else {
-                infoWindow = new google.maps.InfoWindow({
-                    content: `
+                        // You can add more station details here
+                    });
+                } else {
+                    infoWindow = new google.maps.InfoWindow({
+                        content: `
                     <h3 class="stationdetails">${station.name}</h3>
-                    <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${station.bike_stands}</p>
+                    <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${
+                            station.bike_stands
+                        }</p>
                     <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
                     <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
                     <p class="stationdetails">Status: ${station.status}</p>
                     <p class="stationdetails">Station: ${station.number}</p>
                     <div id="predictionChart"></div>`,
-                    // You can add more station details here
-                });
-
-            }
+                        // You can add more station details here
+                    });
+                }
                 infoWindow.open(map, marker);
                 // Call a function to generate and render the chart
                 generateChart(station.number);
@@ -789,8 +795,8 @@ async function generateInfoWindowContent(station) {
         }
     } else {
         if (available_bikes <= 5) {
-        try {
-            return `
+            try {
+                return `
             <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available<h4>
             <h3 class="stationdetails">${station.name}</h3>
             <p class="stationdetails">Address: ${station.address}</p>
@@ -801,12 +807,12 @@ async function generateInfoWindowContent(station) {
             <p class="stationdetails">Status: ${station.status}</p>
             <div id="predictionChart"></div>
             <button class="journeyReset">Reset Route</button>`;
-        } catch (e) {
-            console.error('Fail to load station Data', e);
-        }
-    } else {
-        try {
-            return `
+            } catch (e) {
+                console.error('Fail to load station Data', e);
+            }
+        } else {
+            try {
+                return `
             <h3 class="stationdetails">${station.name}</h3>
             <p class="stationdetails">Address: ${station.address}</p>
             <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
@@ -816,11 +822,11 @@ async function generateInfoWindowContent(station) {
             <p class="stationdetails">Status: ${station.status}</p>
             <div id="predictionChart"></div>
             <button class="journeyReset">Reset Route</button>`;
-        } catch (e) {
-            console.error('Fail to load station Data', e);
+            } catch (e) {
+                console.error('Fail to load station Data', e);
+            }
         }
     }
-}
 }
 
 function resetRoute() {
