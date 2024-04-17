@@ -75,6 +75,7 @@ let map;
 let markers = [];
 let markerCluster;
 let currLatLng;
+let cluster;
 // **** time variable ****
 let station;
 let day = 0;

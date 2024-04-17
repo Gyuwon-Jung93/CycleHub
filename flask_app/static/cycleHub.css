@@ -250,6 +250,21 @@ body.dark .sidebar header .toggle {
 .sidebar.close #station-search {
     display: none;
 }
+body.dark #searchLocation {
+    color: white;
+}
+body.dark #searchDestination {
+    color: white;
+}
+body.dark #dateinput {
+    color: white;
+}
+body.dark #timeinput {
+    color: white;
+}
+body.dark #station-searcher {
+    color: white;
+}
 .sidebar .box {
     background: var(--primary-color-light);
     border-radius: 6px;
