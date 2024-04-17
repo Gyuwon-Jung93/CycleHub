@@ -286,9 +286,10 @@ label {
     margin-left: 10px;
 }
 select {
+    border: #18191a solid 3px;
     margin-top: 13px;
     margin-right: 20px;
-    width: 100%;
+    width: 40%;
     border: none;
     font-family: inherit;
     font-size: 17px;
@@ -488,35 +489,35 @@ body.dark #clockimage {
 }
 
 #timetext {
-    background-color: #fff; /* or any color you prefer */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* subtle shadow */
-    margin-bottom: 10px; /* Adds space below the date/time picker */
-    border-radius: 5px; /* rounded corners */
-    margin: auto; /* center the form in the middle of the page */
-    position: relative; /* To use z-index */
-    z-index: 10; /* Higher than the below content but lower than the sidebar if it has a z-index */
-    max-width: 100%; /* Ensures it doesn't overflow the sidebar */
-    box-sizing: border-box; /* Includes padding in the width */
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    border-radius: 5px;
+    margin: auto;
+    position: relative;
+    z-index: 10;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 #timetext h5 {
     margin-bottom: 10px;
-    font-size: 18px; /* or your preferred size */
+    font-size: 18px;
     font-weight: normal;
-    color: #333; /* or any color you prefer */
-    text-align: center; /* if you want it centered */
+    color: #333;
+    text-align: center;
 }
 
 #timetext form {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* center the form items */
-    gap: 10px; /* space between form items */
+    justify-content: center;
+    gap: 10px;
 }
 
 #timetext input[type='date'],
 #timetext input[type='time'] {
-    border: 1px solid #ccc; /* light grey border */
+    border: 1px solid #ccc;
     padding: 10px;
     border-radius: 4px;
     font-size: 16px;
@@ -548,8 +549,8 @@ body.dark #clockimage {
     bottom: 10px;
     right: 10px;
     z-index: 9999;
-    width: 80vw; /* Adjusted to be responsive based on viewport width, consider a max-width if needed */
-    max-width: 300px; /* Ensures it doesn't get too large on wider screens */
+    width: 80vw;
+    max-width: 300px;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -558,8 +559,8 @@ body.dark #clockimage {
 
 #chart {
     width: 100%;
-    height: auto; /* Adjust height based on content or maintain a fixed height */
-    aspect-ratio: 16 / 9; /* Optional: Sets a fixed aspect ratio for the chart */
+    height: auto;
+    aspect-ratio: 16 / 9;
 }
 
 #weatherdisplay.closed {

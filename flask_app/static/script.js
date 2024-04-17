@@ -37,14 +37,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Journey reverse function
     document.getElementById('changeButton').addEventListener('click', function () {
-        // Get the input elements
         let searchLocation = document.getElementById('searchLocation');
         let searchDestination = document.getElementById('searchDestination');
+        let errorResult = document.getElementById('errorResult');
 
-        // Swap their values
-        let temp = searchLocation.value;
-        searchLocation.value = searchDestination.value;
-        searchDestination.value = temp;
+        if (searchLocation.value.trim() !== '' || searchDestination.value.trim() !== '') {
+            let temp = searchLocation.value;
+            searchLocation.value = searchDestination.value;
+            searchDestination.value = temp;
+        } else {
+            // If either field is empty, display the error message
+            searchLocation.focus();
+            alert('Please fill out either location');
+        }
     });
 });
 
@@ -537,6 +542,10 @@ function searchDest(event) {
 
 function geocodeAddress(address) {
     return new Promise((resolve, reject) => {
+        if (!address) {
+            reject('Address is empty!');
+            return;
+        }
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode({ address: address }, (results, status) => {
             if (status === 'OK') {
@@ -553,7 +562,7 @@ function geocodeAddress(address) {
 // Google Directions API
 let previousDirectionsRenderer = null;
 async function calculateAndDisplayRoute(loc, dest) {
-    const errorResult = document.getElementById('errorResult');
+    var errorResult = document.getElementById('errorResult');
     errorResult.innerHTML = '';
 
     const now = new Date();
