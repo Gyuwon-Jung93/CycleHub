@@ -304,13 +304,21 @@ select {
     border: #18191a solid 3px;
     margin-top: 13px;
     margin-right: 20px;
-    width: 40%;
     border: none;
     font-family: inherit;
     font-size: 17px;
     cursor: inherit;
     line-height: inherit;
     background-color: transparent;
+}
+select #dateinput {
+    width: 55%
+}
+select #timeinput {
+    width: 20%
+}
+.hide { 
+    display: none;
 }
 .greybox button {
     border: none;

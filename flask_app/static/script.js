@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initMap();
     getWeather();
     getTodayDate();
-
+    
     /*Check */
     /* AutoComplete letiable */
     const searchLocationInput = document.getElementById('searchLocation');
@@ -31,6 +31,51 @@ document.addEventListener('DOMContentLoaded', function () {
             // Hide the chart container because the sidebar is now closed
         }
     });
+
+    // Calls function for creating, dynamically, the select options 
+    function generateDateTimeSelect() {
+        let html = '<label>';
+        html += '<select id="dateinput">';
+        html += '<option selected disabled>Pick a day</option>';
+        const londonTime = new Date().toLocaleString('en-US', { timeZone: 'Europe/London' });
+        const today = new Date(londonTime);
+        const currentDayOfWeek = today.getDay() || 7;
+        // Generate options for the next 5 days
+        for (let i = 0; i < 5; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() + i);
+            const dayOfWeek = date.getDay() || 7; 
+            const dayOfWeekNumber = (dayOfWeek === 1 ? 'Monday' : (dayOfWeek === 2 ? 'Tuesday' : (dayOfWeek === 3 ? 'Wednesday' : (dayOfWeek === 4 ? 'Thursday' : (dayOfWeek === 5 ? 'Friday' : (dayOfWeek === 6 ? 'Saturday' : 'Sunday'))))));
+            const month = date.toLocaleDateString('en-US', { month: 'long' });
+            const dayOfMonth = date.getDate();
+            html += `<option value="${dayOfWeek}">${dayOfWeekNumber} ${month} ${dayOfMonth}</option>`;
+        }
+        
+        html += '</select>';
+        
+        // for time
+        html += '<select id="timeinput">';
+        html += '<option selected disabled>Time</option>';
+        const currentHour = today.getHours();
+        for (let hour = 5; hour < 24; hour++) {
+            if (hour <= currentHour) {
+                html += `<option class="hide" value="${hour}">${hour}:00</option>`;
+            } else {
+                html += `<option value="${hour}">${hour}:00</option>`;
+            }
+        }
+        html += '</select>';
+        
+        html += '</label>';
+        
+        return html;
+    }
+    
+    
+
+    const form = document.getElementById('day-time-selection');
+    const dateTimeSelectHTML = generateDateTimeSelect();
+    form.innerHTML += dateTimeSelectHTML;
     // For changing hour and day
     document.getElementById('timeinput').addEventListener('change', handleTimeInputChange);
     document.getElementById('dateinput').addEventListener('change', handleTimeInputChange);
@@ -82,16 +127,35 @@ let day = 0;
 let hour = 0;
 
 function handleTimeInputChange() {
-    let timeInput = document.getElementById('timeinput').value;
-    let dayInput = document.getElementById('dateinput').value;
+    const londonTime = new Date().toLocaleString('en-US', { timeZone: 'Europe/London' });
+    const today = new Date(londonTime);
+    const currentDayOfWeek = today.getDay() || 7;
+    let timeInput = parseInt(document.getElementById('timeinput').value);
+    let dayInput = parseInt(document.getElementById('dateinput').value);
+    let rightNow = new Date().toLocaleString('en-US', { timeZone: 'Europe/London', hour: 'numeric', hour12: false });
+    rightNow = parseInt(rightNow); 
+    let timeSelect = document.getElementsByClassName('hide');
+
     if (timeInput == 0 || dayInput == 0) {
         hour = 0;
-        day = 0;
+        day = 0;                                                                                                                    
     } else {
         hour = timeInput;
         day = dayInput;
     }
+
+    // Check if the selected time is earlier than the current time
+    if (dayInput != currentDayOfWeek) {
+        for (let i = 0; i < timeSelect.length; i++) {
+            timeSelect[i].style.display = 'inline';
+        }
+    } else if (dayInput === currentDayOfWeek) {
+        for (let i = 0; i < timeSelect.length; i++) {
+            timeSelect[i].style.display = 'none';
+        }
+    }
 }
+
 
 // window counter
 let allInfoWindows = [];
