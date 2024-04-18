@@ -297,41 +297,58 @@ async function initMap() {
             lng: station.position.lng,
         }));
 
-        // Current Users Location
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    currLatLng = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
-                    let markerImg = document.createElement('img');
-                    markerImg.src = '/static/image/home_icon.png';
-                    markerImg.width = 50; // Width in pixels
-                    markerImg.height = 50; // Height in pixels
-
-                    new google.maps.Marker({
-                        position: currLatLng,
-                        map: map,
-                        title: 'Your Location',
-                        icon: {
-                            url: markerImg.src,
-                            scaledSize: new google.maps.Size(50, 50), // Adjust size as needed
-                        },
-                    });
+      if (navigator.geolocation) {
+    // Replace the original getCurrentPosition with the fake one
+    navigator.geolocation.getCurrentPosition = (fn) => {
+        setTimeout(() => {
+            fn({
+                coords: {
+                    accuracy: 40,
+                    altitude: null,
+                    altitudeAccuracy: null,
+                    heading: null,
+                    latitude: 53.3498114,
+                    longitude: -6.2628274,
+                    speed: null,
                 },
-                (error) => {
-                    console.error(error);
+                timestamp: Date.now(),
+            })
+        }, 2912)
+    };
+    // Now call getCurrentPosition as usual
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            currLatLng = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+            };
+            let markerImg = document.createElement('img');
+            markerImg.src = '/static/image/home_icon.png';
+            markerImg.width = 50; // Width in pixels
+            markerImg.height = 50; // Height in pixels
+console.log(currLatLng);
+            new google.maps.Marker({
+                position: currLatLng,
+                map: map,
+                title: 'Your Location',
+                icon: {
+                    url: markerImg.src,
+                    scaledSize: new google.maps.Size(50, 50), // Adjust size as needed
                 },
-                {
-                    //enableHighAccuracy added 21/3/2024 Gyuwon
-                    enableHighAccuracy: true, // This requests the highest possible accuracy.
-                    timeout: 10000, // Maximum time in milliseconds to wait for a response.
-                    maximumAge: 0, // Maximum age in milliseconds of a possible cached position that is acceptable to return.
-                }
-            );
-        }
-
+            });
+        },
+        (error) => {
+            console.error(error);
+        },
+        {
+            
+            enableHighAccuracy: true, 
+            timeout: 10000, 
+            maximumAge: 0,         }
+    );
+} else {
+    console.error('Geolocation is not supported by this browser.');
+} 
         //Googlemaps loading
         const mapDiv = document.getElementById('map');
         const mapCenter = { lat: 53.344979, lng: -6.27209 };
