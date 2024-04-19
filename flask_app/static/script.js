@@ -324,16 +324,16 @@ async function initMap() {
             };
             let markerImg = document.createElement('img');
             markerImg.src = '/static/image/home_icon.png';
-            markerImg.width = 50; // Width in pixels
-            markerImg.height = 50; // Height in pixels
-console.log(currLatLng);
+            markerImg.width = 50; 
+            markerImg.height = 50;
+	
             new google.maps.Marker({
                 position: currLatLng,
                 map: map,
                 title: 'Your Location',
                 icon: {
                     url: markerImg.src,
-                    scaledSize: new google.maps.Size(50, 50), // Adjust size as needed
+                    scaledSize: new google.maps.Size(50, 50),
                 },
             });
         },
