@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initMap();
     getWeather();
     getTodayDate();
-    
+
     /*Check */
     /* AutoComplete letiable */
     const searchLocationInput = document.getElementById('searchLocation');
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Calls function for creating, dynamically, the select options 
+    // Calls function for creating, dynamically, the select options
     function generateDateTimeSelect() {
         let html = '<label>';
         html += '<select id="dateinput">';
@@ -44,15 +44,28 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let i = 0; i < 5; i++) {
             const date = new Date(today);
             date.setDate(date.getDate() + i);
-            const dayOfWeek = date.getDay() || 7; 
-            const dayOfWeekNumber = (dayOfWeek === 1 ? 'Monday' : (dayOfWeek === 2 ? 'Tuesday' : (dayOfWeek === 3 ? 'Wednesday' : (dayOfWeek === 4 ? 'Thursday' : (dayOfWeek === 5 ? 'Friday' : (dayOfWeek === 6 ? 'Saturday' : 'Sunday'))))));
+            const dayOfWeek = date.getDay() || 7;
+            const dayOfWeekNumber =
+                dayOfWeek === 1
+                    ? 'Monday'
+                    : dayOfWeek === 2
+                    ? 'Tuesday'
+                    : dayOfWeek === 3
+                    ? 'Wednesday'
+                    : dayOfWeek === 4
+                    ? 'Thursday'
+                    : dayOfWeek === 5
+                    ? 'Friday'
+                    : dayOfWeek === 6
+                    ? 'Saturday'
+                    : 'Sunday';
             const month = date.toLocaleDateString('en-US', { month: 'long' });
             const dayOfMonth = date.getDate();
             html += `<option value="${dayOfWeek}">${dayOfWeekNumber} ${month} ${dayOfMonth}</option>`;
         }
-        
+
         html += '</select>';
-        
+
         // for time
         html += '<select id="timeinput">';
         html += '<option selected disabled>Time</option>';
@@ -65,13 +78,11 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         html += '</select>';
-        
+
         html += '</label>';
-        
+
         return html;
     }
-    
-    
 
     const form = document.getElementById('day-time-selection');
     const dateTimeSelectHTML = generateDateTimeSelect();
@@ -133,12 +144,12 @@ function handleTimeInputChange() {
     let timeInput = parseInt(document.getElementById('timeinput').value);
     let dayInput = parseInt(document.getElementById('dateinput').value);
     let rightNow = new Date().toLocaleString('en-US', { timeZone: 'Europe/London', hour: 'numeric', hour12: false });
-    rightNow = parseInt(rightNow); 
+    rightNow = parseInt(rightNow);
     let timeSelect = document.getElementsByClassName('hide');
 
     if (timeInput == 0 || dayInput == 0) {
         hour = 0;
-        day = 0;                                                                                                                    
+        day = 0;
     } else {
         hour = timeInput;
         day = dayInput;
@@ -155,7 +166,6 @@ function handleTimeInputChange() {
         }
     }
 }
-
 
 // window counter
 let allInfoWindows = [];
@@ -260,7 +270,7 @@ modeSwitch.addEventListener('click', () => {
     } else {
         map.setOptions({ styles: brightStyleArray });
         document.getElementById('logo2').src = '/static/image/LogoWhite.png';
-        document.getElementById('logo').src = '/static/image/White.png';
+        document.getElementById('logo').src = '/static/image/LogoWhite.png';
 
         //document.getElementById('logo').setAttribute.src = 'static/image/LogoWhite.png';
     }
@@ -297,58 +307,58 @@ async function initMap() {
             lng: station.position.lng,
         }));
 
-      if (navigator.geolocation) {
-    // Replace the original getCurrentPosition with the fake one
-    navigator.geolocation.getCurrentPosition = (fn) => {
-        setTimeout(() => {
-            fn({
-                coords: {
-                    accuracy: 40,
-                    altitude: null,
-                    altitudeAccuracy: null,
-                    heading: null,
-                    latitude: 53.3498114,
-                    longitude: -6.2628274,
-                    speed: null,
-                },
-                timestamp: Date.now(),
-            })
-        }, 2912)
-    };
-    // Now call getCurrentPosition as usual
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            currLatLng = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
+        if (navigator.geolocation) {
+            // Replace the original getCurrentPosition with the fake one
+            navigator.geolocation.getCurrentPosition = (fn) => {
+                setTimeout(() => {
+                    fn({
+                        coords: {
+                            accuracy: 40,
+                            altitude: null,
+                            altitudeAccuracy: null,
+                            heading: null,
+                            latitude: 53.3498114,
+                            longitude: -6.2628274,
+                            speed: null,
+                        },
+                        timestamp: Date.now(),
+                    });
+                }, 2912);
             };
-            let markerImg = document.createElement('img');
-            markerImg.src = '/static/image/home_icon.png';
-            markerImg.width = 50; 
-            markerImg.height = 50;
-	
-            new google.maps.Marker({
-                position: currLatLng,
-                map: map,
-                title: 'Your Location',
-                icon: {
-                    url: markerImg.src,
-                    scaledSize: new google.maps.Size(50, 50),
+            // Now call getCurrentPosition as usual
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    currLatLng = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+                    let markerImg = document.createElement('img');
+                    markerImg.src = '/static/image/home_icon.png';
+                    markerImg.width = 50;
+                    markerImg.height = 50;
+
+                    new google.maps.Marker({
+                        position: currLatLng,
+                        map: map,
+                        title: 'Your Location',
+                        icon: {
+                            url: markerImg.src,
+                            scaledSize: new google.maps.Size(50, 50),
+                        },
+                    });
                 },
-            });
-        },
-        (error) => {
-            console.error(error);
-        },
-        {
-            
-            enableHighAccuracy: true, 
-            timeout: 10000, 
-            maximumAge: 0,         }
-    );
-} else {
-    console.error('Geolocation is not supported by this browser.');
-} 
+                (error) => {
+                    console.error(error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0,
+                }
+            );
+        } else {
+            console.error('Geolocation is not supported by this browser.');
+        }
         //Googlemaps loading
         const mapDiv = document.getElementById('map');
         const mapCenter = { lat: 53.344979, lng: -6.27209 };
@@ -480,7 +490,7 @@ async function initMap() {
         });
         //Cluster click listener
         google.maps.event.addListener(markerCluster, 'click', (markerCluster) => {
-            map.setCenter(cluster.getCenter());
+            map.setCenter(markerCluster.getCenter());
             map.setZoom(map.getZoom() + 3);
         });
     } catch (error) {
@@ -853,6 +863,7 @@ async function generateInfoWindowContent(station) {
         if (available_bikes <= 5) {
             try {
                 return `
+                <h6 class=""stationdetails" style="color:Green; text-align:center;">Predicted availability<h6>
                 <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available for time chosen<h4>
                 <h3 class="stationdetails">${station.name}</h3>
                 <p class="stationdetails">Address: ${station.address}</p>
@@ -871,6 +882,7 @@ async function generateInfoWindowContent(station) {
         } else {
             try {
                 return `
+                <h6 class=""stationdetails" style="color:Green; text-align:center;">Predicted availability<h6>
                 <h3 class="stationdetails">${station.name}</h3>
                 <p class="stationdetails">Address: ${station.address}</p>
                 <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
