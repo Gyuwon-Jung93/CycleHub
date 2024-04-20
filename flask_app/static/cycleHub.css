@@ -301,16 +301,13 @@ label {
 select {
     border: #18191a solid 3px;
     margin-top: 13px;
-    margin-right: 20px;
+    margin-right: 0px;
     border: none;
     font-family: inherit;
     font-size: 17px;
     cursor: inherit;
     line-height: inherit;
     background-color: transparent;
-}
-select #dateinput {
-    width: 55%
 }
 select #timeinput {
     width: 20%
