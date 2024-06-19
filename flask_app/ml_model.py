@@ -7,7 +7,7 @@ import pandas as pd
 # For fetching future weather data, collects 7 days in the future
 def fetch_weather_data(lat, lng):
     
-    API_KEY = 'e09fe30aecb65a55bb36442eda372b92'
+    API_KEY = 'xxxxxxxxxxxxxxxxxxxxxx'
     BASE_URL = f" https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lng}&appid={API_KEY}"
 
     response = requests.get(BASE_URL)
