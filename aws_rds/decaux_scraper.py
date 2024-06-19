@@ -48,7 +48,7 @@ def update_database_decaux(data):
 
 def fetch_decaux_data():
     CONTRACT_NAME = "dublin"
-    API_KEY = '99d3e65801ab0bdae585264b25d443c5545365b5'
+    API_KEY = 'xxxxxxxxxxxxxxxxxxxx'
     BASE_URL = f"https://api.jcdecaux.com/vls/v1/stations?contract={CONTRACT_NAME}&apiKey={API_KEY}"
 
     response = requests.get(BASE_URL)
