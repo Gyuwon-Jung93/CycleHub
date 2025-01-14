@@ -5,7 +5,7 @@ CycleHub is monitor of a bike-sharing system designed to promote sustainable urb
 ![Logo](https://github.com/ChristianKeogh/CycleHub/assets/148101801/7fcfc16d-947e-43ba-b9d4-f7f2bd70058a)
 
 
-Myself and two classmates made this website to create a journey planner for users of Dublin Bikes. The stack used is as following:
+This website was created as a journey planner for users of Dublin Bikes. The stack used is as following:
 
 HTML, CSS, JS, Flask, AWS, SQLalchemy, a Linear Regression predictive model, OpenWeather API, and Google Maps API.
 
