@@ -7,7 +7,7 @@ CycleHub is monitor of a bike-sharing system designed to promote sustainable urb
 
 This website was created as a journey planner for users of Dublin Bikes. The stack used is as following:
 
-HTML, CSS, JS, Flask, AWS, SQLalchemy, a Linear Regression predictive model, OpenWeather API, and Google Maps API.
+HTML, CSS, JS, Flask, AWS, SQLalchemy, a XGBoost predictive model, OpenWeather API, and Google Maps API.
 
 The integration of Google Maps and OpenWeather allowed the website to create a joruney layout that brings the user to the closest station, on a cycle path through Dublin, to the station that is closest to their destination, and finally to their final destination via a walking route.
 
