@@ -6,7 +6,7 @@ import datetime
 
 def fetch_weather_data(lat, lng):
     
-    API_KEY = 'e09fe30aecb65a55bb36442eda372b92'
+    API_KEY = ''
     BASE_URL = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lng}&appid={API_KEY}'
 
     response = requests.get(BASE_URL)
