@@ -1,1 +1,26 @@
+# Ignore .env file
+.env
+
+# Ignore Python-related files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore virtual environments
+venv/
+env/
+.venv/
+
+# Ignore macOS system files
 .DS_Store
+
+# Ignore IDE settings (e.g., VSCode, PyCharm)
+.vscode/
+.idea/
+
+# Ignore log files
+*.log
+
+# Ignore build outputs
+dist/
+build/

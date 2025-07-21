@@ -1,3 +1,4 @@
+# app.py
 import sys
 import numpy as np
 import os
@@ -24,9 +25,9 @@ from aws_rds.database import Session
 from aws_rds.models import Station, Availability
 from sqlalchemy.sql import func
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from dotenv import load_dotenv
 
-
-
+load_dotenv()
 
 app = Flask(__name__, static_url_path='/static')
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -48,76 +49,23 @@ def process_data():
 @app.route('/stations')
 def get_stations():
     try:
-        session = Session()
- 
-        latest_update_subq = session.query(
-            Availability.station_id,
-            func.max(Availability.last_update).label('max_last_update')
-        ).group_by(Availability.station_id).subquery('latest_updates')
-
-        stations_with_latest_availability = session.query(
-            Station.station_id,
-            Station.name,
-            Station.address,
-            Station.position_lat,
-            Station.position_lng,
-            Station.banking,
-            Station.bonus,
-            Availability.available_bike_stands,
-            Availability.bike_stands,
-            Availability.available_bikes,
-            Availability.status,
-            Availability.last_update
-        ).join(Availability, Station.station_id == Availability.station_id
-        ).join(latest_update_subq, and_(
-            Availability.station_id == latest_update_subq.c.station_id,
-            Availability.last_update == latest_update_subq.c.max_last_update
-        )).all()
-
-        stations_data = []
-        for (station_id, name, address, position_lat, position_lng, banking, bonus, available_bike_stands, bike_stands, available_bikes, status, last_update) in stations_with_latest_availability:
-            station_data = {
-                "number": station_id,
-                "contract_name": "dublin", 
-                "name": name,
-                "address": address,
-                "position": {"lat": position_lat, "lng": position_lng},
-                "banking": bool(banking),
-                "bonus": bool(bonus),
-                "bike_stands": bike_stands,
-                "available_bike_stands": available_bike_stands,
-                "available_bikes": available_bikes,
-                "status": status,
-                "last_update": last_update.timestamp() * 1000 
-            }
-            stations_data.append(station_data)
-
-        session.close()
-
-        with open('stations_data.json', 'w') as f:
-            json.dump(stations_data, f, indent=4)
-
-        return jsonify(stations_data)
-    except SQLAlchemyError as e:
-        print(f"Database access failed: {e}, attempting API fallback.")
-        try:
-            contract_name = "dublin"
-            api_key = '99d3e65801ab0bdae585264b25d443c5545365b5'
-            base_url = f"https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}"
-            response = requests.get(base_url)
-            stations = response.json()
-            with open('stations_data.json', 'w') as file:
-                json.dump(stations, file, indent=4)
-            return jsonify(stations)
-        except requests.RequestException  as e:
-            print(f"Failed to fetch data from API: {e}")
-            return jsonify({"error": "Cannot Load data"})
+        contract_name = "dublin"
+        api_key = os.getenv('JCDECAUX_API_KEY')
+        base_url = f"https://api.jcdecaux.com/vls/v1/stations?contract={contract_name}&apiKey={api_key}"
+        response = requests.get(base_url)
+        stations = response.json()
+        with open('stations_data.json', 'w') as file:
+            json.dump(stations, file, indent=4)
+        return jsonify(stations)
+    except requests.RequestException  as e:
+        print(f"Failed to fetch data from API: {e}")
+        return jsonify({"error": "Cannot Load data"})
 
 
 
 @app.route('/weather', methods=['GET'])
 def get_weather():
-    api_key = "6def6f5458e3226a4a33490f6635e269"
+    api_key = os.getenv('OPENWEATHER_API_KEY')
     lat = 53.346304
     lon = -6.2554112
     weather_url = f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric'

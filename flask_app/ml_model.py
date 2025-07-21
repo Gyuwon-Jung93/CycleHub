@@ -21,7 +21,7 @@ def fetch_weather_data(lat, lng):
 #fetch up to date staion ids and bike stands
 def fetch_decaux_data():
     CONTRACT_NAME = "dublin"
-    API_KEY = 'xxxxxxxxxxxxxxxxxxx'
+    API_KEY = 'ada91b252842ac03f63f71ec55250632bc1c11ee'
     BASE_URL = f"https://api.jcdecaux.com/vls/v1/stations?contract={CONTRACT_NAME}&apiKey={API_KEY}"
 
     response = requests.get(BASE_URL)

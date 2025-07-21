@@ -1,7 +1,12 @@
+# decaux_scraper.py
 import requests
 from database import Session
 from models import Station, Availability
 import datetime
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 def update_database_decaux(data):
     session = Session()
@@ -48,7 +53,7 @@ def update_database_decaux(data):
 
 def fetch_decaux_data():
     CONTRACT_NAME = "dublin"
-    API_KEY = 'xxxxxxxxxxxxxxxxxxxx'
+    API_KEY = os.getenv('JCDECAUX_API_KEY')
     BASE_URL = f"https://api.jcdecaux.com/vls/v1/stations?contract={CONTRACT_NAME}&apiKey={API_KEY}"
 
     response = requests.get(BASE_URL)

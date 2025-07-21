@@ -296,12 +296,21 @@ document.getElementById('searchDestination').addEventListener('keypress', functi
 async function initMap() {
     try {
         let locations = [];
-        let { Map } = await google.maps.importLibrary('maps');
+        const { Map } = await google.maps.importLibrary('maps');
+        const { Marker } = await google.maps.importLibrary('marker'); // 레거시 Marker 지원
+
         //fetch station information data from the flask Server
         //install pip3 flask-cors to fetch data
         const response = await fetch('/stations');
+        if (!response.ok) {
+            throw new Error('Failed to fetch stations data');
+        }
         const stations_info = await response.json();
+        console.log('Fetched stations:', stations_info); // 디버깅 로그: 데이터 확인
 
+        if (stations_info.length === 0) {
+            console.warn('No station data available');
+        }
         locations = stations_info.map((station) => ({
             lat: station.position.lat,
             lng: station.position.lng,
@@ -362,18 +371,7 @@ async function initMap() {
         //Googlemaps loading
         const mapDiv = document.getElementById('map');
         const mapCenter = { lat: 53.344979, lng: -6.27209 };
-
-        //Current location add
-        const locationButton = document.createElement('button');
-        locationButton.classList.add('custom-map-control-button');
-
-        //GoogleMaps Style Select
-
-        if (darkModeFlag) {
-            customStyle = darkStyleArray;
-        } else {
-            customStyle = brightStyleArray;
-        }
+        let customStyle = darkModeFlag ? darkStyleArray : brightStyleArray;
 
         if (mapDiv) {
             map = new Map(mapDiv, {
@@ -386,124 +384,83 @@ async function initMap() {
                     position: google.maps.ControlPosition.RIGHT_BOTTOM,
                 },
                 fullscreenControl: false,
-
                 styles: customStyle,
             });
         }
         map.addListener('click', () => {
-            if (infoWindow) {
-                infoWindow.close();
-            }
-        });
-
-        async function generateChart(stationId) {
-            let response;
-            // Make a POST request to the /predict endpoin
-            response = await fetch('/predict', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `station_id=${stationId}`,
-            });
-            // Parse the HTML response
-            let htmlContent = await response.text();
-            document.getElementById('predictionChart').innerHTML = htmlContent;
-        }
-
-        // Add some markers to the map
+            if (infoWindow) infoWindow.close();
+        }); // 마커 추가 루프
         stations_info.forEach((station) => {
-            // const selectElement = document.getElementById("stationinput");
-            // const option = document.createElement("option");
-            // option.value = station.number;
-            // option.textContent = station.name;
-            // selectElement.appendChild(option);
-            let markerImg = document.createElement('img');
-            markerImg.src = '/static/image/redMarker.png';
+            let markerImgSrc = '/static/image/redMarker.png'; // 경로 통일: /static/
             let bikeAvailability = ((station.available_bikes / station.bike_stands) * 100).toFixed();
             if (bikeAvailability == 0) {
-                markerImg.src = './static/image/redMarker.png';
+                markerImgSrc = '/static/image/redMarker.png';
             } else if (bikeAvailability > 0 && bikeAvailability < 40) {
-                markerImg.src = './static/image/orangeMarker.png';
+                markerImgSrc = '/static/image/orangeMarker.png';
             } else {
-                markerImg.src = './static/image/greenMarker.png';
+                markerImgSrc = '/static/image/greenMarker.png';
             }
-            const marker = new google.maps.Marker({
+
+            const marker = new Marker({
+                // google.maps.Marker 대신 Marker 사용 (임포트된 것)
                 map: map,
                 position: new google.maps.LatLng(station.position.lat, station.position.lng),
-                title: station.name, // Optional: add a title
-                icon: { url: markerImg.src, scaledSize: new google.maps.Size(25, 25) },
+                title: station.name,
+                icon: { url: markerImgSrc, scaledSize: new google.maps.Size(25, 25) },
             });
 
-            // Create an info window
+            // 클릭 이벤트 (InfoWindow)
             marker.addListener('click', () => {
-                // if infoWindow is already exist, close the current window.
-                if (infoWindow) {
-                    infoWindow.close();
-                }
+                if (infoWindow) infoWindow.close();
+
+                let content = `
+                    <h3 class="stationdetails">${station.name}</h3>
+                    <p class="stationdetails">Bikes stands: ${station.available_bike_stands} / ${
+                    station.bike_stands
+                }</p>
+                    <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
+                    <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
+                    <p class="stationdetails">Status: ${station.status}</p>
+                    <p class="stationdetails">Station: ${station.number}</p>
+                    <div id="predictionChart"></div>`;
 
                 if (station.available_bikes <= 5) {
-                    infoWindow = new google.maps.InfoWindow({
-                        content: `
-                    <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available for time chosen<h4>
-                    <h3 class="stationdetails">${station.name}</h3>
-                    <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${
-                            station.bike_stands
-                        }</p>
-                    <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
-                    <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-                    <p class="stationdetails">Status: ${station.status}</p>
-                    <p class="stationdetails">Station: ${station.number}</p>
-                    <div id="predictionChart"></div>`,
-                        // You can add more station details here
-                    });
-                } else {
-                    infoWindow = new google.maps.InfoWindow({
-                        content: `
-                    <h3 class="stationdetails">${station.name}</h3>
-                    <p class="stationdetails">Bikes_stands: ${station.available_bike_stands} / ${
-                            station.bike_stands
-                        }</p>
-                    <p class="stationdetails">Available bikes: ${station.available_bikes} / ${station.bike_stands}</p>
-                    <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-                    <p class="stationdetails">Status: ${station.status}</p>
-                    <p class="stationdetails">Station: ${station.number}</p>
-                    <div id="predictionChart"></div>`,
-                        // You can add more station details here
-                    });
+                    content =
+                        `<h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available for time chosen</h4>` +
+                        content;
                 }
+
+                infoWindow = new google.maps.InfoWindow({ content });
                 infoWindow.open(map, marker);
-                // Call a function to generate and render the chart
                 generateChart(station.number);
             });
 
             markers.push(marker);
         });
 
-        // Function to generate and render the chart for a specific station
+        // MarkerClusterer (최신 버전 사용)
+        if (markers.length > 0) {
+            const markerCluster = new markerClusterer.MarkerClusterer({
+                map,
+                markers,
+                minimumClusterSize: 4,
+                // imagePath는 구버전; 최신 버전은 기본 클러스터 아이콘 사용 (커스텀 필요 시 renderer 옵션 추가)
+            });
 
-        //marker cluster
-        markerCluster = new MarkerClusterer(map, markers, {
-            minimumClusterSize: 4,
-            imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
-            zoomOnClick: false,
-        });
-        //Cluster click listener
-        google.maps.event.addListener(markerCluster, 'click', (markerCluster) => {
-            map.setCenter(markerCluster.getCenter());
-            map.setZoom(map.getZoom() + 3);
-        });
+            google.maps.event.addListener(markerCluster, 'click', (cluster) => {
+                map.setCenter(cluster.getCenter());
+                map.setZoom(map.getZoom() + 3);
+            });
+        }
     } catch (error) {
         console.error('InitMap Error:', error);
-
-        // If mapDiv exists and an error occurred during map initialization, show an alert
         const mapDiv = document.getElementById('map');
         if (mapDiv) {
             mapDiv.innerHTML = '<div class="map-error-alert">Google maps failed to load.</div>';
             mapDiv.style.display = 'flex';
             mapDiv.style.justifyContent = 'center';
             mapDiv.style.alignItems = 'center';
-            mapDiv.style.height = '100%'; // Make sure your map container has a height, so the message will be visible
+            mapDiv.style.height = '100%';
         }
     }
 }
@@ -551,7 +508,19 @@ async function getWeather() {
         })
         .catch((error) => console.log('Error:', error));
 }
-
+async function generateChart(stationId) {
+    try {
+        const response = await fetch('/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `station_id=${stationId}`,
+        });
+        const htmlContent = await response.text();
+        document.getElementById('predictionChart').innerHTML = htmlContent;
+    } catch (error) {
+        console.error('Chart generation error:', error);
+    }
+}
 function displayResults(stations) {
     try {
         const resultsContainer = document.getElementById('search-results');
@@ -855,7 +824,7 @@ async function predict_time_day(hour, day, station_id) {
 }
 
 async function generateInfoWindowContent(station) {
-    var available_bikes, available_bike_stands;
+    let available_bikes, available_bike_stands;
     if (hour != 0 && day != 0) {
         available_bikes = await predict_time_day(hour, day, station.number);
         available_bike_stands = station.bike_stands - available_bikes;
@@ -880,56 +849,22 @@ async function generateInfoWindowContent(station) {
                 console.error('Fail to load station Data', e);
             }
         } else {
-            try {
-                return `
-                <h6 class=""stationdetails" style="color:Green; text-align:center;">Predicted availability<h6>
+            available_bikes = station.available_bikes; // 초기화 추가
+            available_bike_stands = station.available_bike_stands;
+            let content = `
                 <h3 class="stationdetails">${station.name}</h3>
                 <p class="stationdetails">Address: ${station.address}</p>
                 <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
                 <p class="stationdetails">Available bikes: ${available_bikes}</p>
                 <p class="stationdetails">Available bike stands: ${available_bike_stands}</p>
-                <p class="stationdetails">Banking: ${
-                    station.banking ? 'Yes' : 'No'
-                }</p> <box-icon name='money-withdraw'></box-icon>
+                <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
                 <p class="stationdetails">Status: ${station.status}</p>
                 <div id="predictionChart"></div>
                 <button class="journeyReset">Reset Route</button>`;
-            } catch (e) {
-                console.error('Fail to load station Data', e);
+            if (available_bikes <= 5) {
+                content = `<h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available</h4>` + content;
             }
-        }
-    } else {
-        if (available_bikes <= 5) {
-            try {
-                return `
-            <h4 class="stationdetails" style="color:Tomato;">Bikes may not be Available<h4>
-            <h3 class="stationdetails">${station.name}</h3>
-            <p class="stationdetails">Address: ${station.address}</p>
-            <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
-            <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
-            <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
-            <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-            <p class="stationdetails">Status: ${station.status}</p>
-            <div id="predictionChart"></div>
-            <button class="journeyReset">Reset Route</button>`;
-            } catch (e) {
-                console.error('Fail to load station Data', e);
-            }
-        } else {
-            try {
-                return `
-            <h3 class="stationdetails">${station.name}</h3>
-            <p class="stationdetails">Address: ${station.address}</p>
-            <p class="stationdetails">Bikes stands: ${station.bike_stands}</p>
-            <p class="stationdetails">Available bikes: ${station.available_bikes}</p>
-            <p class="stationdetails">Available bike stands: ${station.available_bike_stands}</p>
-            <p class="stationdetails">Banking: ${station.banking ? 'Yes' : 'No'}</p>
-            <p class="stationdetails">Status: ${station.status}</p>
-            <div id="predictionChart"></div>
-            <button class="journeyReset">Reset Route</button>`;
-            } catch (e) {
-                console.error('Fail to load station Data', e);
-            }
+            return content;
         }
     }
 }

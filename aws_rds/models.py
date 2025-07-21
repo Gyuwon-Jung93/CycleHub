@@ -5,8 +5,6 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
 
 
-
-
 Base = declarative_base()
 
 # Define Station model
